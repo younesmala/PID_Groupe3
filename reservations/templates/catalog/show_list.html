@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8">
+<h1>Catalogue des spectacles</h1>
+
+<ul>
+  {% for show in object_list %}
+    <li>
+      <a href="{% url 'show_detail' show.slug %}">{{ show.title }}</a>
+      — {{ show.price }} €
+    </li>
+  {% empty %}
+    <li>Aucun spectacle disponible.</li>
+  {% endfor %}
+</ul>
