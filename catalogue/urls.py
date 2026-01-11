@@ -7,8 +7,17 @@ app_name='catalogue'
 
 urlpatterns = [
     path('artist/', views.index, name='artist-index'),
-    path('artist/<int:artist_id>', views.show, name='artist-show'),
-    path('artist/edit/<int:artist_id>', views.artist.edit, name='artist-edit'),
-    path('artist/create',views.artist.create, name='artist-create'),
-    path('artist/delet/<int:artist_id>',views.artist.delete, name='artist-delete'),
+
+
+    # Fiche d'un artiste (détail)
+    path('artist/<int:artist_id>/', views.show, name='artist-show'),
+
+    # Formulaire de modification
+    path('artist/edit/<int:artist_id>/', views.edit, name='artist-edit'),
+
+    # Formulaire de création
+    path('artist/create/', views.create, name='artist-create'),
+
+    # Suppression
+    path('artist/delete/<int:artist_id>/', views.delete, name='artist-delete'),
 ]
