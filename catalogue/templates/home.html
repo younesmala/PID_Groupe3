@@ -1,7 +1,10 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Accueil{% endblock %}
-
 {% block content %}
-    <h2>Projet Réservations - Accueil</h2>
+  <h1>Accueil</h1>
+  <p>Bienvenue sur le projet Réservations.</p>
+
+  <p>
+    <a href="{% url 'artist-index' %}">Voir les artistes</a>
+  </p>
 {% endblock %}
