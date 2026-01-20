@@ -2,9 +2,12 @@
 
 ##  Équipe de développement
 
-* **Mohamed Ouedarbi**
-* **Mpindu Mukandila Jean-Paul**
-* *(+ ajouter les autres membres du groupe)*
+* Younes 
+* Morad
+* Randy
+* Vianney
+* Soufiane
+* Oumar 
 
 ---
 
@@ -17,7 +20,7 @@ Elle comprend :
 * un système de **réservations en ligne**,
 * un **back-office administrateur** pour gérer les contenus,
 * une **API RESTful** destinée aux affiliés,
-* et une future **interface front-end ReactJS** pour le public.
+* et une future **interface front-end pour le public => front-end à determiner 
 
 Ce projet s’inscrit dans le cadre du **PID (Projet d’Intégration et Développement)** du Bachelier en Informatique de gestion.
 Il fait suite au *Starter Kit Django 5* (Itération 2 du PID).
@@ -114,7 +117,7 @@ Cela évite de recréer un environnement virtuel et garantit que tous les membre
 * Django **5.0.14**
 * MySQL / MariaDB **11+**
 * Bootstrap 5
-* ReactJS (Itération 7 – Front-end)
+* FRONT END à determiner 
 * Git / GitHub (collaboration)
 
 ---
