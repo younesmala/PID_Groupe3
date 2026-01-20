@@ -1,174 +1,141 @@
-# README
+# Projet Réservations – Django 5
 
+##  Équipe de développement
 
-
-\# Projet Younes Python Django
-
-
-
-\*\*Projet académique réalisé dans le cadre du module PID (Projet d’Intégration en Développement).\*\*  
-
-Ce projet utilise le framework \*\*Django 5\*\* pour concevoir une application web de \*\*gestion de réservations\*\* avec un module interne \*\*catalogue\*\*.
-
-
+* **Mohamed Ouedarbi**
+* **Mpindu Mukandila Jean-Paul**
+* *(+ ajouter les autres membres du groupe)*
 
 ---
 
+## Description du projet
 
+L’application **Projet Réservations** permet de gérer les réservations de spectacles pour une société de production.
+Elle comprend :
 
-\## Fonctionnalités principales
+* un **catalogue de spectacles**, artistes et lieux de représentation,
+* un système de **réservations en ligne**,
+* un **back-office administrateur** pour gérer les contenus,
+* une **API RESTful** destinée aux affiliés,
+* et une future **interface front-end ReactJS** pour le public.
 
-
-
-\- Système de \*\*gestion des réservations\*\*
-
-\- Module interne \*\*catalogue\*\* (application Django)
-
-\- Interface \*\*administrateur Django\*\* intégrée
-
-\- Base de données \*\*MySQL\*\* (ou SQLite en local)
-
-\- Architecture \*\*MVC (Modèles / Vues / Templates)\*\*
-
-\- Compatible avec \*\*Windows, Linux et Mac\*\*
-
-
+Ce projet s’inscrit dans le cadre du **PID (Projet d’Intégration et Développement)** du Bachelier en Informatique de gestion.
+Il fait suite au *Starter Kit Django 5* (Itération 2 du PID).
 
 ---
 
+## Objectifs pédagogiques
 
-\## Installation locale
+* Apprendre à structurer un projet Django complet.
+* Travailler collaborativement via GitHub (versioning).
+* Comprendre le mapping ORM, la gestion CRUD, l’authentification et les APIs.
+* Respecter les bonnes pratiques de déploiement et sécurité (Django 5).
 
-
-\### 1. Cloner le projet
-
-```bash
-
-git clone https://github.com/younesmala/Projet-Younes-Python-Django.git
-
-cd Projet-Younes-Python-Django
-
-
-\### 2. Créer et activer un environnement virtuel
-
-
-python -m venv .venv
-
-.venv\\Scripts\\activate      # sur Windows
-
-\# ou
-
-source .venv/bin/activate   # sur Linux / Mac
-
-
-\### 3. Installer les dépendances
-
-
-pip install -r requirements.txt
-
-
-\### 4. Configurer la base de données
-
-
-Dans le fichier reservations/settings.py, ajustez les paramètres du bloc DATABASES selon votre environnement :
-
-
-Exemples: 
-
-MySQL: 							
-
-
-DATABASES = {
-
-&nbsp;   'default': {
-
-&nbsp;       'ENGINE': 'django.db.backends.mysql',
-
-&nbsp;       'NAME': 'reservations',
-
-&nbsp;       'USER': 'root',
-
-&nbsp;       'PASSWORD': '',
-
-&nbsp;       'HOST': '127.0.0.1',
-
-&nbsp;       'PORT': '3306',
-
-&nbsp;   }
-
-}
-
-
-SQLite: 
-
-DATABASES = {
-
-&nbsp;   'default': {
-
-&nbsp;       'ENGINE': 'django.db.backends.sqlite3',
-
-&nbsp;       'NAME': BASE\_DIR / 'db.sqlite3',
-
-&nbsp;   }
-
-}
-
-
-\### 5: Appliquer les migrations
-
-
-python manage.py migrate
-
-
-\### 6: Lancer le serveur
-
-
-python manage.py runserver
-
-```
-
-
-L’application est accessible à l’adresse :  
-http://127.0.0.1:8000/
+---
 
 ## Structure du projet
 
-Projet-Younes-Python-Django/
+```
+reservations/               # Projet principal Django
+catalogue/                  # Application interne
+requirements.txt            # Liste des dépendances Python
+manage.py                   # Commandes Django
+README.md                   # Documentation du projet
+```
 
-├── catalogue/ # Application interne Django
+---
 
-├── reservations/ # Projet principal (settings, urls, etc.)
+## ⚙Installation et configuration
 
-├── manage.py # Point d’entrée du projet
+###  Installation complète (environnement propre)
 
-├── db.sqlite3 # Base de données locale
+Pour une installation depuis zéro :
 
-├── requirements.txt # Dépendances Python
+```bash
+git clone https://github.com/mouedarbi/PID_Reservations_Groupe_Django.git
+cd PID_Reservations_Groupe_Django
+python -m venv .venv
+.venv\Scripts\activate      # (Windows)
+# ou
+source .venv/bin/activate   # (Linux / Mac)
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
 
-├── .gitignore # Fichiers ignorés par Git
+L’application est ensuite accessible sur :
+👉 [http://localhost:8000](http://localhost:8000)
 
-└── .venv/ # Environnement virtuel (local)
+---
 
-Auteur: 
+### Réutilisation de l’environnement du Starter Kit
 
-Younes El Mallahi
+Si vous avez déjà installé le **Starter Kit Django 5** du PID :
+vous pouvez simplement **réutiliser le même environnement virtuel**.
 
-Étudiant en Bachelier Informatique – Développement d’Applications
+1. Placez le dossier `RESERVATION_GROUPE` **au même niveau que** votre dossier `reservations` (Starter Kit) :
 
-📍 Institut des Carrières Commerciales (ICC), Bruxelles
+   ```
+   BACHELIER_ICC/
+   ├── StarterKit_Django/
+   │   ├── reservations/
+   │   └── .virtualenvs/
+   ├── RESERVATION_GROUPE/
+   │   └── manage.py
+   ```
 
-📧 Contact GitHub
+2. Activez le même environnement :
 
+   ```bash
+   .virtualenvs\djangodev\Scripts\activate
+   ```
 
-Licence : 
+3. Vérifiez que Django est bien actif :
 
+   ```bash
+   python -m django --version
+   ```
 
-Projet académique à usage pédagogique — non destiné à un usage commercial.
+4. Depuis le répertoire du projet de groupe :
 
+   ```bash
+   cd RESERVATION_GROUPE
+   python manage.py migrate
+   python manage.py runserver
+   ```
 
+Cela évite de recréer un environnement virtuel et garantit que tous les membres du groupe utilisent les **mêmes versions de paquets**.
 
+---
 
+##  Technologies utilisées
 
+* Python **3.11+**
+* Django **5.0.14**
+* MySQL / MariaDB **11+**
+* Bootstrap 5
+* ReactJS (Itération 7 – Front-end)
+* Git / GitHub (collaboration)
 
+---
 
+##  Itérations prévues
 
+| N° | Intitulé                   | Objectif                               |
+| -- | -------------------------- | -------------------------------------- |
+| 1  | Installation du framework  | Création du projet Django et dépôt Git |
+| 2  | Starter Kit                | CRUD simple (Artistes)                 |
+| 3  | Mapping relationnel simple | Entités Type, Locality, Price          |
+| 4  | Authentification           | Gestion des utilisateurs               |
+| 5  | Relations complexes        | Shows, Reservations, Relations         |
+| 6  | API RESTful                | Exposition sécurisée des données       |
+| 7  | Intégration Frontend       | Interface ReactJS                      |
+
+---
+
+## 📜 Licence
+
+Projet académique – **Bachelier en Informatique de Gestion (PID)**
+© 2025 – Tous droits réservés.
+
+<!-- Test comment for CI/CD -->
