@@ -86,7 +86,7 @@ python manage.py runserver
 ## 🧪 Versions utilisées (IMPORTANT)
 
 - Python **3.12**
-- Django **4.2.16 (LTS)**
+- Django **5.0.14**
 
 Tous les membres du groupe doivent utiliser **les mêmes versions** afin d’éviter les conflits.
 
