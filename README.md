@@ -3,7 +3,7 @@
 
 ## 👥 Équipe de développement
 
-- Younes (chef de groupe)
+- Younes 
 - Morad
 - Randy
 - Vianney
