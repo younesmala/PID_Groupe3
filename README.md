@@ -1,144 +1,168 @@
-# Projet Réservations – Django 5
+# Projet Réservations – Django (PID)
 
-##  Équipe de développement
 
-* Younes 
-* Morad
-* Randy
-* Vianney
-* Soufiane
-* Oumar 
+## 👥 Équipe de développement
 
----
-
-## Description du projet
-
-L’application **Projet Réservations** permet de gérer les réservations de spectacles pour une société de production.
-Elle comprend :
-
-* un **catalogue de spectacles**, artistes et lieux de représentation,
-* un système de **réservations en ligne**,
-* un **back-office administrateur** pour gérer les contenus,
-* une **API RESTful** destinée aux affiliés,
-* et une future **interface front-end pour le public => front-end à determiner 
-
-Ce projet s’inscrit dans le cadre du **PID (Projet d’Intégration et Développement)** du Bachelier en Informatique de gestion.
-Il fait suite au *Starter Kit Django 5* (Itération 2 du PID).
+- Younes (chef de groupe)
+- Morad
+- Randy
+- Vianney
+- Soufiane
+- Oumar
 
 ---
 
-## Objectifs pédagogiques
+## 📖 Description du projet
 
-* Apprendre à structurer un projet Django complet.
-* Travailler collaborativement via GitHub (versioning).
-* Comprendre le mapping ORM, la gestion CRUD, l’authentification et les APIs.
-* Respecter les bonnes pratiques de déploiement et sécurité (Django 5).
+L’application **Projet Réservations** est une application web développée avec **Django** permettant de gérer un catalogue de spectacles et, à terme, les réservations associées.
 
----
+Le projet comprend actuellement :
+- un **catalogue d’artistes** (CRUD complet),
+- une **page d’accueil**,
+- un **back-office administrateur** (Django Admin),
+- une **architecture prête** pour l’authentification, les spectacles et les réservations.
 
-## Structure du projet
+Ce projet est réalisé dans le cadre du **PID (Projet d’Intégration et de Développement)** du **Bachelier en Informatique de Gestion**.
 
-```
-reservations/               # Projet principal Django
-catalogue/                  # Application interne
-requirements.txt            # Liste des dépendances Python
-manage.py                   # Commandes Django
-README.md                   # Documentation du projet
-```
+Le développement est réalisé de manière **progressive**, par itérations, conformément aux consignes du PID.
 
 ---
 
-## ⚙Installation et configuration
+## 🎯 Objectifs pédagogiques
 
-###  Installation complète (environnement propre)
+- Comprendre la structure d’un projet Django professionnel.
+- Mettre en place un CRUD fonctionnel avec l’ORM Django.
+- Travailler en **équipe** avec GitHub (Issues, branches, Pull Requests).
+- Appliquer les bonnes pratiques de développement et de documentation.
 
-Pour une installation depuis zéro :
+---
 
-```bash
-git clone https://github.com/mouedarbi/PID_Reservations_Groupe_Django.git
-cd PID_Reservations_Groupe_Django
-python -m venv .venv
-.venv\Scripts\activate      # (Windows)
-# ou
-source .venv/bin/activate   # (Linux / Mac)
+## 🗂️ Structure du projet
+
+PID_Groupe3/
+│
+├── reservations/ # Projet principal Django (settings, urls, wsgi)
+├── catalogue/ # Application catalogue (artistes, templates, vues)
+├── requirements.txt # Dépendances Python
+├── manage.py # Commandes Django
+├── README.md # Documentation du projet
+├── LOGBOOK_GROUPE.md # Journal de bord du groupe
+
+
+---
+
+## ⚙️ Installation et lancement du projet
+
+### 🔹 Prérequis
+
+- Python **3.12**
+- Git
+- Environnement virtuel (venv)
+
+---
+
+### 🔹 Installation depuis zéro (Windows)
+
+git clone https://github.com/younesmala/PID_Groupe3.git
+
+cd PID_Groupe3
+python -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
-```
 
-L’application est ensuite accessible sur :
-👉 [http://localhost:8000](http://localhost:8000)
 
 ---
 
-### Réutilisation de l’environnement du Starter Kit
+### 🔹 Accès à l’application
 
-Si vous avez déjà installé le **Starter Kit Django 5** du PID :
-vous pouvez simplement **réutiliser le même environnement virtuel**.
-
-1. Placez le dossier `RESERVATION_GROUPE` **au même niveau que** votre dossier `reservations` (Starter Kit) :
-
-   ```
-   BACHELIER_ICC/
-   ├── StarterKit_Django/
-   │   ├── reservations/
-   │   └── .virtualenvs/
-   ├── RESERVATION_GROUPE/
-   │   └── manage.py
-   ```
-
-2. Activez le même environnement :
-
-   ```bash
-   .virtualenvs\djangodev\Scripts\activate
-   ```
-
-3. Vérifiez que Django est bien actif :
-
-   ```bash
-   python -m django --version
-   ```
-
-4. Depuis le répertoire du projet de groupe :
-
-   ```bash
-   cd RESERVATION_GROUPE
-   python manage.py migrate
-   python manage.py runserver
-   ```
-
-Cela évite de recréer un environnement virtuel et garantit que tous les membres du groupe utilisent les **mêmes versions de paquets**.
+- Accueil : http://127.0.0.1:8000/
+- Catalogue artistes : http://127.0.0.1:8000/catalogue/artist/
+- Administration : http://127.0.0.1:8000/admin/
 
 ---
 
-##  Technologies utilisées
+## 🧪 Versions utilisées (IMPORTANT)
 
-* Python **3.11+**
-* Django **5.0.14**
-* MySQL / MariaDB **11+**
-* Bootstrap 5
-* FRONT END à determiner 
-* Git / GitHub (collaboration)
+- Python **3.12**
+- Django **4.2.16 (LTS)**
+
+Tous les membres du groupe doivent utiliser **les mêmes versions** afin d’éviter les conflits.
 
 ---
 
-##  Itérations prévues
+## 🧠 Gestion du projet
 
-| N° | Intitulé                   | Objectif                               |
-| -- | -------------------------- | -------------------------------------- |
-| 1  | Installation du framework  | Création du projet Django et dépôt Git |
-| 2  | Starter Kit                | CRUD simple (Artistes)                 |
-| 3  | Mapping relationnel simple | Entités Type, Locality, Price          |
-| 4  | Authentification           | Gestion des utilisateurs               |
-| 5  | Relations complexes        | Shows, Reservations, Relations         |
-| 6  | API RESTful                | Exposition sécurisée des données       |
-| 7  | Intégration Frontend       | Interface à determiner                 |
+### 🔹 GitHub Issues
+
+Toutes les tâches de développement sont gérées via **GitHub Issues**.  
+Chaque Issue contient :
+- une description claire,
+- une checklist des étapes à réaliser,
+- une *Definition of Done (DoD)*,
+- un responsable (assignee).
+
+---
+
+### 🔹 Workflow Git
+
+- La branche `main` est protégée.
+- Chaque membre travaille sur une branche personnelle : `dev_prenom`.
+- Toute modification passe par une **Pull Request**.
+- Une Pull Request correspond à **une Issue**.
+
+---
+
+### 🔹 GitHub Projects
+
+Un tableau **GitHub Projects (Kanban)** est utilisé comme gestionnaire de projet avec les colonnes :
+- Backlog
+- To Do
+- In Progress
+- Review
+- Done
+
+---
+
+## 🔄 Itérations du projet
+
+| Itération | Intitulé                              | État |
+|----------|---------------------------------------|------|
+| 1 | Setup & organisation | 🟡 en cours |
+| 2 | CRUD Artistes + navigation | ✅ terminé |
+| 3 | Relations simples (Type, Locality, Price) | 🔜 à venir |
+| 4 | Authentification | 🔜 à venir |
+| 5 | Shows & Réservations (version minimale) | 🔜 à venir |
+
+---
+
+## ✅ Travail déjà réalisé
+
+- Projet Django fonctionnel
+- Environnement configuré
+- CRUD Artistes complet
+- Page d’accueil
+- Routing propre
+- Django Admin opérationnel
+- Gestion Git (branches, remotes)
+
+---
+
+## 🔜 Travail à venir
+
+- Modèles relationnels (Type, Locality, Price)
+- Authentification (login / signup)
+- Shows et représentations
+- Réservations (version simple)
+- Améliorations UX (messages, navigation)
+- Finalisation du LOGBOOK de groupe
 
 ---
 
 ## 📜 Licence
 
-Projet académique – **Bachelier en Informatique de Gestion (PID)**
-© 2025 – Tous droits réservés.
+Projet académique – **Bachelier en Informatique de Gestion (PID)**  
+© 2025 – Usage pédagogique uniquement
 
-<!-- Test comment for CI/CD -->
+
