@@ -132,7 +132,7 @@ Cela évite de recréer un environnement virtuel et garantit que tous les membre
 | 4  | Authentification           | Gestion des utilisateurs               |
 | 5  | Relations complexes        | Shows, Reservations, Relations         |
 | 6  | API RESTful                | Exposition sécurisée des données       |
-| 7  | Intégration Frontend       | Interface ReactJS                      |
+| 7  | Intégration Frontend       | Interface à determiner                 |
 
 ---
 
