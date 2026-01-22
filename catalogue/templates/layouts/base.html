@@ -1,26 +1,32 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Projet Réservations{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'catalogue/style.css' %}">
 </head>
 <body>
 
-    <header>
-        <h1>🎭 Projet Réservations</h1>
+<header>
+    <nav>
+        <a href="{% url 'catalogue:home' %}">Accueil</a> |
+        <a href="{% url 'catalogue:artist-index' %}">Artistes</a> |
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
 
-        <nav>
-            <a href="{% url 'catalogue:home' %}">Accueil</a> |
-            <a href="{% url 'catalogue:artist-index' %}">Artistes</a> |
-            <a href="/admin/">Admin</a>
-        </nav>
+<hr>
 
-        <hr>
-    </header>
+<main>
+    {% block content %}{% endblock %}
+</main>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+<footer>
+    <hr>
+    <p>Projet Réservations – Groupe 3 – MVP</p>
+</footer>
 
 </body>
 </html>
