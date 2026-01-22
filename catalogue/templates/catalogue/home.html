@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+    <h2>Accueil du catalogue</h2>
+
+    <p>
+        Bienvenue sur l’application de gestion de réservations.
+        Cette version est une <strong>version alpha (MVP)</strong>.
+    </p>
+
+    <ul>
+        <li>
+            <a href="{% url 'catalogue:artist-index' %}">
+                Consulter la liste des artistes
+            </a>
+        </li>
+    </ul>
+{% endblock %}
