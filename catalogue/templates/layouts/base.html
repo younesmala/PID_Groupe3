@@ -1,12 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<title>Projet réservations - {% block title %}Bienvenue{% endblock %}</title>
+    <meta charset="UTF-8">
+    <title>{% block title %}Projet Réservations{% endblock %}</title>
 </head>
 <body>
-<div class="container">
+
+    <header>
+        <h1>🎭 Projet Réservations</h1>
+
+        <nav>
+            <a href="{% url 'catalogue:home' %}">Accueil</a> |
+            <a href="{% url 'catalogue:artist-index' %}">Artistes</a> |
+            <a href="/admin/">Admin</a>
+        </nav>
+
+        <hr>
+    </header>
+
+    <main>
         {% block content %}{% endblock %}
-</div>
+    </main>
+
 </body>
 </html>

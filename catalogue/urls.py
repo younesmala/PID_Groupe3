@@ -1,23 +1,14 @@
-"""reservations.catalogue URL Configuration
-"""
 from django.urls import path
-from . import views
+from catalogue.views.home import home
+from catalogue.views import artist
 
-app_name='catalogue'
+app_name = "catalogue"
 
 urlpatterns = [
-    path('artist/', views.index, name='artist-index'),
-
-
-    # Fiche d'un artiste (détail)
-    path('artist/<int:artist_id>/', views.show, name='artist-show'),
-
-    # Formulaire de modification
-    path('artist/edit/<int:artist_id>/', views.edit, name='artist-edit'),
-
-    # Formulaire de création
-    path('artist/create/', views.create, name='artist-create'),
-
-    # Suppression
-    path('artist/delete/<int:artist_id>/', views.delete, name='artist-delete'),
+    path("", home, name="home"),
+    path("artist/", artist.index, name="artist-index"),
+    path("artist/<int:artist_id>/", artist.show, name="artist-show"),
+    path("artist/edit/<int:artist_id>/", artist.edit, name="artist-edit"),
+    path("artist/create/", artist.create, name="artist-create"),
+    path("artist/delete/<int:artist_id>/", artist.delete, name="artist-delete"),
 ]
