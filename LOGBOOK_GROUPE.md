@@ -76,5 +76,93 @@ une validation par le groupe (relecture, tests),
 
 puis une fusion (merge) vers main.
 
+----------------------------------------------------------------------------------------------------
 
-Une fois le travail terminé ou une étape importante atteinte :
+Mise en place de la Home & navigation – Workflow Git (MVP Alpha)
+
+=> Objectif: 
+
+Mettre en place une page d’accueil fonctionnelle et une navigation principale claire, tout en respectant un workflow Git collaboratif (branches + PR).
+
+✅ Travail réalisé (branche dev_younes)
+1. Fonctionnel (Application)
+
+Création d’une page d’accueil Catalogue accessible via :
+
+http://127.0.0.1:8000/catalogue/
+
+Mise en place d’une navigation principale :
+
+Lien vers la liste des artistes
+
+Lien vers l’admin Django
+
+Centralisation du layout via :
+
+catalogue/templates/lyouts/base.html
+
+
+Utilisation correcte des blocs Django ({% block content %})
+
+2. Routing (URLs)
+
+Le projet redirige correctement :
+
+/catalogue/ → page d’accueil Catalogue
+/catalogue/artist/ → liste des artistes
+/admin/ → admin Django
+
+
+Le routing est réparti correctement entre :
+
+reservations/urls.py (projet)
+
+catalogue/urls.py (application)
+
+=> Nettoyage du dépôt (problème résolu)
+Problème identifié
+
+Des fichiers non versionnables étaient présents dans le dépôt :
+
+venv/
+
+__pycache__/
+
+fichiers .pyc
+
+fichiers générés par Django et Python
+
+Cela provoquait :
+
+des conflits Git massifs
+
+des PR impossibles à merger proprement
+
+Solution appliquée: 
+
+Suppression de ces fichiers du suivi Git
+
+Mise à jour de .gitignore pour empêcher leur retour
+
+Rebase propre de la branche dev_younes sur main
+
+Résolution manuelle des conflits
+
+Push sécurisé avec :
+
+git push --force-with-lease
+
+
+==> Le dépôt est désormais propre, stable et collaboratif <==
+
+État actuel du projet (22/01/2026): 
+
+✔️ MVP Alpha fonctionnel
+
+✔️ Navigation claire
+
+✔️ Base solide pour développement parallèle
+
+✔️ Conforme aux consignes de versioning (Release Alpha)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
