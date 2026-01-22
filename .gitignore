@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Virtual env
 venv/
 .env
@@ -15,3 +16,19 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+=======
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+.venv/
+
+# Django / local
+*.log
+.env
+db.sqlite3
+>>>>>>> db65efd (chore: update gitignore)
