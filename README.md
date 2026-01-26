@@ -1,174 +1,61 @@
-# README
-
-
-
-\# Projet Younes Python Django
-
-
-
-\*\*Projet académique réalisé dans le cadre du module PID (Projet d’Intégration en Développement).\*\*  
-
-Ce projet utilise le framework \*\*Django 5\*\* pour concevoir une application web de \*\*gestion de réservations\*\* avec un module interne \*\*catalogue\*\*.
-
-
-
----
-
-
-
-\## Fonctionnalités principales
-
-
-
-\- Système de \*\*gestion des réservations\*\*
-
-\- Module interne \*\*catalogue\*\* (application Django)
-
-\- Interface \*\*administrateur Django\*\* intégrée
-
-\- Base de données \*\*MySQL\*\* (ou SQLite en local)
-
-\- Architecture \*\*MVC (Modèles / Vues / Templates)\*\*
-
-\- Compatible avec \*\*Windows, Linux et Mac\*\*
-
-
-
----
-
-
-\## Installation locale
-
-
-\### 1. Cloner le projet
-
-```bash
-
-git clone https://github.com/younesmala/Projet-Younes-Python-Django.git
-
-cd Projet-Younes-Python-Django
-
-
-\### 2. Créer et activer un environnement virtuel
-
-
-python -m venv .venv
-
-.venv\\Scripts\\activate      # sur Windows
-
-\# ou
-
-source .venv/bin/activate   # sur Linux / Mac
-
-
-\### 3. Installer les dépendances
-
-
-pip install -r requirements.txt
-
-
-\### 4. Configurer la base de données
-
-
-Dans le fichier reservations/settings.py, ajustez les paramètres du bloc DATABASES selon votre environnement :
-
-
-Exemples: 
-
-MySQL: 							
-
-
-DATABASES = {
-
-&nbsp;   'default': {
-
-&nbsp;       'ENGINE': 'django.db.backends.mysql',
-
-&nbsp;       'NAME': 'reservations',
-
-&nbsp;       'USER': 'root',
-
-&nbsp;       'PASSWORD': '',
-
-&nbsp;       'HOST': '127.0.0.1',
-
-&nbsp;       'PORT': '3306',
-
-&nbsp;   }
-
-}
-
-
-SQLite: 
-
-DATABASES = {
-
-&nbsp;   'default': {
-
-&nbsp;       'ENGINE': 'django.db.backends.sqlite3',
-
-&nbsp;       'NAME': BASE\_DIR / 'db.sqlite3',
-
-&nbsp;   }
-
-}
-
-
-\### 5: Appliquer les migrations
-
-
-python manage.py migrate
-
-
-\### 6: Lancer le serveur
-
-
-python manage.py runserver
-
-```
-
-
-L’application est accessible à l’adresse :  
-http://127.0.0.1:8000/
-
-## Structure du projet
-
-Projet-Younes-Python-Django/
-
-├── catalogue/ # Application interne Django
-
-├── reservations/ # Projet principal (settings, urls, etc.)
-
-├── manage.py # Point d’entrée du projet
-
-├── db.sqlite3 # Base de données locale
-
-├── requirements.txt # Dépendances Python
-
-├── .gitignore # Fichiers ignorés par Git
-
-└── .venv/ # Environnement virtuel (local)
-
-Auteur: 
-
-Younes El Mallahi
-
-Étudiant en Bachelier Informatique – Développement d’Applications
-
-📍 Institut des Carrières Commerciales (ICC), Bruxelles
-
-📧 Contact GitHub
-
-
-Licence : 
-
-
-Projet académique à usage pédagogique — non destiné à un usage commercial.
-
-
-
-
-
-
-
-
+1. Mise en place de l’authentification (login / logout)
+Intégration du système d’authentification de Django
+Utilisation des vues d’authentification natives (LoginView, LogoutView)
+Mise en place de la page de connexion personnalisée :
+Template login.html
+Champs username et password
+Bouton de connexion
+Lien « Mot de passe oublié »
+2. Organisation propre des templates
+Mise en place d’un layout principal (base.html)
+Centralisation du HTML commun :
+<head>
+Navbar
+Container principal
+Utilisation des blocs Django :
+{% block title %}
+{% block content %}
+Les pages héritent désormais du layout avec {% extends "layouts/base.html" %}
+3. Gestion de la navigation selon l’état de connexion
+Ajout d’une navbar dynamique :
+Si l’utilisateur est connecté :
+Affichage du nom d’utilisateur
+Bouton Déconnexion
+Si l’utilisateur est déconnecté :
+Bouton Connexion
+Comportement conditionnel basé sur :
+{% if user.is_authenticated %}
+4. Amélioration de l’interface avec Bootstrap
+Intégration de Bootstrap 5 via CDN
+Mise en page moderne et responsive :
+Navbar stylée
+Pages centrées
+Cartes (card) pour l’accueil et le login
+Amélioration visuelle de la page de connexion :
+Carte centrée
+Champs larges et lisibles
+Bouton principal bien visible
+5. Page d’accueil améliorée
+Page d’accueil épurée et lisible
+Contenu affiché dans une carte Bootstrap
+Texte de bienvenue clair
+Interface cohérente avec le reste du site
+6. Fonctionnement global validé
+Connexion → redirection correcte
+Déconnexion → retour à l’état invité
+Navbar mise à jour automatiquement
+Aucun conflit entre les templates
+Structure propre et maintenable
+7. Bonnes pratiques respectées
+Séparation claire des responsabilités :
+Layout global
+Pages spécifiques
+Code lisible et structuré
+Commits clairs et descriptifs en français
+Interface utilisateur cohérente et moderne
+Conclusion
+Le projet dispose maintenant :
+D’un système d’authentification fonctionnel
+D’une interface moderne grâce à Bootstrap
+D’une structure de templates propre et professionnelle
+D’une navigation intuitive selon l’état de connexion de l’utilisateur
