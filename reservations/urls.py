@@ -5,7 +5,7 @@ from catalogue.views import home
 
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/catalogue/', permanent=False)),
+
     path('catalogue/', include('catalogue.urls')),
     path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
