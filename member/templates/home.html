@@ -1,0 +1,13 @@
+<h1>Accueil</h1>
+
+{% if user.is_authenticated %}
+<p>Connecté en tant que {{ user.username }}</p>
+
+<form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Se déconnecter</button>
+</form>
+{% else %}
+<p>Vous n'êtes pas connecté.</p>
+<a href="{% url 'login' %}">Se connecter</a>
+{% endif %}
