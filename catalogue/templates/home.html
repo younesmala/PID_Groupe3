@@ -1,23 +1,8 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<h1>Accueil</h1>
-<p>Bienvenue sur le projet Réservations.</p>
-{% if user.is_authenticated %}
-<p>Connecté en tant que {{ user.username }}</p>
-
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">Se déconnecter</button>
-</form>
-{% else %}
-<a href="{% url 'login' %}">Se connecter</a>
-{% endif %}
-
-
-<p>
-  {# <a href="{% url 'artist-index' %}">Voir les artistes</a> #}
-
-
-</p>
+<div class="p-4 p-md-5 mb-4 rounded-3 bg-light border">
+  <h1 class="display-5 fw-bold">Accueil</h1>
+  <p class="fs-5 mb-0">Bienvenue sur le projet Réservations.</p>
+</div>
 {% endblock %}
