@@ -1,3 +1,5 @@
+import pymysql
+pymysql.install_as_MySQLdb()
 """
 Django settings for reservations project.
 
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     
     #ajout de catalogue
     "catalogue",
+    'member',
 ]
 
 MIDDLEWARE = [
@@ -82,11 +85,14 @@ WSGI_APPLICATION = "reservations.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'reservation',
+        'NAME': 'reservations',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': '127.0.0.1',
-        'PORT': '3306'
+        'PORT': '8889',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
