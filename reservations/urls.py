@@ -9,5 +9,7 @@ urlpatterns = [
     path('catalogue/', include('catalogue.urls')),
     path('api/', include('api.urls')),
     path('admin/', admin.site.urls),
-    path('', home, name='home'), 
+    path('', home, name='home'),
+    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]

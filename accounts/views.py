@@ -1,17 +1,16 @@
-from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from .forms import UserSignUpForm
-from .forms import UserUpdateForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from .forms.UserSignUpForm import UserSignUpForm
+from .forms.UserUpdateForm import UserUpdateForm
 
 
-from .forms import UserSignUpForm
+
 class UserUpdateView(UserPassesTestMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
@@ -29,9 +28,10 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
 
 
 class UserSignUpView(UserPassesTestMixin, CreateView):
-    form_class = UserCreationForm
+    form_class = UserSignUpForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
+
 
     def test_func(self):
         return self.request.user.is_anonymous or self.request.user.is_superuser

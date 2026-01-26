@@ -20,7 +20,10 @@ class UserSignUpForm(UserCreationForm):
     email = forms.EmailField()
 
     # Ajout des champs de données personnelles supplémentaires
-    langue = forms.ChoiceField(choices=Language)
+    langue = forms.ChoiceField(
+        choices=Language.choices,
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -48,20 +51,21 @@ class UserSignUpForm(UserCreationForm):
         ]
 
     def save(self, commit=True):
-        user = super(UserSignUpForm, self).save(commit=False)
-        user.save()
+        user = super().save(commit=False)
+        user.email = self.cleaned_data.get("email", "")
+        user.first_name = self.cleaned_data.get("first_name", "")
+        user.last_name = self.cleaned_data.get("last_name", "")
 
-        # Ajout de l'utilisateur au groupe MEMBER => rôle de membre
-        memberGroup = Group.objects.get(name='MEMBER')
-        memberGroup.user_set.add(user)
+     # Ajout de l'utilisateur au groupe MEMBER => rôle de membre
+        if commit:
+            user.save()
+            memberGroup, _ = Group.objects.get_or_create(name="MEMBER")
+            memberGroup.user_set.add(user)
 
-        if self.cleaned_data['langue']:
-            user_meta = UserMeta(**{
-                'langue': self.cleaned_data['langue'],
-            })
+            langue = self.cleaned_data.get("langue") or "fr"
+            UserMeta.objects.create(user=user, langue=langue)
 
-            # Mise à jour de la relation one-to-one
-            user_meta.user = user
-            user_meta.save()
         return user
+
+
 
