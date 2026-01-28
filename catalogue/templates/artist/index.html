@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1 class="m-0">Liste des artistes</h1>
 
-  {% if user.is_staff or user.is_superuser %}
+  {% if user.is_authenticated and user.is_staff %}
     <a class="btn btn-primary" href="{% url 'catalogue:artist-create' %}">
       + Ajouter un artiste
     </a>
@@ -20,7 +20,7 @@
       <th>Nom</th>
       <th style="width: 1%;">Voir</th>
 
-      {% if user.is_staff or user.is_superuser %}
+      {% if user.is_authenticated and user.is_staff %}
         <th style="width: 1%;">Modifier</th>
         <th style="width: 1%;">Supprimer</th>
       {% endif %}
@@ -40,7 +40,7 @@
           </a>
         </td>
 
-        {% if user.is_staff or user.is_superuser %}
+        {% if user.is_authenticated and user.is_staff %}
           <td>
             <a class="btn btn-outline-primary btn-sm"
                href="{% url 'catalogue:artist-edit' artist.id %}">
@@ -57,7 +57,10 @@
       </tr>
     {% empty %}
       <tr>
-        <td colspan="5" class="text-muted">Aucun artiste.</td>
+        <td colspan="{% if user.is_authenticated and user.is_staff %}5{% else %}3{% endif %}"
+            class="text-muted text-center">
+          Aucun artiste.
+        </td>
       </tr>
     {% endfor %}
   </tbody>
