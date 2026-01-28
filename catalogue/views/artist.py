@@ -5,67 +5,73 @@ from catalogue.forms.ArtistForm import ArtistForm
 from catalogue.models import Artist
 
 
-
-# Create your views here.
 def index(request):
-	artists = Artist.objects.all()
-	
-	return render(request, 'artist/index.html', {
-		'artists':artists,
-	})
-
-def show(request, artist_id):
-	try:
-		artist = Artist.objects.get(id=artist_id)
-	except Artist.DoesNotExist:
-		raise Http404('Artist inexistant');
-		
-	return render(request, 'artist/show.html', {
-		'artist':artist,
-	})
-
-
-def edit(request, artist_id):
-    # fetch the object related to passed id
-    artist = Artist.objects.get(id=artist_id)
-
-    # pass the object as instance in form
-    form = ArtistForm(request.POST or None, instance=artist)
-
-    if request.method == 'POST':
-        method = request.POST.get('_method', '').upper()
-
-        if method == 'PUT':
-            # save the data from the form and
-            # redirect to detail_view
-            if form.is_valid():
-                form.save()
-
-                return render(request, "artist/show.html", {
-                    'artist': artist,
-                })
-
-    return render(request, 'artist/edit.html', {
-        'form': form,
-        'artist': artist,
+    artists = Artist.objects.all()
+    return render(request, "artist/index.html", {
+        "artists": artists,
     })
 
 
-def create (request):
+def show(request, artist_id):
+    try:
+        artist = Artist.objects.get(id=artist_id)
+    except Artist.DoesNotExist:
+        raise Http404("Artist inexistant")
+
+    return render(request, "artist/show.html", {
+        "artist": artist,
+    })
+
+
+def create(request):
     form = ArtistForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
+    if request.method == "POST" and form.is_valid():
         form.save()
+        return redirect("catalogue:artist-index")
 
-        return redirect('catalogue:artist-index')
-    return render(request, 'artist/create.html', {'form' : form,})
+    return render(request, "artist/create.html", {
+        "form": form,
+    })
+
+
+def edit(request, artist_id):
+    artist = get_object_or_404(Artist, id=artist_id)
+
+    # On bind le form (POST) ou on l’affiche (GET)
+    form = ArtistForm(request.POST or None, instance=artist)
+
+    if request.method == "POST":
+        method = request.POST.get("_method", "").upper()
+
+        if method == "PUT":
+            if form.is_valid():
+                form.save()
+                # après édition -> retour sur la page détail
+                return redirect("catalogue:artist-show", artist_id=artist.id)
+
+    return render(request, "artist/edit.html", {
+        "form": form,
+        "artist": artist,
+    })
+
 
 def delete(request, artist_id):
-    artist = get_object_or_404(Artist, id =artist_id)
-    if request.method =="POST":
-        method = request.POST.get('_method', '').upper()
-        if method =='DELETE':
-            artist.delete()
+    """
+    GET  -> affiche une page de confirmation
+    POST -> si _method=DELETE, supprime puis redirige vers la liste
+    """
+    artist = get_object_or_404(Artist, id=artist_id)
 
-            return redirect('catalogue:artist-index')
-    return render(request, 'artist/show.html', {'artist': artist,})
+    if request.method == "POST":
+        method = request.POST.get("_method", "").upper()
+
+        # Si tu n’utilises pas _method dans ton form, tu peux aussi accepter POST direct
+        if method == "DELETE" or method == "":
+            artist.delete()
+            return redirect("catalogue:artist-index")
+
+    # IMPORTANT: on rend un template de confirmation dédié
+    return render(request, "artist/delete.html", {
+        "artist": artist,
+    })
