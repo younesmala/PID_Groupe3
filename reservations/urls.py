@@ -1,15 +1,16 @@
-from django.views.generic import RedirectView
 from django.contrib import admin
-from django.urls import include, path
-from catalogue.views import home
-
+from django.urls import path, include
+from django.views.generic import TemplateView
 
 urlpatterns = [
+    path("admin/", admin.site.urls),
 
-    path('catalogue/', include('catalogue.urls')),
-    path('api/', include('api.urls')),
-    path('admin/', admin.site.urls),
-    path('', home, name='home'),
-    path("accounts/", include("accounts.urls")),
+    # Accueil du site
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+
+    # Catalogue
+    path("catalogue/", include(("catalogue.urls", "catalogue"), namespace="catalogue")),
+
+    # Auth Django
     path("accounts/", include("django.contrib.auth.urls")),
 ]
