@@ -7,6 +7,8 @@ urlpatterns = [
 
     # Accueil du SITE (page racine /)
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path("api/", include("api.urls")),
+
 
     # Catalogue
     path("catalogue/", include(("catalogue.urls", "catalogue"), namespace="catalogue")),

@@ -8,6 +8,9 @@ urlpatterns = [
     path('auth/signup/', auth.AuthSignupView.as_view(), name='auth-signup'),
     path('auth/login/', auth.AuthLoginView.as_view(), name='auth-login'),
     path('auth/logout/', auth.AuthLogoutView.as_view(), name='auth-logout'),
+    # TYPES
+    path('types/', types.TypesView.as_view(), name='types-list'),
+    path('types/<int:pk>/', types.TypesDetailView.as_view(), name='types-detail'),
 
     # USERS
     path('users/me/', users.UsersMeView.as_view(), name='users-me'),
