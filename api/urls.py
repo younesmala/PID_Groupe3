@@ -11,6 +11,12 @@ urlpatterns = [
     # TYPES
     path('types/', types.TypesView.as_view(), name='types-list'),
     path('types/<int:pk>/', types.TypesDetailView.as_view(), name='types-detail'),
+    # ARTIST_TYPES
+    path(
+        'artist-types/',
+        artist_types.ArtistTypesView.as_view(),
+        name='artist-types-list'
+    ),
 
     # USERS
     path('users/me/', users.UsersMeView.as_view(), name='users-me'),
