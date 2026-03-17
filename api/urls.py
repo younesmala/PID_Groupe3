@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import auth, users, artists, types, artist_types, localities, locations, shows, representations, prices, cart, checkout, reservations, tickets, reviews, producer, admin_api, affiliate, rss, public_api
+from api.views.artists import ArtistsView, ArtistsDetailView
 
 app_name = 'api'
 
@@ -17,6 +18,9 @@ urlpatterns = [
         artist_types.ArtistTypesView.as_view(),
         name='artist-types-list'
     ),
+    # ARTISTS
+    path('artists/', artists.ArtistsView.as_view()),
+    path('artists/<int:pk>/', artists.ArtistsDetailView.as_view()),
 
     # USERS
     path('users/me/', users.UsersMeView.as_view(), name='users-me'),

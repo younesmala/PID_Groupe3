@@ -23,14 +23,12 @@ class ArtistsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ArtistsDetailView(APIView):
-    def get(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-    
-    def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-    
-    def put(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-    
-    def delete(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+
+    def get(self, request, pk):
+        try:
+            artist = Artist.objects.get(pk=pk)
+        except Artist.DoesNotExist:
+            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ArtistSerializer(artist)
+        return Response(serializer.data, status=status.HTTP_200_OK)
