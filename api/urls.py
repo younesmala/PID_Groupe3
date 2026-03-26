@@ -41,7 +41,6 @@ urlpatterns = [
     path('localities/', localities.LocalitiesView.as_view(), name='localities-list'),
     path('localities/<int:id>/', localities.LocalitiesDetailView.as_view(), name='localities-detail'),
     path('locations/', locations.LocationsView.as_view(), name='locations-list-create'),
-    path('locations/', locations.LocationsView.as_view(), name='locations-update'),
     path('locations/<int:id>/', locations.LocationsDetailView.as_view(), name='locations-detail'),
 
     # SHOWS
