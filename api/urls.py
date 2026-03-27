@@ -45,7 +45,6 @@ urlpatterns = [
 
     # SHOWS
     path('shows/', shows.ShowsView.as_view(), name='shows-list-create'),
-    path('shows/', shows.ShowsView.as_view(), name='shows-update'),
     path('shows/<int:id>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
     path('shows/search/', shows.ShowsSearchView.as_view(), name='shows-search'),
 
