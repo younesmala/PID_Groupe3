@@ -11,6 +11,7 @@
 - Vianney
 - Soufiane
 - Oumar
+- Nicolas 
 
 ---
 
@@ -300,7 +301,41 @@ L’authentification et la navigation sont stables et fiables.
 - Utilisation correcte des templates Django (`extends`, `block`)
 - Commits clairs et descriptifs en français
 - Interface utilisateur cohérente et moderne
+Mise a jours de taches 1avril 2026
 
+Nicolas
+ Mission Frontend — Liste + Navigation  Objectif : créer la base du frontend artistes. À faire : 1. Créer la page liste des artistes - afficher une liste (mock data) - bouton : voir / modifier / supprimer 2. Mettre en place la navigation - liste → détail - liste → modifier   Important : - utiliser des données fake - structure propre (composants, fichiers) - préparer les appels API (sans forcément les connecter)   Résultat attendu : - page liste fonctionnelle - navigation opérationnelle - base frontend prête
+
+Vianey 
+Mission Frontend — Détail + Formulaire Objectif : compléter l’interface artistes.  👉 À faire : 1. Page détail artiste - afficher les infos (mock data) 2. Formulaire artiste - ajout - modification - validation simple  👉 Résultat attendu : - page détail fonctionnelle - formulaire prêt - intégration facile avec API
+
+Soufiane
+Mission Frontend — Composants réutilisables Objectif : créer une base de composants pour tout le projet.  👉 À faire : 1. Créer des composants : - bouton (primary, danger, etc.) - input (formulaire) - card (pour afficher un artiste) 2. Structurer proprement : - dossier components - composants réutilisables - code propre et lisible  👉 Important : - composants génériques (réutilisables partout) - props bien définies - style cohérent  👉 Résultat attendu : - composants prêts à être utilisés dans toutes les pages - base frontend solide
+
+Randy Masamba 
+Mission Frontend — UI / UX + Composants Objectif : améliorer l’interface et préparer des composants réutilisables. 👉 À faire : 1. Créer des composants réutilisables : - bouton (primary, danger, etc.) - input (formulaire) - card (pour afficher un artiste) 2. Améliorer le design : - alignement des éléments - espacement (margin / padding) - structure propre (header, contenu, etc.) e
+
+Younes 
+Frontend — UI / UX
+Mission Frontend — UI / UX
+améliorer design (spacing, layout)
+messages (succès, erreur)
+états (loading, empty)
+ Résultat :
+interface propre et professionnelle
+
+Morad
+Mission Frontend — Composants
+ À faire :
+bouton (primary, danger)
+input
+card artiste
+ Résultat :
+base composants réutilisables
+Oumar
+3. Ajouter des messages utilisateur : - message succès (ex: "Artiste ajouté") - message erreur - message liste vide 4. Ajouter états visuels : - loading (chargement) - empty state (aucun artiste) - erreur API (préparé même si API pas encore prête)
+
+⁩
 
 ## 📜 Licence
 
