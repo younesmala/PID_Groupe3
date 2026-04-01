@@ -11,6 +11,7 @@
 - Vianney
 - Soufiane
 - Oumar
+- Nicolas 
 
 ---
 
