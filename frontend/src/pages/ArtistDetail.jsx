@@ -1,11 +1,8 @@
-import React from "react";
+import { useParams } from "react-router-dom";
 
-const ArtistDetail = () => {
-  return (
-    <div>
-      <h1>Artist Detail</h1>
-    </div>
-  );
-};
+function ArtistDetail() {
+  const { id } = useParams();
+  return <h1>Artist Detail - id: {id}</h1>;
+}
 
 export default ArtistDetail;

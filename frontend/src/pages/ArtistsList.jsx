@@ -1,18 +1,21 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import { artists } from "../data/artists";
-import ArtistCard from "../components/ArtistCard";
 
-const ArtistsList = () => {
+function ArtistsList() {
   return (
     <div>
       <h1>Artists List</h1>
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxWidth: 400 }}>
+      <ul>
         {artists.map((artist) => (
-          <ArtistCard key={artist.id} firstname={artist.firstname} lastname={artist.lastname} />
+          <li key={artist.id}>
+            {artist.firstname} {artist.lastname} -
+            <Link to={`/artist/${artist.id}`}>Voir</Link> |
+            <Link to={`/artist/${artist.id}/edit`}>Modifier</Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
-};
+}
 
 export default ArtistsList;

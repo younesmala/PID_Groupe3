@@ -1,11 +1,8 @@
-import React from "react";
+import { useParams } from "react-router-dom";
 
-const ArtistEdit = () => {
-  return (
-    <div>
-      <h1>Edit Artist</h1>
-    </div>
-  );
-};
+function ArtistEdit() {
+  const { id } = useParams();
+  return <h1>Artist Edit - id: {id}</h1>;
+}
 
 export default ArtistEdit;
