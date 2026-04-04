@@ -173,3 +173,42 @@ code {
   font-size: 14px;
   margin: 0;
 }
+
+.artists-page {
+  padding: 32px;
+  text-align: center;
+}
+
+.artists-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  margin-bottom: 12px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
