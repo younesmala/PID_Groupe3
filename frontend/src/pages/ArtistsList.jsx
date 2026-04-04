@@ -1,19 +1,17 @@
-import { Link } from "react-router-dom";
+
+import ArtistCard from "../components/ArtistCard";
 import { artists } from "../data/artists";
 
 function ArtistsList() {
   return (
-    <div>
+    <div className="artists-page">
       <h1>Artists List</h1>
-      <ul>
+
+      <div className="artists-grid">
         {artists.map((artist) => (
-          <li key={artist.id}>
-            {artist.firstname} {artist.lastname} -
-            <Link to={`/artist/${artist.id}`}>Voir</Link> |
-            <Link to={`/artist/${artist.id}/edit`}>Modifier</Link>
-          </li>
+          <ArtistCard key={artist.id} artist={artist} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
