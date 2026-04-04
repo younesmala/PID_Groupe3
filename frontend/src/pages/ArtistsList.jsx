@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { artists } from "../data/artists";
 
 function ArtistsList() {
@@ -8,9 +7,7 @@ function ArtistsList() {
       <ul>
         {artists.map((artist) => (
           <li key={artist.id}>
-            {artist.firstname} {artist.lastname} -
-            <Link to={`/artist/${artist.id}`}>Voir</Link> |
-            <Link to={`/artist/${artist.id}/edit`}>Modifier</Link>
+            {artist.firstname} {artist.lastname}
           </li>
         ))}
       </ul>
