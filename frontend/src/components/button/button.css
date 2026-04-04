@@ -1,5 +1,3 @@
-/* filepath: c:\Users\soufi\PID_Groupe3\frontend\src\components\button\button.css */
-
 .button {
     padding: 10px 20px;
     border: none;
@@ -9,29 +7,29 @@
     transition: background-color 0.3s ease;
 }
 
-.button.primary {
+.button-primary {
     background-color: #007bff;
     color: white;
 }
 
-.button.primary:hover {
+.button-primary:hover {
     background-color: #0056b3;
 }
 
-.button.danger {
+.button-danger {
     background-color: #dc3545;
     color: white;
 }
 
-.button.danger:hover {
+.button-danger:hover {
     background-color: #c82333;
 }
 
-.button.secondary {
+.button-secondary {
     background-color: #6c757d;
     color: white;
 }
 
-.button.secondary:hover {
+.button-secondary:hover {
     background-color: #545b62;
 }

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import Button from "./button/button";
 function ArtistCard({ artist }) {
   return (
     <div className="card">
@@ -14,13 +14,21 @@ function ArtistCard({ artist }) {
       </h3>
 
       <div className="card-actions">
-        <Link to={`/artist/${artist.id}`} className="btn primary">
-          Voir
-        </Link>
+        <div className="top-actions">
+          <Link to={`/artist/${artist.id}`}>
+            <Button label="Voir" variant="primary" />
+          </Link>
 
-        <Link to={`/artist/${artist.id}/edit`} className="btn danger">
-          Modifier
-        </Link>
+          <Link to={`/artist/${artist.id}/edit`}>
+            <Button label="Modifier" variant="danger" />
+          </Link>
+        </div>
+
+        <Button
+          label="Supprimer"
+          variant="danger"
+          onClick={() => console.log("delete", artist.id)}
+        />
       </div>
     </div>
   );
