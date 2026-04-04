@@ -1,4 +1,5 @@
 import { artists } from "../data/artists";
+import ArtistCard from "../components/ArtistCard";
 
 function ArtistsList() {
   return (
@@ -6,8 +7,8 @@ function ArtistsList() {
       <h1 style={{ textAlign: "center" }}>Artists List</h1>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {artists.map((artist) => (
-          <li key={artist.id} style={{ padding: "8px 0", borderBottom: "1px solid #eee", fontSize: 18 }}>
-            {artist.firstname} {artist.lastname}
+          <li key={artist.id} style={{ listStyle: "none" }}>
+            <ArtistCard firstname={artist.firstname} lastname={artist.lastname} />
           </li>
         ))}
       </ul>
