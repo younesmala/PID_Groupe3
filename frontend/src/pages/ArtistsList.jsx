@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { artists as mockArtists } from "../data/artists";
 import ArtistCard from "../components/ArtistCard";
 
@@ -16,8 +17,8 @@ function ArtistsList() {
         {artists.map((artist) => (
           <li key={artist.id} style={{ listStyle: "none", display: "flex", alignItems: "center", gap: 8 }}>
             <ArtistCard firstname={artist.firstname} lastname={artist.lastname} />
-            <button style={{ marginLeft: 4 }}>Voir</button>
-            <button style={{ marginLeft: 4 }}>Modifier</button>
+            <Link to={`/artist/${artist.id}`} style={{ marginLeft: 4 }}><button>Voir</button></Link>
+            <Link to={`/artist/${artist.id}/edit`} style={{ marginLeft: 4 }}><button>Modifier</button></Link>
             <button style={{ marginLeft: 4 }} onClick={() => handleDelete(artist.id)}>Supprimer</button>
           </li>
         ))}
