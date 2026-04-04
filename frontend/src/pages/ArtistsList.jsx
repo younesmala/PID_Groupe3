@@ -22,7 +22,7 @@ function ArtistsList() {
             <button style={{ marginLeft: 4 }} onClick={() => handleDelete(artist.id)}>Supprimer</button>
           </li>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
