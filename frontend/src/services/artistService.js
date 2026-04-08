@@ -1,22 +1,26 @@
-import { artists as mockArtists } from "../data/artists";
-
-let artists = [...mockArtists];
-
-export function getArtists() {
-  return artists;
+export async function getArtists() {
+  const res = await fetch('/api/artists/');
+  if (!res.ok) throw new Error('Failed to fetch artists');
+  return res.json();
 }
 
-export function getArtistById(id) {
-  return artists.find((a) => a.id === Number(id));
+export async function getArtistById(id) {
+  const res = await fetch(`/api/artists/${id}/`);
+  if (!res.ok) throw new Error('Artist not found');
+  return res.json();
 }
 
-export function updateArtist(id, data) {
-  artists = artists.map((a) =>
-    a.id === Number(id) ? { ...a, ...data } : a
-  );
-  return getArtistById(id);
+export async function updateArtist(id, data) {
+  const res = await fetch(`/api/artists/${id}/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to update artist');
+  return res.json();
 }
 
-export function deleteArtist(id) {
-  artists = artists.filter((a) => a.id !== Number(id));
+export async function deleteArtist(id) {
+  const res = await fetch(`/api/artists/${id}/`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete artist');
 }
