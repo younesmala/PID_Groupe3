@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ArtistsList from "./pages/ArtistsList";
 import ArtistDetail from "./pages/ArtistDetail";
 import ArtistEdit from "./pages/ArtistEdit";
+import ShowsList from "./pages/ShowsList";
+import ShowDetail from "./pages/ShowDetail";
 
 function App() {
   return (
@@ -10,6 +12,8 @@ function App() {
         <Route path="/" element={<ArtistsList />} />
         <Route path="/artist/:id" element={<ArtistDetail />} />
         <Route path="/artist/:id/edit" element={<ArtistEdit />} />
+        <Route path="/shows" element={<ShowsList />} />
+        <Route path="/show/:id" element={<ShowDetail />} />
       </Routes>
     </BrowserRouter>
   );
