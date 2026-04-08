@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'rest_framework',
     # ajout de accounts
     "accounts",
+
+    # ajout de cart
+    "cart",
 ]
 
 MIDDLEWARE = [
@@ -66,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "cart.context_processors.cart",
             ],
         },
     },
@@ -139,5 +143,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "accounts:login"
+
+CART_SESSION_ID = 'cart'
 
 

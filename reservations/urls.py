@@ -15,4 +15,10 @@ urlpatterns = [
 
     # Auth Django (login/logout/password_reset...) SANS namespace
     path("accounts/", include("django.contrib.auth.urls")),
+
+    # Accounts app (profile, signup...)
+    path("accounts/", include("accounts.urls", namespace="accounts")),
+
+    # Cart
+    path('cart/', include('cart.urls', namespace='cart')),
 ]
