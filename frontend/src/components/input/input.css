@@ -1,0 +1,38 @@
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    width: 100%;
+    max-width: 360px;
+}
+
+.inputLabel {
+    font-size: 0.95rem;
+    color: #2d2d2d;
+    font-weight: 500;
+}
+
+.inputField {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid #c7c7c7;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #1e1e1e;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputField:focus {
+    outline: none;
+    border-color: #4b7ef6;
+    box-shadow: 0 0 0 4px rgba(75, 126, 246, 0.15);
+}
+
+.inputField::placeholder {
+    color: #9a9a9a;
+}
+
+.inputField[type="password"] {
+    letter-spacing: 0.12em;
+}

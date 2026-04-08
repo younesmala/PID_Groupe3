@@ -1,0 +1,24 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Catalogue{% endblock %}
+
+{% block content %}
+<h1>Catalogue des artistes</h1>
+
+<p>
+    Ici, vous trouverez le <strong>catalogue des artistes</strong>
+    disponibles dans notre application de gestion de réservations.
+</p>
+
+<p>
+    Cette application est actuellement en <strong>version alpha (MVP)</strong>.
+</p>
+
+<ul>
+    <li>
+        <a href="{% url 'catalogue:artist-index' %}">
+            Consulter la liste des artistes
+        </a>
+    </li>
+</ul>
+{% endblock %}
