@@ -1,11 +1,22 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { artists } from "../data/artists";
+import { getArtistById } from "../services/artistService";
 
 function ArtistDetail() {
   const { id } = useParams();
-  const artist = artists.find((a) => a.id === Number(id));
+  const [artist, setArtist] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!artist) return <div>Artiste introuvable</div>;
+  useEffect(() => {
+    getArtistById(id)
+      .then(setArtist)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div>Chargement...</div>;
+  if (error) return <div>Artiste introuvable</div>;
 
   return (
     <div style={{ maxWidth: 400, margin: "40px auto", padding: 20 }}>
