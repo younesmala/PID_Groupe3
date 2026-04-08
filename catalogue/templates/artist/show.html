@@ -3,16 +3,21 @@
 {% block title %}Fiche d'un artiste{% endblock %}
 
 {% block content %}
-    <h2>{{ artist.firstname }} {{ artist.lastname }}</h2>
-    <div><a class="btn btn-primary" href="{% url 'catalogue:artist-edit' artist.id %}">Modifier</a></div>
-    <form method="post" action="{% url 'catalogue:artist-delete' artist.id %}"
-        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ?')">
-        {% csrf_token %}
+    <div class="card-artiste">
+        <p class="card-title">{{ artist.firstname }} {{ artist.lastname }}</p>
+        <p class="card-subtitle">Artiste</p>
 
-        <input type="hidden" name="_method" value="DELETE">
+        <div class="card-actions">
+            <a class="btn btn-primary" href="{% url 'catalogue:artist-edit' artist.id %}">Modifier</a>
 
-        <button class="btn btn-danger">Supprimer</button>
-    </form>
+            <form method="post" action="{% url 'catalogue:artist-delete' artist.id %}"
+                onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ?')">
+                {% csrf_token %}
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
 
     <nav><a href="{% url 'catalogue:artist-index' %}">Retour à l'index</a></nav>
 {% endblock %}
