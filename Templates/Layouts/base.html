@@ -23,6 +23,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'catalogue:home' %}">Catalogue</a>
                 </li>
+                {% if user.is_superuser %}<li class="nav-item"><a class="nav-link" href="{% url 'catalogue:admin-dashboard' %}">Dashboard Admin</a></li>{% else %}{% for g in user.groups.all %}{% if g.name == 'ADMIN' %}<li class="nav-item"><a class="nav-link" href="{% url 'catalogue:admin-dashboard' %}">Dashboard Admin</a></li>{% endif %}{% endfor %}{% endif %}
             </ul>
 
             <div class="d-flex gap-2">
