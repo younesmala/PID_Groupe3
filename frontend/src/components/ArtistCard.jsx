@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 import Button from "./button/button";
-function ArtistCard({ artist }) {
+import { deleteArtist } from "../services/artistService";
+
+function ArtistCard({ artist, onDelete }) {
+  async function handleDelete() {
+    await deleteArtist(artist.id);
+    if (onDelete) onDelete(artist.id);
+  }
+
   return (
     <div className="card">
       <img
@@ -27,7 +34,7 @@ function ArtistCard({ artist }) {
         <Button
           label="Supprimer"
           variant="danger"
-          onClick={() => console.log("delete", artist.id)}
+          onClick={handleDelete}
         />
       </div>
     </div>
