@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
 
 from catalogue.forms.ArtistForm import ArtistForm
 from catalogue.models import Artist
@@ -31,7 +32,10 @@ def create(request):
 
     if request.method == "POST" and form.is_valid():
         form.save()
+        messages.success(request, "L'artiste a été ajouté avec succès.")
         return redirect("catalogue:artist-index")
+    elif request.method == "POST" and not form.is_valid():
+        messages.error(request, "Erreur lors de l'ajout de l'artiste. Veuillez vérifier les informations saisies.")
 
     return render(request, "artist/create.html", {
         "form": form,
