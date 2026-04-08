@@ -1,15 +1,32 @@
 {%extends 'layouts/base.html'%}
 
-{%block title %} Modifier un artist {% endblock %}
+{%block title %} Ajouter un artiste {% endblock %}
 
 {% block content %}
     <H2>Ajouter un artiste</H2>
     <form action="{%url 'catalogue:artist-create' %}" method="post">
         {% csrf_token %}
 
-        {{ form }}
-        <button class="btn btn-primary"> Ajouter</button>
-        <a class="btn" href="{%url 'catalogue:artist-index' %}"> Annuler</a>
+        <div class="form-group">
+            <label for="{{ form.firstname.id_for_label }}">Prénom</label>
+            <input class="form-input"
+                   type="text"
+                   name="{{ form.firstname.html_name }}"
+                   id="{{ form.firstname.id_for_label }}"
+                   value="{{ form.firstname.value|default:'' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.lastname.id_for_label }}">Nom</label>
+            <input class="form-input"
+                   type="text"
+                   name="{{ form.lastname.html_name }}"
+                   id="{{ form.lastname.id_for_label }}"
+                   value="{{ form.lastname.value|default:'' }}">
+        </div>
+
+        <button class="btn btn-primary">Ajouter</button>
+        <a class="btn" href="{%url 'catalogue:artist-index' %}">Annuler</a>
 
     </form>
     <nav><a href="{%url 'catalogue:artist-index' %}"> Retour à la l'index</a></nav>
