@@ -8,8 +8,8 @@
         {% csrf_token %}
 
         {{ form }}
-        <button> Ajouter</button>
-        <a href="{%url 'catalogue:artist-index' %}"> Annuler</a>
+        <button class="btn btn-primary"> Ajouter</button>
+        <a class="btn" href="{%url 'catalogue:artist-index' %}"> Annuler</a>
 
     </form>
     <nav><a href="{%url 'catalogue:artist-index' %}"> Retour à la l'index</a></nav>
