@@ -1,79 +1,75 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
+from django.contrib.auth.decorators import login_required, user_passes_test
 
-from catalogue.models import Artist
 from catalogue.forms.ArtistForm import ArtistForm
+from catalogue.models import Artist
 
 
-
-
-# Create your views here.
 def index(request):
-	artists = Artist.objects.all()
-	
-	return render(request, 'artist/index.html', {
-		'artists':artists,
-	})
+    artists = Artist.objects.all()
+    return render(request, "artist/index.html", {
+        "artists": artists,
+    })
+
 
 def show(request, artist_id):
-	try:
-		artist = Artist.objects.get(id=artist_id)
-	except Artist.DoesNotExist:
-		raise Http404('Artist inexistant');
-		
-	return render(request, 'artist/show.html', {
-		'artist':artist,
-	})
-
-
-def edit(request, artist_id):
-    # fetch the object related to passed id
-    artist = Artist.objects.get(id=artist_id)
-
-    # pass the object as instance in form
-    form = ArtistForm(request.POST or None, instance=artist)
-
-    if request.method == 'POST':
-        method = request.POST.get('_method', '').upper()
-
-        if method == 'PUT':
-            # save the data from the form and
-            # redirect to detail_view
-            if form.is_valid():
-                form.save()
-
-                return render(request, "artist/show.html", {
-                    'artist': artist,
-                })
-
-    return render(request, 'artist/edit.html', {
-        'form': form,
-        'artist': artist,
+    artist = get_object_or_404(Artist, id=artist_id)
+    return render(request, "artist/show.html", {
+        "artist": artist,
     })
 
 
+# ---- Permissions helpers ----
+def is_staff_user(user):
+    return user.is_authenticated and user.is_staff
+
+
+@user_passes_test(is_staff_user)
 def create(request):
-    # On crée un formulaire vide ou pré-rempli avec les données POST
     form = ArtistForm(request.POST or None)
 
-    if request.method == 'POST':
-        # Si on a soumis le formulaire
-        if form.is_valid():
-            form.save()  # Enregistre un nouvel artiste dans la DB
-            return redirect('catalogue:artist-index')  # Retour à la liste
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("catalogue:artist-index")
 
-    # Si on arrive en GET ou que le formulaire n'est pas valide
-    return render(request, 'artist/create.html', {
-        'form': form,
+    return render(request, "artist/create.html", {
+        "form": form,
     })
 
 
-def delete(request, artist_id):
-    artist = get_object_or_404(Artist, id =artist_id)
-    if request.method =="POST":
-        method = request.POST.get('_method', '').upper()
-        if method =='DELETE':
-            artist.delete()
+@user_passes_test(is_staff_user)
+def edit(request, artist_id):
+    artist = get_object_or_404(Artist, id=artist_id)
+    form = ArtistForm(request.POST or None, instance=artist)
 
-            return redirect('catalogue:artist-index')
-    return render(request, 'artist/show.html', {'artist': artist,})
+    if request.method == "POST":
+        method = request.POST.get("_method", "").upper()
+        if method == "PUT" and form.is_valid():
+            form.save()
+            return redirect("catalogue:artist-show", artist_id=artist.id)
+
+    return render(request, "artist/edit.html", {
+        "form": form,
+        "artist": artist,
+    })
+
+
+@user_passes_test(is_staff_user)
+def delete(request, artist_id):
+    """
+    GET  -> page de confirmation
+    POST -> si _method=DELETE (ou POST simple), supprime puis redirige
+    """
+    artist = get_object_or_404(Artist, id=artist_id)
+
+    if request.method == "POST":
+        method = request.POST.get("_method", "").upper()
+        if method == "DELETE" or method == "":
+            artist.delete()
+            return redirect("catalogue:artist-index")
+
+    return render(request, "artist/delete.html", {
+        "artist": artist,
+    })
+

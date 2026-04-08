@@ -1,21 +1,17 @@
 from django.urls import path
-from . import views  # on importe les vues de l'app catalogue
+from .views.home import home
+from .views.artist import index, create, show, edit, delete
 
-app_name = 'catalogue'
+app_name = "catalogue"
 
 urlpatterns = [
-    # Liste des artistes
-    path('artist/', views.index, name='artist-index'),
+    # Accueil DU CATALOGUE: /catalogue/
+    path("", home, name="home"),
 
-    # Fiche d'un artiste (détail)
-    path('artist/<int:artist_id>/', views.show, name='artist-show'),
-
-    # Formulaire de modification
-    path('artist/edit/<int:artist_id>/', views.edit, name='artist-edit'),
-
-    # Formulaire de création
-    path('artist/create/', views.create, name='artist-create'),
-
-    # Suppression
-    path('artist/delete/<int:artist_id>/', views.delete, name='artist-delete'),
+    # Artistes: /catalogue/artist/...
+    path("artist/", index, name="artist-index"),
+    path("artist/create/", create, name="artist-create"),
+    path("artist/<int:artist_id>/", show, name="artist-show"),
+    path("artist/<int:artist_id>/edit/", edit, name="artist-edit"),
+    path("artist/<int:artist_id>/delete/", delete, name="artist-delete"),
 ]
