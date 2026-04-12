@@ -24,9 +24,17 @@
       {% for item in cart %}
       <tr>
         <td>{{ item.representation }}</td>
-        <td>{{ item.price_obj }}</td>
+        <td>{{ item.price_obj.type }}</td>
         <td>{{ item.price }} €</td>
-        <td>{{ item.quantity }}</td>
+        <td>
+          <form action="{% url 'cart:cart_add' item.representation.id %}" method="post" class="d-flex gap-2">
+            {% csrf_token %}
+            <input type="hidden" name="price_id" value="{{ item.price_obj.id }}">
+            <input type="hidden" name="override_quantity" value="true">
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.representation.available_seats }}" class="form-control form-control-sm" style="width: 70px;">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Mettre à jour</button>
+          </form>
+        </td>
         <td>{{ item.total_price }} €</td>
         <td>
           <a href="{% url 'cart:cart_remove' item.representation.id item.price_obj.id %}"
