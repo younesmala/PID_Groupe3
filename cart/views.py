@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from catalogue.models import Representation, Price, Reservation, RepresentationReservation
 from .cart import Cart
@@ -16,23 +17,43 @@ def cart_add(request, representation_id):
     cart = Cart(request)
     representation = get_object_or_404(Representation, id=representation_id)
     price_id = request.POST.get('price_id')
-    quantity = int(request.POST.get('quantity', 1))
     override = request.POST.get('override_quantity') == 'true'
+
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+    except (TypeError, ValueError):
+        messages.error(request, "Quantité invalide.")
+        return redirect('cart:cart_detail')
+
+    if quantity <= 0:
+        messages.error(request, "La quantité doit être supérieure à zéro.")
+        return redirect('cart:cart_detail')
 
     price = get_object_or_404(Price, id=price_id)
 
-    if representation.available_seats < quantity:
+    # Calculate total quantity if we were to add this
+    current_quantity = 0
+    key = f"{representation.id}_{price.id}"
+    if key in cart.cart:
+        current_quantity = cart.cart[key]['quantity']
+    
+    new_total_quantity = quantity if override else (current_quantity + quantity)
+
+    if representation.available_seats < new_total_quantity:
+        messages.error(request, f"Seulement {representation.available_seats} places disponibles.")
         return redirect('cart:cart_detail')
 
     cart.add(representation=representation, price=price, quantity=quantity, override_quantity=override)
     return redirect('cart:cart_detail')
 
 
+@require_POST
 def cart_clear(request):
     Cart(request).clear()
     return redirect('cart:cart_detail')
 
 
+@require_POST
 def cart_remove(request, representation_id, price_id):
     cart = Cart(request)
     representation = get_object_or_404(Representation, id=representation_id)
@@ -44,6 +65,9 @@ def cart_remove(request, representation_id, price_id):
 @login_required
 def cart_checkout(request):
     cart = Cart(request)
+    if not cart.cart:
+        messages.warning(request, "Votre panier est vide.")
+        return redirect('cart:cart_detail')
 
     # Delete existing PENDING reservations for this user
     Reservation.objects.filter(user=request.user, status='PENDING').delete()
