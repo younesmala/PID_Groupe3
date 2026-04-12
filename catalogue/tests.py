@@ -77,14 +77,71 @@ class CartTestCase(TestCase):
                 'quantity': 1,
             }
         )
-        # Should redirect after adding
         self.assertEqual(response.status_code, 302)
-        # Cart session key should exist
         session = self.client.session
         self.assertIn('cart', session)
         key = f"{self.representation.id}_{self.price.id}"
         self.assertIn(key, session['cart'])
         self.assertEqual(session['cart'][key]['quantity'], 1)
+
+    def test_cart_update_quantity(self):
+        self.client.login(username='testuser', password='TestPass123!')
+        # Add initial
+        self.client.post(reverse('cart:cart_add', args=[self.representation.id]), {
+            'price_id': self.price.id,
+            'quantity': 1,
+        })
+        # Update with override
+        response = self.client.post(reverse('cart:cart_add', args=[self.representation.id]), {
+            'price_id': self.price.id,
+            'quantity': 5,
+            'override_quantity': 'true'
+        })
+        self.assertEqual(response.status_code, 302)
+        session = self.client.session
+        key = f"{self.representation.id}_{self.price.id}"
+        self.assertEqual(session['cart'][key]['quantity'], 5)
+
+    def test_cart_remove_item(self):
+        self.client.login(username='testuser', password='TestPass123!')
+        self.client.post(reverse('cart:cart_add', args=[self.representation.id]), {
+            'price_id': self.price.id,
+            'quantity': 1,
+        })
+        response = self.client.get(reverse('cart:cart_remove', args=[self.representation.id, self.price.id]))
+        self.assertEqual(response.status_code, 302)
+        session = self.client.session
+        self.assertEqual(len(session['cart']), 0)
+
+    def test_cart_total_price(self):
+        self.client.login(username='testuser', password='TestPass123!')
+        self.client.post(reverse('cart:cart_add', args=[self.representation.id]), {
+            'price_id': self.price.id,
+            'quantity': 2,
+        })
+        response = self.client.get(reverse('cart:cart_detail'))
+        self.assertEqual(response.status_code, 200)
+        # Debug: print(response.content.decode())
+        # The decimal separator might be a comma due to the 'fr' locale
+        content = response.content.decode()
+        self.assertTrue('40' in content)
+        self.assertTrue('€' in content)
+
+    def test_cart_navbar_count(self):
+        self.client.login(username='testuser', password='TestPass123!')
+        # Initially empty or not shown
+        response = self.client.get(reverse('home'))
+        self.assertNotContains(response, 'badge rounded-pill bg-danger')
+        
+        # Add 3 items
+        self.client.post(reverse('cart:cart_add', args=[self.representation.id]), {
+            'price_id': self.price.id,
+            'quantity': 3,
+        })
+        response = self.client.get(reverse('home'))
+        # Should show '3' in the badge
+        self.assertContains(response, '3')
+        self.assertContains(response, 'badge rounded-pill bg-danger')
 
     @override_settings(LOGIN_URL='/accounts/login/')
     def test_cart_checkout_requires_login(self):

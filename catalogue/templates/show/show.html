@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'Layouts/base.html' %}
 
 {% load static %}
 
@@ -22,6 +22,37 @@
         
     {% if show.bookable %}
     <p><em>Réservable</em></p>
+    
+    <h3 class="mt-4">Représentations</h3>
+    {% if show.representations.all %}
+    <ul class="list-group">
+        {% for representation in show.representations.all %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ representation.schedule|date:"d/m/Y H:i" }}</strong>
+                {% if representation.location %}
+                - {{ representation.location.designation }}
+                {% endif %}
+                <span class="badge bg-info text-dark ms-2">{{ representation.available_seats }} places restantes</span>
+            </div>
+            
+            <form action="{% url 'cart:cart_add' representation.id %}" method="post" class="d-flex gap-2">
+                {% csrf_token %}
+                <select name="price_id" class="form-select form-select-sm" required>
+                    {% for price in prices %}
+                    <option value="{{ price.id }}">{{ price.type }} ({{ price.price }}€)</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantity" value="1" min="1" max="{{ representation.available_seats }}" class="form-control form-control-sm" style="width: 70px;">
+                <button type="submit" class="btn btn-success btn-sm">Réserver</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Aucune représentation prévue pour le moment.</p>
+    {% endif %}
+
     {% else %}
     <p><em>Non réservable</em></p>
     {% endif %}
