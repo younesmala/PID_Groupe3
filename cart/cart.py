@@ -35,22 +35,32 @@ class Cart:
         rep_ids = set()
         price_ids = set()
         for key in self.cart:
-            rep_id, price_id = key.split('_')
-            rep_ids.add(int(rep_id))
-            price_ids.add(int(price_id))
+            try:
+                rep_id, price_id = key.split('_')
+                rep_ids.add(int(rep_id))
+                price_ids.add(int(price_id))
+            except ValueError:
+                continue
 
         representations = {r.id: r for r in Representation.objects.filter(id__in=rep_ids)}
         prices = {p.id: p for p in Price.objects.filter(id__in=price_ids)}
 
         cart = self.cart.copy()
         for key, item in cart.items():
-            rep_id, price_id = key.split('_')
-            item = item.copy()
-            item['representation'] = representations[int(rep_id)]
-            item['price_obj'] = prices[int(price_id)]
-            item['key'] = key
-            item['total_price'] = Decimal(item['price']) * item['quantity']
-            yield item
+            try:
+                rep_id_str, price_id_str = key.split('_')
+                rep_id = int(rep_id_str)
+                price_id = int(price_id_str)
+                
+                if rep_id in representations and price_id in prices:
+                    item = item.copy()
+                    item['representation'] = representations[rep_id]
+                    item['price_obj'] = prices[price_id]
+                    item['key'] = key
+                    item['total_price'] = Decimal(item['price']) * item['quantity']
+                    yield item
+            except (ValueError, KeyError):
+                continue
 
     def __len__(self):
         return sum(item['quantity'] for item in self.cart.values())
@@ -59,5 +69,6 @@ class Cart:
         return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
 
     def clear(self):
-        del self.session[settings.CART_SESSION_ID]
-        self.save()
+        if settings.CART_SESSION_ID in self.session:
+            del self.session[settings.CART_SESSION_ID]
+            self.save()
