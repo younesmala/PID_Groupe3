@@ -108,7 +108,7 @@ class CartTestCase(TestCase):
             'price_id': self.price.id,
             'quantity': 1,
         })
-        response = self.client.get(reverse('cart:cart_remove', args=[self.representation.id, self.price.id]))
+        response = self.client.post(reverse('cart:cart_remove', args=[self.representation.id, self.price.id]))
         self.assertEqual(response.status_code, 302)
         session = self.client.session
         self.assertEqual(len(session['cart']), 0)
@@ -148,3 +148,65 @@ class CartTestCase(TestCase):
         response = self.client.post(reverse('cart:cart_checkout'))
         self.assertEqual(response.status_code, 302)
         self.assertIn('/accounts/login', response['Location'])
+
+    def test_api_cart_add_uses_price_id(self):
+        response = self.client.post(
+            reverse('api:cart-add'),
+            data={
+                'representation_id': self.representation.id,
+                'price_id': self.price.id,
+                'quantity': 2,
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200)
+        session = self.client.session
+        key = f"{self.representation.id}_{self.price.id}"
+        self.assertEqual(session['cart'][key]['quantity'], 2)
+
+    def test_api_cart_update_rejects_invalid_quantity(self):
+        response = self.client.post(
+            reverse('api:cart-update'),
+            data={
+                'representation_id': self.representation.id,
+                'price_id': self.price.id,
+                'quantity': 'abc',
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_api_cart_update_zero_removes_item(self):
+        self.client.post(
+            reverse('api:cart-add'),
+            data={
+                'representation_id': self.representation.id,
+                'price_id': self.price.id,
+                'quantity': 2,
+            },
+            content_type='application/json',
+        )
+
+        response = self.client.post(
+            reverse('api:cart-update'),
+            data={
+                'representation_id': self.representation.id,
+                'price_id': self.price.id,
+                'quantity': 0,
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(self.client.session['cart']), 0)
+
+    def test_api_cart_update_rejects_quantity_above_available_seats(self):
+        response = self.client.post(
+            reverse('api:cart-update'),
+            data={
+                'representation_id': self.representation.id,
+                'price_id': self.price.id,
+                'quantity': 99,
+            },
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)

@@ -12,10 +12,10 @@
   <table class="table table-bordered">
     <thead class="table-dark">
       <tr>
-        <th>Représentation</th>
+        <th>Representation</th>
         <th>Type de tarif</th>
         <th>Prix unitaire</th>
-        <th>Quantité</th>
+        <th>Quantite</th>
         <th>Sous-total</th>
         <th>Action</th>
       </tr>
@@ -32,13 +32,15 @@
             <input type="hidden" name="price_id" value="{{ item.price_obj.id }}">
             <input type="hidden" name="override_quantity" value="true">
             <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.representation.available_seats }}" class="form-control form-control-sm" style="width: 70px;">
-            <button type="submit" class="btn btn-sm btn-outline-primary">Mettre à jour</button>
+            <button type="submit" class="btn btn-sm btn-outline-primary">Mettre a jour</button>
           </form>
         </td>
         <td>{{ item.total_price }} €</td>
         <td>
-          <a href="{% url 'cart:cart_remove' item.representation.id item.price_obj.id %}"
-             class="btn btn-sm btn-danger">Retirer</a>
+          <form action="{% url 'cart:cart_remove' item.representation.id item.price_obj.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger">Retirer</button>
+          </form>
         </td>
       </tr>
       {% endfor %}
@@ -53,7 +55,10 @@
 
   <div class="d-flex gap-2 mt-3">
     <a href="{% url 'catalogue:home' %}" class="btn btn-outline-secondary">Continuer les achats</a>
-    <a href="{% url 'cart:cart_clear' %}" class="btn btn-outline-danger">Vider le panier</a>
+    <form action="{% url 'cart:cart_clear' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-danger">Vider le panier</button>
+    </form>
     <a href="{% url 'cart:cart_checkout' %}" class="btn btn-success">Commander</a>
   </div>
 {% endif %}
