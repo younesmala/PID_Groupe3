@@ -1,0 +1,34 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Changer le rôle de {{ target.username }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Changer le rôle de <strong>{{ target.username }}</strong></h1>
+  <a href="{% url 'catalogue:admin-users' %}" class="btn btn-outline-secondary btn-sm">← Retour</a>
+</div>
+
+<div class="card" style="max-width: 400px;">
+  <div class="card-body">
+    <p class="mb-3">
+      Groupe actuel :
+      <strong>{{ current_group|default:"Aucun" }}</strong>
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="group" class="form-label">Nouveau groupe</label>
+        <select name="group" id="group" class="form-select">
+          {% for g in groups %}
+          <option value="{{ g.name }}" {% if g == current_group %}selected{% endif %}>
+            {{ g.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -23,3 +23,28 @@ class Reservation(models.Model):
 
     class Meta:
         db_table = "reservations"
+
+
+class RepresentationReservation(models.Model):
+    reservation = models.ForeignKey(
+        Reservation,
+        on_delete=models.CASCADE,
+        related_name='representation_reservations'
+    )
+    representation = models.ForeignKey(
+        'Representation',
+        on_delete=models.RESTRICT,
+        related_name='representation_reservations'
+    )
+    price = models.ForeignKey(
+        'Price',
+        on_delete=models.RESTRICT
+    )
+    quantity = models.IntegerField(default=1)
+
+    @property
+    def subtotal(self):
+        return self.price.price * self.quantity
+
+    class Meta:
+        db_table = "representation_reservations"

@@ -11,8 +11,11 @@ class RepresentationsView(APIView):
     POST: Crée une représentation
     """
     def get(self, request, *args, **kwargs):
-        representations = Representation.objects.all()
-        serializer = RepresentationSerializer(representations, many=True)
+        qs = Representation.objects.all()
+        show_id = request.query_params.get('show')
+        if show_id:
+            qs = qs.filter(show_id=show_id)
+        serializer = RepresentationSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):

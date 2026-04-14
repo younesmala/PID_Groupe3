@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Confirmer la commande{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Confirmer votre commande</h1>
+
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th>Représentation</th>
+      <th>Type de tarif</th>
+      <th>Prix unitaire</th>
+      <th>Quantité</th>
+      <th>Sous-total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in cart %}
+    <tr>
+      <td>{{ item.representation }}</td>
+      <td>{{ item.price_obj }}</td>
+      <td>{{ item.price }} €</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.total_price }} €</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4" class="text-end fw-bold">Total</td>
+      <td class="fw-bold">{{ cart.get_total_price }} €</td>
+    </tr>
+  </tfoot>
+</table>
+
+<form method="post" action="{% url 'cart:cart_checkout' %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-success">Confirmer la commande</button>
+  <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-secondary ms-2">Retour au panier</a>
+</form>
+{% endblock %}
