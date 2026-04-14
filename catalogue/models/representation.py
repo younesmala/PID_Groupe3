@@ -23,6 +23,7 @@ class Representation(models.Model):
     show = models.ForeignKey(Show, on_delete=models.RESTRICT, null=False, related_name='representations')
     schedule = models.DateTimeField()
     location = models.ForeignKey(Location, on_delete=models.RESTRICT, null=True, related_name='representations')
+    available_seats = models.PositiveIntegerField(default=100)  # Nombre de places disponibles
 
     def __str__(self):
         return f"{self.show.slug} @ {self.schedule}"
