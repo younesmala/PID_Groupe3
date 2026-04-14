@@ -1,0 +1,39 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Utilisateurs</h1>
+  <a href="{% url 'catalogue:admin-dashboard' %}" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+</div>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th>Nom d'utilisateur</th>
+      <th>Email</th>
+      <th>Inscrit le</th>
+      <th>Groupe</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.username }}</td>
+      <td>{{ u.email|default:"—" }}</td>
+      <td>{{ u.date_joined|date:"d/m/Y" }}</td>
+      <td>{{ u.groups.all|first|default:"—" }}</td>
+      <td>
+        <a href="{% url 'catalogue:admin-user-edit' u.pk %}" class="btn btn-sm btn-outline-primary">
+          Changer de rôle
+        </a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-muted">Aucun utilisateur.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
