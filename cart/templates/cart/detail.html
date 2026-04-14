@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Panier{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Mon panier</h1>
+
+{% if cart|length == 0 %}
+  <p class="text-muted">Votre panier est vide.</p>
+  <a href="{% url 'catalogue:home' %}" class="btn btn-primary">Voir le catalogue</a>
+{% else %}
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Representation</th>
+        <th>Type de tarif</th>
+        <th>Prix unitaire</th>
+        <th>Quantite</th>
+        <th>Sous-total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart %}
+      <tr>
+        <td>{{ item.representation }}</td>
+        <td>{{ item.price_obj.type }}</td>
+        <td>{{ item.price }} €</td>
+        <td>
+          <form action="{% url 'cart:cart_add' item.representation.id %}" method="post" class="d-flex gap-2">
+            {% csrf_token %}
+            <input type="hidden" name="price_id" value="{{ item.price_obj.id }}">
+            <input type="hidden" name="override_quantity" value="true">
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.representation.available_seats }}" class="form-control form-control-sm" style="width: 70px;">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Mettre a jour</button>
+          </form>
+        </td>
+        <td>{{ item.total_price }} €</td>
+        <td>
+          <form action="{% url 'cart:cart_remove' item.representation.id item.price_obj.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger">Retirer</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" class="text-end fw-bold">Total</td>
+        <td colspan="2" class="fw-bold">{{ cart.get_total_price }} €</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="d-flex gap-2 mt-3">
+    <a href="{% url 'catalogue:home' %}" class="btn btn-outline-secondary">Continuer les achats</a>
+    <form action="{% url 'cart:cart_clear' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-danger">Vider le panier</button>
+    </form>
+    <a href="{% url 'cart:cart_checkout' %}" class="btn btn-success">Commander</a>
+  </div>
+{% endif %}
+{% endblock %}

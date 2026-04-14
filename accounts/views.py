@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from .forms.UserSignUpForm import UserSignUpForm
 from .forms.UserUpdateForm import UserUpdateForm
 
@@ -32,6 +32,16 @@ class UserSignUpView(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = self.object
+        try:
+            member_group = Group.objects.get(name='MEMBER')
+            user.groups.add(member_group)
+        except Group.DoesNotExist:
+            pass
+        return response
 
     def test_func(self):
         return self.request.user.is_anonymous or self.request.user.is_superuser

@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Projet réservations - {% block title %}Bienvenue{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'catalogue/css/components.css' %}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'cart:cart_detail' %}">
+            Panier
+            {% if cart|length > 0 %}
+            <span class="badge rounded-pill bg-danger">{{ cart|length }}</span>
+            {% endif %}
+        </a>
+    </div>
+</nav>
+<div class="container">
+        {% block content %}{% endblock %}
+</div>
+</body>
+</html>
