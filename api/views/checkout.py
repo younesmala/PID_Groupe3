@@ -5,6 +5,7 @@ from catalogue.models.reservation import Reservation
 from catalogue.models.representation import Representation
 from django.contrib.auth.models import User
 from django.db import transaction
+from cart.cart import Cart
 
 
 class CheckoutView(APIView):
@@ -13,27 +14,22 @@ class CheckoutView(APIView):
         if not user.is_authenticated:
             return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
         
-        cart_items = request.session.get('cart', [])
-        if not cart_items:
+        cart = Cart(request)
+        if len(cart) == 0:
             return Response({"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST)
         
         reservations_created = []
         
         with transaction.atomic():
-            for item in cart_items:
-                representation_id = item.get("representation_id")
-                quantity = item.get("quantity", 1)
+            for item in cart:
+                representation = item['representation']
+                quantity = item['quantity']
                 
-                if not representation_id:
-                    return Response({"error": "representation_id is required for each cart item"}, status=status.HTTP_400_BAD_REQUEST)
-                
-                try:
-                    representation = Representation.objects.select_for_update().get(id=representation_id)
-                except Representation.DoesNotExist:
-                    return Response({"error": f"Representation {representation_id} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+                # Re-vérifier la disponibilité avec un lock
+                representation = Representation.objects.select_for_update().get(id=representation.id)
                 
                 if representation.available_seats < quantity:
-                    return Response({"error": f"Not enough seats available for representation {representation_id}"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"error": f"Not enough seats available for {representation}"}, status=status.HTTP_400_BAD_REQUEST)
                 
                 # Décrémenter les places disponibles
                 representation.available_seats -= quantity
@@ -45,13 +41,12 @@ class CheckoutView(APIView):
                     representation=representation,
                     quantity=quantity,
                     status="confirmed",
-                    payment_status="paid"  # Assumer paiement réussi pour cet exemple
+                    payment_status="paid"
                 )
                 reservations_created.append(reservation.id)
         
-        # Vider le panier
-        request.session['cart'] = []
-        request.session.modified = True
+        # Vider le panier après succès
+        cart.clear()
         
         return Response({
             "message": "Reservations created successfully",
