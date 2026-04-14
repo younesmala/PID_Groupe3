@@ -13,6 +13,9 @@ urlpatterns = [
     # Catalogue
     path("catalogue/", include(("catalogue.urls", "catalogue"), namespace="catalogue")),
 
+    # Cart
+    path("cart/", include(("cart.urls", "cart"), namespace="cart")),
+
     # Auth Django (login/logout/password_reset...) SANS namespace
     path("accounts/", include("django.contrib.auth.urls")),
 ]
