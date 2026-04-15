@@ -133,19 +133,19 @@ class CartTestCase(TestCase):
 
     def test_cart_navbar_count(self):
         self.client.login(username='testuser', password='TestPass123!')
-        # Initially empty or not shown
         response = self.client.get(reverse('home'))
         self.assertNotContains(response, 'badge rounded-pill bg-danger')
-        
+
         # Add 3 items
-        self.client.post(reverse('cart:cart_add', args=[self.representation.id]), {
-            'price_id': self.price.id,
-            'quantity': 3,
-        })
+        add_response = self.client.post(
+            reverse('cart:cart_add', args=[self.representation.id]),
+            {'price_id': self.price.id, 'quantity': 3}
+        )
+        self.assertEqual(add_response.status_code, 302)
+
         response = self.client.get(reverse('home'))
-        # Should show '3' in the badge
-        self.assertContains(response, '3')
         self.assertContains(response, 'badge rounded-pill bg-danger')
+        self.assertContains(response, '>3<')
 
     @override_settings(LOGIN_URL='/accounts/login/')
     def test_cart_checkout_requires_login(self):
