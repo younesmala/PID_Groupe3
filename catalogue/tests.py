@@ -43,11 +43,14 @@ class ReservationTestCase(TestCase):
     def setUp(self):
         Group.objects.get_or_create(name='MEMBER')
         self.user = make_user()
+        self.show = make_show()
+        self.representation = make_representation(self.show)
 
     def test_reservation_creation(self):
         reservation = Reservation.objects.create(
             user=self.user,
             status='PENDING',
+            representation=self.representation,
         )
         self.assertEqual(Reservation.objects.count(), 1)
         self.assertEqual(reservation.status, 'PENDING')
@@ -56,6 +59,7 @@ class ReservationTestCase(TestCase):
         reservation = Reservation.objects.create(
             user=self.user,
             status='PENDING',
+            representation=self.representation,
         )
         self.assertEqual(reservation.user, self.user)
 
