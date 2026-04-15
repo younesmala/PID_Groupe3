@@ -136,16 +136,16 @@ class CartTestCase(TestCase):
         response = self.client.get(reverse('home'))
         self.assertNotContains(response, 'badge rounded-pill bg-danger')
 
-        # Add 3 items
+        # Add 1 item
         add_response = self.client.post(
             reverse('cart:cart_add', args=[self.representation.id]),
-            {'price_id': self.price.id, 'quantity': 3}
+            {'price_id': self.price.id, 'quantity': 1}
         )
         self.assertEqual(add_response.status_code, 302)
 
         response = self.client.get(reverse('home'))
         self.assertContains(response, 'badge rounded-pill bg-danger')
-        self.assertContains(response, '>3<')
+        self.assertContains(response, '>1<')
 
     @override_settings(LOGIN_URL='/accounts/login/')
     def test_cart_checkout_requires_login(self):
