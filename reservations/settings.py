@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     # ajout de accounts
     "accounts",
-
     # ajout de cart
     "cart",
 ]
