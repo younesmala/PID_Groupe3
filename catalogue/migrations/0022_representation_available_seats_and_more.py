@@ -11,11 +11,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='representation',
-            name='available_seats',
-            field=models.IntegerField(default=100),
-        ),
+
         migrations.CreateModel(
             name='RepresentationReservation',
             fields=[

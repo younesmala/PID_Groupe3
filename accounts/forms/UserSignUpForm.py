@@ -27,34 +27,42 @@ class UserSignUpForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].label = 'Login'
+        self.fields['username'].label = 'Pseudo'
+        self.fields['last_name'].label = 'Nom'
+        self.fields['first_name'].label = 'Prénom'
+        self.fields['email'].label = 'Adresse e-mail'
         self.fields['password1'].label = 'Mot de passe'
         self.fields['password2'].label = 'Confirmation du mot de passe'
-        self.fields['first_name'].label = 'Prénom'
-        self.fields['last_name'].label = 'Nom'
+
 
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
+
+        # Appliquer la classe 'form-control' à tous les champs pour le style Bootstrap
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = User
 
         fields = [
             'username',
+            'last_name',
+            'first_name',
             'email',
             'password1',
             'password2',
-            'first_name',
-            'last_name',
             'langue',
         ]
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data.get("email", "")
-        user.first_name = self.cleaned_data.get("first_name", "")
+        user.username = self.cleaned_data.get("username", "")
         user.last_name = self.cleaned_data.get("last_name", "")
+        user.first_name = self.cleaned_data.get("first_name", "")
+        user.email = self.cleaned_data.get("email", "")
+
 
      # Ajout de l'utilisateur au groupe MEMBER => rôle de membre
         if commit:
@@ -66,6 +74,3 @@ class UserSignUpForm(UserCreationForm):
             UserMeta.objects.create(user=user, langue=langue)
 
         return user
-
-
-
