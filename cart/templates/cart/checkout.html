@@ -1,18 +1,19 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Confirmer la commande{% endblock %}
+{% block title %}{% trans "Confirmer la commande" %}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Confirmer votre commande</h1>
+<h1 class="mb-4">{% trans "Confirmer votre commande" %}</h1>
 
 <table class="table table-bordered">
   <thead class="table-dark">
     <tr>
-      <th>Représentation</th>
-      <th>Type de tarif</th>
-      <th>Prix unitaire</th>
-      <th>Quantité</th>
-      <th>Sous-total</th>
+      <th>{% trans "Représentation" %}</th>
+      <th>{% trans "Type de tarif" %}</th>
+      <th>{% trans "Prix unitaire" %}</th>
+      <th>{% trans "Quantité" %}</th>
+      <th>{% trans "Sous-total" %}</th>
     </tr>
   </thead>
   <tbody>
@@ -28,7 +29,7 @@
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="4" class="text-end fw-bold">Total</td>
+      <td colspan="4" class="text-end fw-bold">{% trans "Total" %}</td>
       <td class="fw-bold">{{ cart.get_total_price }} €</td>
     </tr>
   </tfoot>
@@ -36,7 +37,7 @@
 
 <form method="post" action="{% url 'cart:cart_checkout' %}">
   {% csrf_token %}
-  <button type="submit" class="btn btn-success">Confirmer la commande</button>
-  <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-secondary ms-2">Retour au panier</a>
+  <button type="submit" class="btn btn-success">{% trans "Confirmer la commande" %}</button>
+  <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-secondary ms-2">{% trans "Retour au panier" %}</a>
 </form>
 {% endblock %}
