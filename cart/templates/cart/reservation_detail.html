@@ -1,0 +1,51 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Réservation #{{ reservation.id }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Réservation #{{ reservation.id }}</h1>
+
+<div class="mb-3">
+  <p><strong>Date de réservation :</strong> {{ reservation.booking_date }}</p>
+  <p><strong>Statut :</strong>
+    <span class="badge
+      {% if reservation.status == 'PAID' %}bg-success
+      {% elif reservation.status == 'FAILED' %}bg-danger
+      {% else %}bg-warning text-dark
+      {% endif %}">
+      {{ reservation.status }}
+    </span>
+  </p>
+</div>
+
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th>Représentation</th>
+      <th>Type de tarif</th>
+      <th>Prix unitaire</th>
+      <th>Quantité</th>
+      <th>Sous-total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.representation }}</td>
+      <td>{{ item.price }}</td>
+      <td>{{ item.price.price }} €</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.subtotal }} €</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4" class="text-end fw-bold">Total</td>
+      <td class="fw-bold">{{ total }} €</td>
+    </tr>
+  </tfoot>
+</table>
+
+<a href="{% url 'accounts:user-profile' %}" class="btn btn-outline-secondary">Retour au profil</a>
+{% endblock %}

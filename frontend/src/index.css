@@ -1,0 +1,89 @@
+/* ===== CARD ===== */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  width: 260px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== ACTIONS ===== */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ligne du haut (Voir + Modifier) */
+.top-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ===== BOUTONS ===== */
+.btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  color: white;
+}
+
+/* couleurs */
+.primary {
+  background-color: #2f6fed;
+}
+
+.danger {
+  background-color: #e63946;
+}
+
+/* tailles */
+.top-actions .btn {
+  width: 100px;
+}
+
+.card-actions>.btn {
+  width: 120px;
+}
+
+/* CONTENEUR GLOBAL */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* IMAGE */
+.card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* PAGE */
+.artists-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* GRID */
+.artists-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 900px;
+  width: 100%;
+}
