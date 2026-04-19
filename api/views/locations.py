@@ -11,6 +11,7 @@ class LocationsView(APIView):
     GET: Récupère tous les lieux
     POST: Crée un nouveau lieu
     """
+
     def get(self, request, *args, **kwargs):
         locations = Location.objects.all()
         serializer = LocationSerializer(locations, many=True)
@@ -30,6 +31,7 @@ class LocationsDetailView(APIView):
     PUT: Met à jour un lieu
     DELETE: Supprime un lieu
     """
+
     def get(self, request, id, *args, **kwargs):
         try:
             location = Location.objects.get(id=id)
@@ -51,7 +53,8 @@ class LocationsDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = LocationSerializer(location, data=request.data, partial=True)
+        serializer = LocationSerializer(
+            location, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

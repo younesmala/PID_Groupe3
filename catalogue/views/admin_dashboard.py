@@ -21,8 +21,10 @@ class AdminDashboardView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        reservations_qs = Reservation.objects.select_related('user').order_by('-booking_date')
-        recent_users = User.objects.prefetch_related('groups').order_by('-date_joined')[:5]
+        reservations_qs = Reservation.objects.select_related(
+            'user').order_by('-booking_date')
+        recent_users = User.objects.prefetch_related(
+            'groups').order_by('-date_joined')[:5]
 
         context = {
             'total_users': User.objects.count(),
@@ -48,7 +50,8 @@ class AdminUsersView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        users = User.objects.prefetch_related('groups').order_by('-date_joined')
+        users = User.objects.prefetch_related(
+            'groups').order_by('-date_joined')
         return render(request, 'admin/user/index.html', {'users': users})
 
 
@@ -63,7 +66,8 @@ class AdminUserEditView(View):
     def get(self, request, pk):
         target = get_object_or_404(User, pk=pk)
         groups = Group.objects.filter(name__in=['MEMBER', 'ADMIN', 'PRODUCER'])
-        current_group = target.groups.filter(name__in=['MEMBER', 'ADMIN', 'PRODUCER']).first()
+        current_group = target.groups.filter(
+            name__in=['MEMBER', 'ADMIN', 'PRODUCER']).first()
         return render(request, 'admin/user/edit.html', {
             'target': target,
             'groups': groups,
@@ -79,7 +83,9 @@ class AdminUserEditView(View):
             messages.error(request, "Groupe invalide.")
             return redirect('catalogue:admin-user-edit', pk=pk)
 
-        target.groups.remove(*Group.objects.filter(name__in=['MEMBER', 'ADMIN', 'PRODUCER']))
+        target.groups.remove(
+            *Group.objects.filter(name__in=['MEMBER', 'ADMIN', 'PRODUCER']))
         target.groups.add(new_group)
-        messages.success(request, f"Rôle de {target.username} changé en {group_name}.")
+        messages.success(
+            request, f"Rôle de {target.username} changé en {group_name}.")
         return redirect('catalogue:admin-users')

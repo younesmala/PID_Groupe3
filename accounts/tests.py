@@ -42,7 +42,8 @@ class LoginTestCase(TestCase):
             username='loginuser',
             password='TestPass123!',
         )
-        UserMeta.objects.get_or_create(user=self.user, defaults={'langue': 'fr'})
+        UserMeta.objects.get_or_create(
+            user=self.user, defaults={'langue': 'fr'})
 
     def test_login_with_valid_credentials(self):
         response = self.client.post('/accounts/login/', {

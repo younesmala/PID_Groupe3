@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class AffiliateSerializer(serializers.Serializer):
     # Placeholder pour les données de l'affilié
     id = serializers.IntegerField(read_only=True)

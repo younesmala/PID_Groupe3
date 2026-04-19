@@ -10,6 +10,7 @@ class ArtistTypesView(APIView):
     """
     GET /api/artist-types/
     """
+
     def get(self, request):
         qs = ArtistType.objects.all()
         serializer = ArtistTypeSerializer(qs, many=True)
