@@ -1,343 +1,289 @@
+# 🎭 Projet Réservations – PID_Groupe3
 
+[![CI/CD](https://github.com/younesmala/PID_Groupe3/actions/workflows/main.yml/badge.svg)](https://github.com/younesmala/PID_Groupe3/actions/workflows/main.yml)
 
-# Projet Réservations – Django (PID)
-
-
-## 👥 Équipe de développement
-
-- Younes 
-- Morad
-- Randy
-- Vianney
-- Soufiane
-- Oumar
-- Nicolas 
+Application web de gestion et de réservation de spectacles, développée avec **Django** (backend) et **React** (frontend).
 
 ---
 
 ## 📖 Description du projet
 
-L’application **Projet Réservations** est une application web développée avec **Django** permettant de gérer un catalogue de spectacles et, à terme, les réservations associées.
+**Projet Réservations** est une application web permettant de gérer un catalogue complet de spectacles, artistes, représentations et réservations associées.
 
 Le projet comprend actuellement :
-- un **catalogue d’artistes** (CRUD complet),
-- une **page d’accueil**,
-- un **back-office administrateur** (Django Admin),
-- une **architecture prête** pour l’authentification, les spectacles et les réservations.
 
-Ce projet est réalisé dans le cadre du **PID (Projet d’Intégration et de Développement)** du **Bachelier en Informatique de Gestion**.
-
-Le développement est réalisé de manière **progressive**, par itérations, conformément aux consignes du PID.
-
----
-
-## 🎯 Objectifs pédagogiques
-
-- Comprendre la structure d’un projet Django professionnel.
-- Mettre en place un CRUD fonctionnel avec l’ORM Django.
-- Travailler en **équipe** avec GitHub (Issues, branches, Pull Requests).
-- Appliquer les bonnes pratiques de développement et de documentation.
+- un **catalogue d'artistes** (CRUD complet)
+- un **catalogue de spectacles** avec représentations et lieux
+- un système de **panier et réservation** pour les utilisateurs
+- un **back-office administrateur** (Django Admin)
+- une **API REST** (Django REST Framework) pour les interactions frontend
+- une **interface React** moderne avec Vite
+- le support du **multilingue** (i18n) via django-modeltranslation
 
 ---
 
-## 🗂️ Structure du projet
+## 🎓 Contexte académique
 
-PID_Groupe3/
-│
-├── reservations/ # Projet principal Django (settings, urls, wsgi)
-├── catalogue/ # Application catalogue (artistes, templates, vues)
-├── requirements.txt # Dépendances Python
-├── manage.py # Commandes Django
-├── README.md # Documentation du projet
-├── LOGBOOK_GROUPE.md # Journal de bord du groupe
-
+- **École** : Institut des Carrières Commerciales (ICC) – Ville de Bruxelles
+- **Cursus** : Bachelier en Informatique – orientation Développement d'Applications
+- **Cours** : Projet d'Intégration Développement (PID)
+- **Enseignant** : Cédric Ruth
 
 ---
 
-## ⚙️ Installation et lancement du projet
+## 👥 Équipe de développement
 
-### 🔹 Prérequis
-
-- Python **3.12**
-- Git
-- Environnement virtuel (venv)
-
----
-
-### 🔹 Installation depuis zéro (Windows)
-
-git clone https://github.com/younesmala/PID_Groupe3.git
-
-cd PID_Groupe3
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-
+- Younes
+- Morad
+- Randy
+- Vianney
+- Soufiane
+- Oumar
+- Nicolas
 
 ---
 
-### 🔹 Accès à l’application
+## 🛠️ Stack technique
 
-- Accueil : http://127.0.0.1:8000/
-- Catalogue artistes : http://127.0.0.1:8000/catalogue/artist/
-- Administration : http://127.0.0.1:8000/admin/
+### Backend
+- Python 3.12
+- Django 5.0.14
+- Django REST Framework 3.15.2
+- django-modeltranslation 0.18.11 (i18n)
+- python-dotenv 1.1.1 (variables d'environnement)
+- mysqlclient 2.2.7 (connecteur MySQL)
 
----
+### Frontend
+- React 19.2.4
+- Vite 8.0.1
+- React Router DOM 7.13.2
+- ESLint 9.39.4
 
-## 🧪 Versions utilisées (IMPORTANT)
+### Base de données
+- MySQL 8.0 (via MAMP sur macOS ou installation directe sur Windows)
 
-- Python **3.12**
-- Django **5.0.14**
-
-Tous les membres du groupe doivent utiliser **les mêmes versions** afin d’éviter les conflits.
-
----
-
-## 🧠 Gestion du projet
-
-### 🔹 GitHub Issues
-
-Toutes les tâches de développement sont gérées via **GitHub Issues**.  
-Chaque Issue contient :
-- une description claire,
-- une checklist des étapes à réaliser,
-- une *Definition of Done (DoD)*,
-- un responsable (assignee).
+### CI/CD
+- GitHub Actions (3 jobs parallèles : lint Python, tests Django, build React)
 
 ---
 
-### 🔹 Workflow Git
+## 📋 Prérequis
 
-- La branche `main` est protégée.
-- Chaque membre travaille sur une branche personnelle : `dev_prenom`.
-- Toute modification passe par une **Pull Request**.
-- Une Pull Request correspond à **une Issue**.
+Avant de commencer, assurez-vous d'avoir installé :
 
----
-
-### 🔹 GitHub Projects
-
-Un tableau **GitHub Projects (Kanban)** est utilisé comme gestionnaire de projet avec les colonnes :
-- Backlog
-- To Do
-- In Progress
-- Review
-- Done
+- Python 3.12 (https://www.python.org/downloads/)
+- Node.js 20+ et npm (https://nodejs.org/)
+- MySQL 8.0 (via MAMP sur macOS, ou MySQL Installer sur Windows)
+- Git (https://git-scm.com/)
 
 ---
 
-## 🔄 Itérations du projet
+## 🚀 Installation
 
-| Itération | Intitulé                              | État |
-|----------|---------------------------------------|------|
-| 1 | Setup & organisation | 🟡 en cours |
-| 2 | CRUD Artistes + navigation | ✅ terminé |
-| 3 | Relations simples (Type, Locality, Price) | 🔜 à venir |
-| 4 | Authentification | 🔜 à venir |
-| 5 | Shows & Réservations (version minimale) | 🔜 à venir |
+### 1. Cloner le dépôt
 
----
+    git clone https://github.com/younesmala/PID_Groupe3.git
+    cd PID_Groupe3
 
-## ✅ Travail déjà réalisé
+### 2. Configuration du backend Django
 
-- Projet Django fonctionnel
-- Environnement configuré
-- CRUD Artistes complet
-- Page d’accueil
-- Routing propre
-- Django Admin opérationnel
-- Gestion Git (branches, remotes)
+**Sur macOS / Linux :**
 
----
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
 
-1. Mise en place de l’authentification (login / logout)
-Intégration du système d’authentification de Django
-Utilisation des vues d’authentification natives (LoginView, LogoutView)
-Mise en place de la page de connexion personnalisée :
-Template login.html
-Champs username et password
-Bouton de connexion
-Lien « Mot de passe oublié »
+**Sur Windows :**
 
-2. Organisation propre des templates
-Mise en place d’un layout principal (base.html)
-Centralisation du HTML commun :
-<head>
-Navbar
-Container principal
-Utilisation des blocs Django :
-{% block title %}
-{% block content %}
-Les pages héritent désormais du layout avec {% extends "layouts/base.html" %}
-3. Gestion de la navigation selon l’état de connexion
-Ajout d’une navbar dynamique :
-Si l’utilisateur est connecté :
-Affichage du nom d’utilisateur
-Bouton Déconnexion
-Si l’utilisateur est déconnecté :
-Bouton Connexion
-Comportement conditionnel basé sur :
-{% if user.is_authenticated %}
+    python -m venv venv
+    venv\Scripts\activate
+    pip install -r requirements.txt
 
-  4. Amélioration de l’interface avec Bootstrap
-Intégration de Bootstrap 5 via CDN
-Mise en page moderne et responsive :
-Navbar stylée
-Pages centrées
-Cartes (card) pour l’accueil et le login
-Amélioration visuelle de la page de connexion :
-Carte centrée
-Champs larges et lisibles
-Bouton principal bien visible
+Note Windows : si mysqlclient pose problème à l'installation, pymysql est utilisé automatiquement en fallback.
 
-5. Page d’accueil améliorée
-Page d’accueil épurée et lisible
-Contenu affiché dans une carte Bootstrap
-Texte de bienvenue clair
-Interface cohérente avec le reste du site
+### 3. Configuration de la base de données
 
-6. Fonctionnement global validé
-Connexion → redirection correcte
-Déconnexion → retour à l’état invité
-Navbar mise à jour automatiquement
-Aucun conflit entre les templates
-Structure propre et maintenable
+1. Démarrer MySQL (via MAMP sur macOS, ou le service MySQL sur Windows)
 
+2. Créer la base de données :
 
-## Fonctionnalités implémentées
+    CREATE DATABASE reservation CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-### 1. Authentification (Login / Logout)
-- Intégration du système d’authentification natif de Django
-- Utilisation des vues d’authentification (`LoginView`, `LogoutView`)
-- Mise en place d’une page de connexion personnalisée (`login.html`)
-- Champs :
-  - Username
-  - Password
-- Bouton de connexion
-- Lien « Mot de passe oublié »
+3. Créer le fichier .env à la racine :
+
+    cp .env.example .env      # macOS / Linux
+    copy .env.example .env    # Windows
+
+4. Éditer .env avec vos credentials MySQL locaux.
+
+### 4. Appliquer les migrations
+
+    python manage.py migrate
+
+### 5. Créer un super-utilisateur (optionnel)
+
+    python manage.py createsuperuser
+
+### 6. Configuration du frontend React
+
+    cd frontend
+    npm install
+    cd ..
 
 ---
 
-### 2. Organisation propre des templates
-- Mise en place d’un layout principal (`base.html`)
-- Centralisation du HTML commun :
-  - Navbar
-  - Container principal
-- Utilisation des blocs Django :
-  - `{% block title %}`
-  - `{% block content %}`
-- Héritage des pages via :
-  ```django
-  {% extends "layouts/base.html" %}
+## ▶️ Lancement du projet
 
-  ---
+### Backend Django (port 8000)
 
-## 3. Gestion de la navigation selon l’état de connexion
+    source venv/bin/activate    # macOS/Linux
+    venv\Scripts\activate       # Windows
+    python manage.py runserver
 
-Ajout d’une **navbar dynamique** qui s’adapte automatiquement à l’état de connexion de l’utilisateur.
+### Frontend React (port 5173)
 
-- Si l’utilisateur est connecté :
-  - Affichage du **nom d’utilisateur**
-  - Bouton **Déconnexion**
-- Si l’utilisateur est déconnecté :
-  - Bouton **Connexion**
+Dans un second terminal :
 
-Ce comportement est géré via les templates Django grâce à la condition :
-
-```django
-{% if user.is_authenticated %}
----
-
-## 4. Amélioration de l’interface avec Bootstrap
-
-Intégration de **Bootstrap 5 via CDN** afin d’améliorer l’interface utilisateur.
-
-- Mise en page moderne et responsive
-- Utilisation des classes Bootstrap (`container`, `row`, `col`, `card`, `btn`)
-- Navbar stylée et cohérente sur toutes les pages
-- Interface adaptée aux différentes tailles d’écran
-
-Bootstrap permet d’obtenir une interface propre et professionnelle sans CSS personnalisé complexe.
+    cd frontend
+    npm run dev
 
 ---
 
-## 5. Amélioration de la page d’accueil
+## 🌐 Accès à l'application
 
-Refonte de la page d’accueil pour améliorer la lisibilité et l’expérience utilisateur :
-
-- Contenu centré dans une **carte Bootstrap**
-- Titre principal clair
-- Texte de bienvenue lisible
-- Interface épurée et cohérente avec le reste du site
-
-La page d’accueil sert désormais de point d’entrée clair pour l’utilisateur.
+- http://127.0.0.1:8000/ — Page d'accueil Django
+- http://127.0.0.1:8000/catalogue/artist/ — Catalogue des artistes
+- http://127.0.0.1:8000/admin/ — Interface d'administration
+- http://127.0.0.1:8000/api/ — API REST (DRF Browsable API)
+- http://localhost:5173/ — Application React (frontend)
 
 ---
 
-## 6. Fonctionnement global validé
+## 📡 Documentation API
 
-Le fonctionnement général de l’application a été validé :
+### Authentification
+- POST /api/auth/login/ — Connexion
+- POST /api/auth/register/ — Inscription
+- POST /api/auth/logout/ — Déconnexion
 
-- Connexion utilisateur fonctionnelle
-- Redirection correcte après connexion
-- Déconnexion fonctionnelle
-- Retour à l’état invité après déconnexion
-- Navbar mise à jour automatiquement selon l’état de connexion
-- Aucun conflit entre les templates
+### Spectacles & Représentations
+- GET /api/shows/ — Liste des spectacles
+- GET /api/shows/<id>/ — Détail d'un spectacle
+- GET /api/representations/ — Liste des représentations
 
-L’authentification et la navigation sont stables et fiables.
+### Artistes
+- GET /api/artists/ — Liste des artistes
+- GET /api/artists/<id>/ — Détail d'un artiste
+- GET /api/types/ — Types d'artistes
+
+### Lieux
+- GET /api/locations/ — Liste des salles
+- GET /api/localities/ — Liste des localités
+
+### Panier & Réservation
+- GET /api/cart/ — Contenu du panier
+- POST /api/cart/add/ — Ajouter au panier
+- POST /api/checkout/ — Finaliser la commande
+- GET /api/reservations/ — Liste des réservations
+- GET /api/tickets/ — Liste des tickets
+
+### Avis
+- GET /api/reviews/ — Liste des avis
+- POST /api/reviews/ — Créer un avis
+
+### Utilisateurs & Admin
+- GET /api/users/ — Liste des utilisateurs (admin)
+- GET /api/admin/ — Endpoints administrateur
+
+Astuce : explorez l'API interactivement via http://127.0.0.1:8000/api/
 
 ---
 
-## 7. Bonnes pratiques respectées
+## 🧪 Tests
 
-- Séparation claire des responsabilités :
-  - Layout global (`base.html`)
-  - Pages spécifiques par fonctionnalité
-- Organisation propre des templates
-- Code lisible et structuré
-- Utilisation correcte des templates Django (`extends`, `block`)
-- Commits clairs et descriptifs en français
-- Interface utilisateur cohérente et moderne
-Mise a jours de taches 1avril 2026
+### Tests Django
 
-Nicolas
- Mission Frontend — Liste + Navigation  Objectif : créer la base du frontend artistes. À faire : 1. Créer la page liste des artistes - afficher une liste (mock data) - bouton : voir / modifier / supprimer 2. Mettre en place la navigation - liste → détail - liste → modifier   Important : - utiliser des données fake - structure propre (composants, fichiers) - préparer les appels API (sans forcément les connecter)   Résultat attendu : - page liste fonctionnelle - navigation opérationnelle - base frontend prête
+    python manage.py test
 
-Vianey 
-Mission Frontend — Détail + Formulaire Objectif : compléter l’interface artistes.  👉 À faire : 1. Page détail artiste - afficher les infos (mock data) 2. Formulaire artiste - ajout - modification - validation simple  👉 Résultat attendu : - page détail fonctionnelle - formulaire prêt - intégration facile avec API
+### Linting Python (flake8)
 
-Soufiane
-Mission Frontend — Composants réutilisables Objectif : créer une base de composants pour tout le projet.  👉 À faire : 1. Créer des composants : - bouton (primary, danger, etc.) - input (formulaire) - card (pour afficher un artiste) 2. Structurer proprement : - dossier components - composants réutilisables - code propre et lisible  👉 Important : - composants génériques (réutilisables partout) - props bien définies - style cohérent  👉 Résultat attendu : - composants prêts à être utilisés dans toutes les pages - base frontend solide
+    pip install flake8
+    flake8 .
 
-Randy Masamba 
-Mission Frontend — UI / UX + Composants Objectif : améliorer l’interface et préparer des composants réutilisables. 👉 À faire : 1. Créer des composants réutilisables : - bouton (primary, danger, etc.) - input (formulaire) - card (pour afficher un artiste) 2. Améliorer le design : - alignement des éléments - espacement (margin / padding) - structure propre (header, contenu, etc.) e
+### Linting JavaScript (ESLint)
 
-Younes 
-Frontend — UI / UX
-Mission Frontend — UI / UX
-améliorer design (spacing, layout)
-messages (succès, erreur)
-états (loading, empty)
- Résultat :
-interface propre et professionnelle
+    cd frontend
+    npm run lint
 
-Morad
-Mission Frontend — Composants
- À faire :
-bouton (primary, danger)
-input
-card artiste
- Résultat :
-base composants réutilisables
-Oumar
-3. Ajouter des messages utilisateur : - message succès (ex: "Artiste ajouté") - message erreur - message liste vide 4. Ajouter états visuels : - loading (chargement) - empty state (aucun artiste) - erreur API (préparé même si API pas encore prête)
+---
 
-⁩
+## 📁 Structure du projet
 
-## 📜 Licence
+    PID_Groupe3/
+    ├── .github/workflows/    # Configuration CI/CD GitHub Actions
+    ├── accounts/             # Gestion des comptes utilisateurs
+    ├── api/                  # API REST (Django REST Framework)
+    │   ├── serializers/
+    │   └── views/
+    ├── cart/                 # Gestion du panier
+    ├── catalogue/            # Modèles et vues du catalogue
+    │   ├── models/
+    │   ├── forms/
+    │   └── views/
+    ├── frontend/             # Application React + Vite
+    │   ├── src/
+    │   └── public/
+    ├── locale/               # Fichiers de traduction (i18n)
+    ├── member/               # Gestion des membres
+    ├── reservations/         # Configuration Django principale
+    │   ├── settings.py
+    │   └── urls.py
+    ├── Templates/            # Templates Django
+    ├── .env.example          # Modèle de configuration
+    ├── .flake8               # Configuration du linter Python
+    ├── .gitignore
+    ├── manage.py             # Point d'entrée Django
+    ├── requirements.txt      # Dépendances Python
+    └── README.md
 
-Projet académique – **Bachelier en Informatique de Gestion (PID)**  
-© 2025 – Usage pédagogique uniquement
+---
+
+## 🔄 CI/CD
+
+Le projet utilise GitHub Actions pour automatiser les vérifications à chaque push et pull request. Le workflow exécute 3 jobs en parallèle :
+
+1. Python Lint (flake8) — Vérification du style de code Python
+2. Django Tests (MySQL 8.0) — Tests unitaires Django avec base MySQL
+3. Frontend React (npm install + build) — Build du frontend React
+
+Le workflow est défini dans .github/workflows/main.yml.
+
+---
+
+## 🤝 Contribution
+
+Le projet suit un workflow Git basé sur les pull requests :
+
+1. Créer une branche depuis main : git checkout -b feature/ma-fonctionnalite
+2. Committer ses changements : git commit -m "feat: description"
+3. Pousser sur le dépôt : git push origin feature/ma-fonctionnalite
+4. Ouvrir une Pull Request sur GitHub
+5. Attendre la validation de la CI/CD et la revue de code
+6. Merger après approbation
+
+### Convention de nommage des branches
+
+- feature/* — Nouvelles fonctionnalités
+- fix/* — Corrections de bugs
+- chore/* — Tâches de maintenance (refacto, config)
+- dev_* — Branches de développement d'étapes
+
+---
+
+## 📝 Licence
+
+Projet académique réalisé dans le cadre du Bachelier en Informatique de l'ICC Bruxelles.
+
+---
+
+Développé par le Groupe 3 – ICC Bruxelles – 2025-2026
