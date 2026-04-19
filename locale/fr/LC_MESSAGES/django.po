@@ -285,38 +285,34 @@ msgid "Retour au profil"
 msgstr "Retour au profil"
 
 #: .\catalogue\templates\artist\index.html:8
-#, fuzzy
-#| msgid "Consulter la liste des artistes"
 msgid "Liste des artistes"
-msgstr "Consulter la liste des artistes"
+msgstr "Liste des artistes"
 
 #: .\catalogue\templates\artist\index.html:12
 msgid "Ajouter un artiste"
-msgstr ""
+msgstr "Ajouter un artiste"
 
 #: .\catalogue\templates\artist\index.html:20
 msgid "Prénom"
-msgstr ""
+msgstr "Prénom"
 
 #: .\catalogue\templates\artist\index.html:21
 msgid "Nom"
-msgstr ""
+msgstr "Nom"
 
 #: .\catalogue\templates\artist\index.html:22
 #: .\catalogue\templates\artist\index.html:40
 msgid "Voir"
-msgstr ""
+msgstr "Voir"
 
 #: .\catalogue\templates\artist\index.html:26
 #: .\catalogue\templates\artist\index.html:54
 msgid "Supprimer"
-msgstr ""
+msgstr "Supprimer"
 
 #: .\catalogue\templates\artist\index.html:63
-#, fuzzy
-#| msgid "Artistes"
 msgid "Aucun artiste."
-msgstr "Artistes"
+msgstr "Aucun artiste."
 
 #: .\catalogue\templates\catalogue\home.html:10
 msgid ""

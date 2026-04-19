@@ -25,6 +25,18 @@ msgstr "Reserveringsproject"
 msgid "Réservations"
 msgstr "Reserveringen"
 
+msgid "au total"
+msgstr "in totaal"
+
+msgid "En attente"
+msgstr "In afwachting"
+
+msgid "Payées"
+msgstr "Betaald"
+
+msgid "Échouées"
+msgstr "Mislukt"
+
 #: .\Templates\Layouts\base.html:21
 msgid "Accueil"
 msgstr "Home"
@@ -67,39 +79,39 @@ msgstr "Registreren"
 #: .\accounts\templates\registration\login.html:7
 #: .\accounts\templates\registration\signup.html:12
 msgid "Se connecter"
-msgstr ""
+msgstr "Aanmelden"
 
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
-msgstr ""
+msgstr "Nog geen account?"
 
 #: .\accounts\templates\registration\login.html:12
 msgid "S'inscrire"
-msgstr ""
+msgstr "Registreren"
 
 #: .\accounts\templates\registration\signup.html:7
 msgid "Créer un compte"
-msgstr ""
+msgstr "Account aanmaken"
 
 #: .\accounts\templates\registration\signup.html:11
 msgid "Déjà un compte ?"
-msgstr ""
+msgstr "Al een account?"
 
 #: .\accounts\templates\user\profile.html:4
 msgid "Profil"
-msgstr ""
+msgstr "Profiel"
 
 #: .\accounts\templates\user\profile.html:9
 msgid "Login"
-msgstr ""
+msgstr "Gebruikersnaam"
 
 #: .\accounts\templates\user\profile.html:10
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: .\accounts\templates\user\profile.html:11
 msgid "Langue"
-msgstr ""
+msgstr "Taal"
 
 #: .\accounts\templates\user\profile.html:15
 #: .\accounts\templates\user\update.html:7
@@ -107,21 +119,21 @@ msgstr ""
 #: .\catalogue\templates\artist\index.html:25
 #: .\catalogue\templates\artist\index.html:48
 msgid "Modifier"
-msgstr ""
+msgstr "Bewerken"
 
 #: .\accounts\templates\user\profile.html:16
 msgid "Modifier le mot de passe"
-msgstr ""
+msgstr "Wachtwoord wijzigen"
 
 #: .\accounts\templates\user\profile.html:19
 msgid ""
 "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est "
 "irréversible."
-msgstr ""
+msgstr "Weet je zeker dat je je account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
 
 #: .\accounts\templates\user\profile.html:21
 msgid "Supprimer son compte"
-msgstr ""
+msgstr "Account verwijderen"
 
 #: .\accounts\templates\user\profile.html:26
 #, fuzzy
@@ -131,11 +143,11 @@ msgstr "Reserveringen"
 
 #: .\accounts\templates\user\profile.html:31
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: .\accounts\templates\user\profile.html:32
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: .\accounts\templates\user\profile.html:33
 #: .\cart\templates\cart\reservation_detail.html:11
@@ -144,7 +156,7 @@ msgstr "Status"
 
 #: .\accounts\templates\user\update.html:4
 msgid "Mise à jour du profil"
-msgstr ""
+msgstr "Profiel bijwerken"
 
 #: .\cart\templates\cart\checkout.html:4 .\cart\templates\cart\checkout.html:40
 msgid "Confirmer la commande"
@@ -188,88 +200,154 @@ msgstr "Totaal"
 msgid "Retour au panier"
 msgstr "Terug naar winkelwagen"
 
+#: .\catalogue\templates\artist\create.html
+msgid "Ajouter"
+msgstr "Toevoegen"
+
+msgid "Annuler"
+msgstr "Annuleren"
+
+msgid "Retour à la l'index"
+msgstr "Terug naar de index"
+
+#: .\catalogue\templates\admin\dashboard.html:11
+msgid "Utilisateurs"
+msgstr "Gebruikers"
+
+#: .\catalogue\templates\admin\dashboard.html:13
+msgid "Gérer"
+msgstr "Beheren"
+
+#: .\catalogue\templates\admin\dashboard.html:27
+msgid "Représentations"
+msgstr "Opvoeringen"
+
+#: .\catalogue\templates\admin\dashboard.html:43
+msgid "Réservations — {{ total }} au total"
+msgstr "Reserveringen — {{ total }} in totaal"
+
+#: .\catalogue\templates\admin\dashboard.html:45
+msgid "En attente : {{ pending }}"
+msgstr "In afwachting: {{ pending }}"
+
+#: .\catalogue\templates\admin\dashboard.html:46
+msgid "Payées : {{ paid }}"
+msgstr "Betaald: {{ paid }}"
+
+#: .\catalogue\templates\admin\dashboard.html:47
+msgid "Échouées : {{ failed }}"
+msgstr "Mislukt: {{ failed }}"
+
+#: .\catalogue\templates\admin\dashboard.html:55
+msgid "Dernières réservations"
+msgstr "Laatste reserveringen"
+
+#: .\catalogue\templates\admin\dashboard.html:59
+msgid "Utilisateur"
+msgstr "Gebruiker"
+
+#: .\catalogue\templates\admin\dashboard.html:77
+msgid "Aucune réservation."
+msgstr "Geen reservering."
+
+#: .\catalogue\templates\admin\dashboard.html:83
+msgid "Derniers utilisateurs inscrits"
+msgstr "Laatst ingeschreven gebruikers"
+
+#: .\catalogue\templates\admin\dashboard.html:87
+msgid "Nom d'utilisateur"
+msgstr "Gebruikersnaam"
+
+#: .\catalogue\templates\admin\dashboard.html:88
+msgid "Inscrit le"
+msgstr "Ingeschreven op"
+
+#: .\catalogue\templates\admin\dashboard.html:89
+msgid "Groupe"
+msgstr "Groep"
+
+#: .\catalogue\templates\admin\dashboard.html:100
+msgid "Aucun utilisateur."
+msgstr "Geen gebruiker."
+
 #: .\cart\templates\cart\detail.html:7
-#, fuzzy
-#| msgid "Panier"
 msgid "Mon panier"
-msgstr "Winkelwagen"
+msgstr "Mijn winkelwagen"
 
 #: .\cart\templates\cart\detail.html:10
 msgid "Votre panier est vide."
-msgstr ""
+msgstr "Je winkelwagen is leeg."
 
 #: .\cart\templates\cart\detail.html:11
-#, fuzzy
-#| msgid "Catalogue"
 msgid "Voir le catalogue"
-msgstr "Catalogus"
+msgstr "Bekijk de catalogus"
 
 #: .\cart\templates\cart\detail.html:16
 msgid "Representation"
-msgstr ""
+msgstr "Voorstelling"
 
 #: .\cart\templates\cart\detail.html:19
 msgid "Quantite"
-msgstr ""
+msgstr "Hoeveelheid"
 
 #: .\cart\templates\cart\detail.html:21
 msgid "Action"
-msgstr ""
+msgstr "Actie"
 
 #: .\cart\templates\cart\detail.html:36
 msgid "Mettre a jour"
-msgstr ""
+msgstr "Bijwerken"
 
 #: .\cart\templates\cart\detail.html:43
 msgid "Retirer"
-msgstr ""
+msgstr "Verwijderen"
 
 #: .\cart\templates\cart\detail.html:58
 msgid "Continuer les achats"
-msgstr ""
+msgstr "Verder winkelen"
 
 #: .\cart\templates\cart\detail.html:61
 msgid "Vider le panier"
-msgstr ""
+msgstr "Winkelwagen legen"
 
 #: .\cart\templates\cart\detail.html:63
 msgid "Commander"
-msgstr ""
+msgstr "Bestellen"
 
 #: .\cart\templates\cart\payment_simulation.html:4
 #: .\cart\templates\cart\payment_simulation.html:7
 msgid "Simulation de paiement"
-msgstr ""
+msgstr "Betalingssimulatie"
 
 #: .\cart\templates\cart\payment_simulation.html:9
 msgid ""
 "Choisissez le résultat du paiement pour simuler le comportement du système."
-msgstr ""
+msgstr "Kies het betaalresultaat om het gedrag van het systeem te simuleren."
 
 #: .\cart\templates\cart\payment_simulation.html:15
 msgid "Paiement réussi"
-msgstr ""
+msgstr "Betaling geslaagd"
 
 #: .\cart\templates\cart\payment_simulation.html:16
 msgid "La réservation sera confirmée et les places décomptées."
-msgstr ""
+msgstr "De reservering wordt bevestigd en de plaatsen worden afgetrokken."
 
 #: .\cart\templates\cart\payment_simulation.html:20
 msgid "Simuler le succès"
-msgstr ""
+msgstr "Succes simuleren"
 
 #: .\cart\templates\cart\payment_simulation.html:29
 msgid "Paiement échoué"
-msgstr ""
+msgstr "Betaling mislukt"
 
 #: .\cart\templates\cart\payment_simulation.html:30
 msgid ""
 "La réservation sera marquée comme échouée et vous retournerez au panier."
-msgstr ""
+msgstr "De reservering wordt als mislukt gemarkeerd en je keert terug naar de winkelwagen."
 
 #: .\cart\templates\cart\payment_simulation.html:34
 msgid "Simuler l'échec"
-msgstr ""
+msgstr "Mislukking simuleren"
 
 #: .\cart\templates\cart\reservation_detail.html:4
 #: .\cart\templates\cart\reservation_detail.html:7
@@ -285,38 +363,49 @@ msgid "Retour au profil"
 msgstr "Terug naar profiel"
 
 #: .\catalogue\templates\artist\index.html:8
-#, fuzzy
-#| msgid "Consulter la liste des artistes"
 msgid "Liste des artistes"
-msgstr "Bekijk de lijst met artiesten"
+msgstr "Lijst van artiesten"
+
+msgid "Modifier un artiste"
+msgstr "Artiest bewerken"
+
+msgid "Fiche d'un artiste"
+msgstr "Artiestfiche"
+
+msgid "Artiste"
+msgstr "Artiest"
+
+msgid "Retour à l'index"
+msgstr "Terug naar de index"
+
+msgid "Êtes-vous sûr de vouloir supprimer ?"
+msgstr "Weet je zeker dat je wilt verwijderen?"
 
 #: .\catalogue\templates\artist\index.html:12
 msgid "Ajouter un artiste"
-msgstr ""
+msgstr "Artiest toevoegen"
 
 #: .\catalogue\templates\artist\index.html:20
 msgid "Prénom"
-msgstr ""
+msgstr "Voornaam"
 
 #: .\catalogue\templates\artist\index.html:21
 msgid "Nom"
-msgstr ""
+msgstr "Achternaam"
 
 #: .\catalogue\templates\artist\index.html:22
 #: .\catalogue\templates\artist\index.html:40
 msgid "Voir"
-msgstr ""
+msgstr "Bekijken"
 
 #: .\catalogue\templates\artist\index.html:26
 #: .\catalogue\templates\artist\index.html:54
 msgid "Supprimer"
-msgstr ""
+msgstr "Verwijderen"
 
 #: .\catalogue\templates\artist\index.html:63
-#, fuzzy
-#| msgid "Artistes"
 msgid "Aucun artiste."
-msgstr "Artiesten"
+msgstr "Geen artiesten."
 
 #: .\catalogue\templates\catalogue\home.html:10
 msgid ""
@@ -326,6 +415,70 @@ msgstr "Welkom in de catalogus van onze reserveringsbeheerapplicatie."
 #: .\catalogue\templates\catalogue\home.html:15
 msgid "Consulter la liste des spectacles"
 msgstr "Bekijk de lijst met voorstellingen"
+
+#: .\catalogue\templates\show\index.html:4
+msgid "Liste des spectacles"
+msgstr "Lijst van voorstellingen"
+
+#: .\catalogue\templates\show\index.html:10
+msgid "Créer un spectacle"
+msgstr "Een voorstelling maken"
+
+#: .\catalogue\templates\show\create.html:10
+msgid "Sauvegarder"
+msgstr "Opslaan"
+
+#: .\catalogue\templates\show\create.html:12
+msgid "Retour à la liste"
+msgstr "Terug naar de lijst"
+
+#: form field labels
+msgid "Slug"
+msgstr "Slug"
+
+msgid "URL de l'affiche"
+msgstr "Poster-URL"
+
+msgid "Durée"
+msgstr "Duur"
+
+msgid "Créé en"
+msgstr "Gemaakt in"
+
+msgid "Réservable"
+msgstr "Boekbaar"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Description"
+msgstr "Beschrijving"
+
+msgid "Poster url"
+msgstr "Poster-URL"
+
+msgid "Duration"
+msgstr "Duur"
+
+msgid "Created in"
+msgstr "Gemaakt in"
+
+msgid "Location"
+msgstr "Locatie"
+
+msgid "Bookable"
+msgstr "Boekbaar"
+
+msgid "---------"
+msgstr "---------"
+
+#: .\catalogue\templates\show\index.html:15
+msgid "Titre"
+msgstr "Titel"
+
+#: .\catalogue\templates\show\index.html:17
+msgid "Lieu"
+msgstr "Locatie"
 
 #: .\catalogue\templates\catalogue\home.html:18
 msgid "Consulter la liste des artistes"
@@ -342,3 +495,31 @@ msgstr "Nederlands"
 #: .\reservations\settings.py:130
 msgid "English"
 msgstr "Engels"
+
+#: .\catalogue\templates\admin\user\edit.html:5
+msgid "Changer le rôle de %(username)s"
+msgstr "Rol wijzigen van %(username)s"
+
+#: .\catalogue\templates\admin\user\edit.html:9
+msgid "Changer le rôle de"
+msgstr "Rol wijzigen van"
+
+#: .\catalogue\templates\admin\user\edit.html:10
+msgid "Retour"
+msgstr "Terug"
+
+#: .\catalogue\templates\admin\user\edit.html:16
+msgid "Aucun"
+msgstr "Geen"
+
+#: .\catalogue\templates\admin\user\edit.html:18
+msgid "Groupe actuel :"
+msgstr "Huidige groep:"
+
+#: .\catalogue\templates\admin\user\edit.html:24
+msgid "Nouveau groupe"
+msgstr "Nieuwe groep"
+
+#: .\catalogue\templates\admin\user\edit.html:33
+msgid "Enregistrer"
+msgstr "Opslaan"

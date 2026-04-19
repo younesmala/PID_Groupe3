@@ -43,9 +43,13 @@
                 </a>
 
                 <div class="d-flex align-items-center gap-2 me-3">
-                    <a href="/fr/" class="btn btn-outline-light btn-sm {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">FR</a>
-                    <a href="/nl/" class="btn btn-outline-light btn-sm {% if LANGUAGE_CODE == 'nl' %}active{% endif %}">NL</a>
-                    <a href="/en/" class="btn btn-outline-light btn-sm {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</a>
+                    <form action="{% url 'set_language' %}" method="post" class="d-flex align-items-center gap-2 m-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="fr" class="btn btn-outline-light btn-sm {% if LANGUAGE_CODE == 'fr' %}active{% endif %}">FR</button>
+                        <button type="submit" name="language" value="nl" class="btn btn-outline-light btn-sm {% if LANGUAGE_CODE == 'nl' %}active{% endif %}">NL</button>
+                        <button type="submit" name="language" value="en" class="btn btn-outline-light btn-sm {% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+                    </form>
                 </div>
 
                 <div class="d-flex gap-2">

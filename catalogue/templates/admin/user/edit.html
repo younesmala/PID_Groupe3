@@ -1,24 +1,26 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Changer le rôle de {{ target.username }}{% endblock %}
+{% block title %}{% blocktrans with username=target.username %}Changer le rôle de {{ username }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>Changer le rôle de <strong>{{ target.username }}</strong></h1>
-  <a href="{% url 'catalogue:admin-users' %}" class="btn btn-outline-secondary btn-sm">← Retour</a>
+  <h1>{% trans "Changer le rôle de" %} <strong>{{ target.username }}</strong></h1>
+  <a href="{% url 'catalogue:admin-users' %}" class="btn btn-outline-secondary btn-sm">← {% trans "Retour" %}</a>
 </div>
 
 <div class="card" style="max-width: 400px;">
   <div class="card-body">
+    {% trans "Aucun" as no_group %}
     <p class="mb-3">
-      Groupe actuel :
-      <strong>{{ current_group|default:"Aucun" }}</strong>
+      {% trans "Groupe actuel :" %}
+      <strong>{{ current_group|default:no_group }}</strong>
     </p>
 
     <form method="post">
       {% csrf_token %}
       <div class="mb-3">
-        <label for="group" class="form-label">Nouveau groupe</label>
+        <label for="group" class="form-label">{% trans "Nouveau groupe" %}</label>
         <select name="group" id="group" class="form-select">
           {% for g in groups %}
           <option value="{{ g.name }}" {% if g == current_group %}selected{% endif %}>
@@ -27,7 +29,7 @@
           {% endfor %}
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Enregistrer</button>
+      <button type="submit" class="btn btn-primary">{% trans "Enregistrer" %}</button>
     </form>
   </div>
 </div>

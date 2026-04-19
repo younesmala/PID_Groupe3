@@ -46,6 +46,66 @@ msgstr "Shows"
 msgid "Dashboard Admin"
 msgstr "Admin Dashboard"
 
+#: .\catalogue\templates\admin\dashboard.html:11
+msgid "Utilisateurs"
+msgstr "Users"
+
+#: .\catalogue\templates\admin\dashboard.html:13
+msgid "Gérer"
+msgstr "Manage"
+
+#: .\catalogue\templates\admin\dashboard.html:27
+msgid "Représentations"
+msgstr "Representations"
+
+#: .\catalogue\templates\admin\dashboard.html:45
+msgid "au total"
+msgstr "in total"
+
+#: .\catalogue\templates\admin\dashboard.html:45
+msgid "En attente"
+msgstr "Pending"
+
+#: .\catalogue\templates\admin\dashboard.html:46
+msgid "Payées"
+msgstr "Paid"
+
+#: .\catalogue\templates\admin\dashboard.html:47
+msgid "Échouées"
+msgstr "Failed"
+
+#: .\catalogue\templates\admin\dashboard.html:55
+msgid "Dernières réservations"
+msgstr "Latest reservations"
+
+#: .\catalogue\templates\admin\dashboard.html:59
+msgid "Utilisateur"
+msgstr "User"
+
+#: .\catalogue\templates\admin\dashboard.html:77
+msgid "Aucune réservation."
+msgstr "No reservation."
+
+#: .\catalogue\templates\admin\dashboard.html:83
+msgid "Derniers utilisateurs inscrits"
+msgstr "Latest registered users"
+
+#: .\catalogue\templates\admin\dashboard.html:87
+msgid "Nom d'utilisateur"
+msgstr "Username"
+
+#: .\catalogue\templates\admin\dashboard.html:88
+msgid "Inscrit le"
+msgstr "Registered on"
+
+#: .\catalogue\templates\admin\dashboard.html:89
+msgid "Groupe"
+msgstr "Group"
+
+#: .\catalogue\templates\admin\dashboard.html:100
+msgid "Aucun utilisateur."
+msgstr "No user."
+
 #: .\Templates\Layouts\base.html:37 .\cart\templates\cart\detail.html:4
 msgid "Panier"
 msgstr "Cart"
@@ -67,61 +127,56 @@ msgstr "Sign up"
 #: .\accounts\templates\registration\login.html:7
 #: .\accounts\templates\registration\signup.html:12
 msgid "Se connecter"
-msgstr ""
+msgstr "Sign in"
 
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
-msgstr ""
+msgstr "No account yet?"
 
 #: .\accounts\templates\registration\login.html:12
 msgid "S'inscrire"
-msgstr ""
+msgstr "Sign up"
 
 #: .\accounts\templates\registration\signup.html:7
 msgid "Créer un compte"
-msgstr ""
+msgstr "Create an account"
 
 #: .\accounts\templates\registration\signup.html:11
 msgid "Déjà un compte ?"
-msgstr ""
+msgstr "Already have an account?"
 
 #: .\accounts\templates\user\profile.html:4
 msgid "Profil"
-msgstr ""
+msgstr "Profile"
 
 #: .\accounts\templates\user\profile.html:9
 msgid "Login"
-msgstr ""
+msgstr "Username"
 
 #: .\accounts\templates\user\profile.html:10
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: .\accounts\templates\user\profile.html:11
 msgid "Langue"
-msgstr ""
+msgstr "Language"
 
 #: .\accounts\templates\user\profile.html:15
 #: .\accounts\templates\user\update.html:7
 #: .\accounts\templates\user\update.html:11
-#: .\catalogue\templates\artist\index.html:25
-#: .\catalogue\templates\artist\index.html:48
-msgid "Modifier"
-msgstr ""
-
 #: .\accounts\templates\user\profile.html:16
 msgid "Modifier le mot de passe"
-msgstr ""
+msgstr "Change password"
 
 #: .\accounts\templates\user\profile.html:19
 msgid ""
 "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est "
 "irréversible."
-msgstr ""
+msgstr "Are you sure you want to delete your account? This action cannot be undone."
 
 #: .\accounts\templates\user\profile.html:21
 msgid "Supprimer son compte"
-msgstr ""
+msgstr "Delete account"
 
 #: .\accounts\templates\user\profile.html:26
 #, fuzzy
@@ -131,11 +186,11 @@ msgstr "Reservations"
 
 #: .\accounts\templates\user\profile.html:31
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: .\accounts\templates\user\profile.html:32
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: .\accounts\templates\user\profile.html:33
 #: .\cart\templates\cart\reservation_detail.html:11
@@ -144,7 +199,7 @@ msgstr "Status"
 
 #: .\accounts\templates\user\update.html:4
 msgid "Mise à jour du profil"
-msgstr ""
+msgstr "Profile update"
 
 #: .\cart\templates\cart\checkout.html:4 .\cart\templates\cart\checkout.html:40
 msgid "Confirmer la commande"
@@ -196,7 +251,7 @@ msgstr "Cart"
 
 #: .\cart\templates\cart\detail.html:10
 msgid "Votre panier est vide."
-msgstr ""
+msgstr "Your cart is empty."
 
 #: .\cart\templates\cart\detail.html:11
 #, fuzzy
@@ -206,70 +261,70 @@ msgstr "Catalog"
 
 #: .\cart\templates\cart\detail.html:16
 msgid "Representation"
-msgstr ""
+msgstr "Show"
 
 #: .\cart\templates\cart\detail.html:19
 msgid "Quantite"
-msgstr ""
+msgstr "Quantity"
 
 #: .\cart\templates\cart\detail.html:21
 msgid "Action"
-msgstr ""
+msgstr "Action"
 
 #: .\cart\templates\cart\detail.html:36
 msgid "Mettre a jour"
-msgstr ""
+msgstr "Update"
 
 #: .\cart\templates\cart\detail.html:43
 msgid "Retirer"
-msgstr ""
+msgstr "Remove"
 
 #: .\cart\templates\cart\detail.html:58
 msgid "Continuer les achats"
-msgstr ""
+msgstr "Continue shopping"
 
 #: .\cart\templates\cart\detail.html:61
 msgid "Vider le panier"
-msgstr ""
+msgstr "Empty cart"
 
 #: .\cart\templates\cart\detail.html:63
 msgid "Commander"
-msgstr ""
+msgstr "Checkout"
 
 #: .\cart\templates\cart\payment_simulation.html:4
 #: .\cart\templates\cart\payment_simulation.html:7
 msgid "Simulation de paiement"
-msgstr ""
+msgstr "Payment simulation"
 
 #: .\cart\templates\cart\payment_simulation.html:9
 msgid ""
 "Choisissez le résultat du paiement pour simuler le comportement du système."
-msgstr ""
+msgstr "Choose the payment result to simulate system behavior."
 
 #: .\cart\templates\cart\payment_simulation.html:15
 msgid "Paiement réussi"
-msgstr ""
+msgstr "Payment successful"
 
 #: .\cart\templates\cart\payment_simulation.html:16
 msgid "La réservation sera confirmée et les places décomptées."
-msgstr ""
+msgstr "The reservation will be confirmed and seats will be deducted."
 
 #: .\cart\templates\cart\payment_simulation.html:20
 msgid "Simuler le succès"
-msgstr ""
+msgstr "Simulate success"
 
 #: .\cart\templates\cart\payment_simulation.html:29
 msgid "Paiement échoué"
-msgstr ""
+msgstr "Payment failed"
 
 #: .\cart\templates\cart\payment_simulation.html:30
 msgid ""
 "La réservation sera marquée comme échouée et vous retournerez au panier."
-msgstr ""
+msgstr "The reservation will be marked as failed and you will return to the cart."
 
 #: .\cart\templates\cart\payment_simulation.html:34
 msgid "Simuler l'échec"
-msgstr ""
+msgstr "Simulate failure"
 
 #: .\cart\templates\cart\reservation_detail.html:4
 #: .\cart\templates\cart\reservation_detail.html:7
@@ -285,38 +340,48 @@ msgid "Retour au profil"
 msgstr "Back to profile"
 
 #: .\catalogue\templates\artist\index.html:8
-#, fuzzy
-#| msgid "Consulter la liste des artistes"
 msgid "Liste des artistes"
-msgstr "View the list of artists"
+msgstr "List of artists"
 
 #: .\catalogue\templates\artist\index.html:12
 msgid "Ajouter un artiste"
-msgstr ""
+msgstr "Add an artist"
+
+#: .\catalogue\templates\artist\edit.html
+msgid "Modifier un artiste"
+msgstr "Edit an artist"
 
 #: .\catalogue\templates\artist\index.html:20
 msgid "Prénom"
-msgstr ""
+msgstr "First name"
 
 #: .\catalogue\templates\artist\index.html:21
 msgid "Nom"
-msgstr ""
+msgstr "Last name"
 
 #: .\catalogue\templates\artist\index.html:22
 #: .\catalogue\templates\artist\index.html:40
 msgid "Voir"
-msgstr ""
+msgstr "View"
+
+#: .\catalogue\templates\artist\index.html:24
+msgid "Modifier"
+msgstr "Edit"
 
 #: .\catalogue\templates\artist\index.html:26
 #: .\catalogue\templates\artist\index.html:54
 msgid "Supprimer"
-msgstr ""
+msgstr "Delete"
 
 #: .\catalogue\templates\artist\index.html:63
-#, fuzzy
-#| msgid "Artistes"
 msgid "Aucun artiste."
-msgstr "Artists"
+msgstr "No artists."
+
+msgid "Retour à la l'index"
+msgstr "Back to the index"
+
+msgid "Annuler"
+msgstr "Cancel"
 
 #: .\catalogue\templates\catalogue\home.html:10
 msgid ""
@@ -326,6 +391,56 @@ msgstr "Welcome to the catalog of our reservations management application."
 #: .\catalogue\templates\catalogue\home.html:15
 msgid "Consulter la liste des spectacles"
 msgstr "View the list of shows"
+
+#: .\catalogue\templates\show\index.html:4
+msgid "Liste des spectacles"
+msgstr "List of shows"
+
+#: .\catalogue\templates\show\index.html:10
+#: .\catalogue\templates\show\create.html:4
+#: .\catalogue\templates\show\create.html:7
+msgid "Créer un spectacle"
+msgstr "Create a show"
+
+#: .\catalogue\templates\show\index.html:15
+msgid "Titre"
+msgstr "Title"
+
+#: .\catalogue\templates\show\index.html:16
+msgid "Description"
+msgstr "Description"
+
+#: .\catalogue\templates\show\index.html:17
+msgid "Lieu"
+msgstr "Location"
+
+#: .\catalogue\templates\show\index.html:18
+msgid "Bookable"
+msgstr "Bookable"
+
+#: .\catalogue\templates\show\create.html:10
+msgid "Sauvegarder"
+msgstr "Save"
+
+#: .\catalogue\templates\show\create.html:12
+msgid "Retour à la liste"
+msgstr "Back to the list"
+
+#: form field labels
+msgid "Slug"
+msgstr "Slug"
+
+msgid "URL de l'affiche"
+msgstr "Poster URL"
+
+msgid "Durée"
+msgstr "Duration"
+
+msgid "Créé en"
+msgstr "Created in"
+
+msgid "Réservable"
+msgstr "Bookable"
 
 #: .\catalogue\templates\catalogue\home.html:18
 msgid "Consulter la liste des artistes"
@@ -342,3 +457,31 @@ msgstr "Dutch"
 #: .\reservations\settings.py:130
 msgid "English"
 msgstr "English"
+
+#: .\catalogue\templates\admin\user\edit.html:5
+msgid "Changer le rôle de %(username)s"
+msgstr "Change role of %(username)s"
+
+#: .\catalogue\templates\admin\user\edit.html:9
+msgid "Changer le rôle de"
+msgstr "Change role of"
+
+#: .\catalogue\templates\admin\user\edit.html:10
+msgid "Retour"
+msgstr "Back"
+
+#: .\catalogue\templates\admin\user\edit.html:16
+msgid "Aucun"
+msgstr "None"
+
+#: .\catalogue\templates\admin\user\edit.html:18
+msgid "Groupe actuel :"
+msgstr "Current group:"
+
+#: .\catalogue\templates\admin\user\edit.html:24
+msgid "Nouveau groupe"
+msgstr "New group"
+
+#: .\catalogue\templates\admin\user\edit.html:33
+msgid "Enregistrer"
+msgstr "Save"
