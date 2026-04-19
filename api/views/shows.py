@@ -11,6 +11,7 @@ class ShowsView(APIView):
     GET: Récupère tous les spectacles
     POST: Crée un nouveau spectacle
     """
+
     def get(self, request, *args, **kwargs):
         shows = Show.objects.all()
         serializer = ShowSerializer(shows, many=True)
@@ -30,6 +31,7 @@ class ShowsDetailView(APIView):
     PUT: Met à jour un spectacle
     DELETE: Supprime un spectacle
     """
+
     def get(self, request, id, *args, **kwargs):
         try:
             show = Show.objects.get(id=id)
@@ -74,6 +76,7 @@ class ShowsSearchView(APIView):
     """
     GET: Recherche des spectacles
     """
+
     def get(self, request, *args, **kwargs):
         # Implémentation basique de recherche - peut être étendue
         query = request.query_params.get('q', '')

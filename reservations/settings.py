@@ -1,4 +1,5 @@
 
+from django.utils.translation import gettext_lazy as _
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -33,7 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    #ajout de catalogue
+    # ajout de catalogue
     "catalogue",
 
     # ajout de api
@@ -62,7 +63,7 @@ ROOT_URLCONF = "reservations.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -122,7 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ('fr', _('French')),
@@ -156,5 +156,3 @@ LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
 CART_SESSION_ID = 'cart'
-
-

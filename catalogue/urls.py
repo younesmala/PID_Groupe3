@@ -27,5 +27,6 @@ urlpatterns = [
     # Admin dashboard
     path("admin-dashboard/", AdminDashboardView.as_view(), name="admin-dashboard"),
     path("admin-dashboard/users/", AdminUsersView.as_view(), name="admin-users"),
-    path("admin-dashboard/users/<int:pk>/edit/", AdminUserEditView.as_view(), name="admin-user-edit"),
+    path("admin-dashboard/users/<int:pk>/edit/",
+         AdminUserEditView.as_view(), name="admin-user-edit"),
 ]

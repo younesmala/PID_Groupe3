@@ -22,7 +22,8 @@ def cart_add(request, representation_id):
     override = request.POST.get('override_quantity') == 'true'
 
     price = get_object_or_404(Price, pk=price_id)
-    cart.add(representation=representation, price=price, quantity=quantity, override_quantity=override)
+    cart.add(representation=representation, price=price,
+             quantity=quantity, override_quantity=override)
     return redirect('cart:cart_detail')
 
 
@@ -70,7 +71,8 @@ def cart_checkout(request):
 
         # Stocke les IDs en session pour la simulation de paiement
         request.session['pending_reservation_ids'] = reservation_ids
-        reservation_id = reservation_ids[0] if len(reservation_ids) == 1 else ','.join(reservation_ids)
+        reservation_id = reservation_ids[0] if len(
+            reservation_ids) == 1 else ','.join(reservation_ids)
         return redirect('cart:payment_simulation', reservation_id=reservation_id)
 
     return render(request, 'cart/checkout.html', {'cart': cart})
@@ -89,7 +91,8 @@ def payment_simulation(request, reservation_id):
             # Décrémenter les places disponibles
             for reservation in reservations:
                 rep = reservation.representation
-                rep.available_seats = max(0, rep.available_seats - reservation.quantity)
+                rep.available_seats = max(
+                    0, rep.available_seats - reservation.quantity)
                 rep.save()
             Cart(request).clear()
             return redirect('cart:reservation_detail', reservation_id=ids[0])
@@ -103,8 +106,10 @@ def payment_simulation(request, reservation_id):
 
 @login_required
 def reservation_detail(request, reservation_id):
-    reservation = get_object_or_404(Reservation, pk=reservation_id, user=request.user)
-    items = reservation.representation_reservations.select_related('representation', 'price').all()
+    reservation = get_object_or_404(
+        Reservation, pk=reservation_id, user=request.user)
+    items = reservation.representation_reservations.select_related(
+        'representation', 'price').all()
     total = sum(item.subtotal for item in items)
     return render(request, 'cart/reservation_detail.html', {
         'reservation': reservation,
