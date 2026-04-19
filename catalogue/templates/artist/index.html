@@ -1,14 +1,15 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Artistes{% endblock %}
+{% block title %}{% trans "Artistes" %}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="m-0">Liste des artistes</h1>
+  <h1 class="m-0">{% trans "Liste des artistes" %}</h1>
 
   {% if user.is_authenticated and user.is_staff %}
     <a class="btn btn-primary" href="{% url 'catalogue:artist-create' %}">
-      + Ajouter un artiste
+      + {% trans "Ajouter un artiste" %}
     </a>
   {% endif %}
 </div>
@@ -16,13 +17,13 @@
 <table class="table table-striped align-middle">
   <thead>
     <tr>
-      <th>Prénom</th>
-      <th>Nom</th>
-      <th style="width: 1%;">Voir</th>
+      <th>{% trans "Prénom" %}</th>
+      <th>{% trans "Nom" %}</th>
+      <th style="width: 1%;">{% trans "Voir" %}</th>
 
       {% if user.is_authenticated and user.is_staff %}
-        <th style="width: 1%;">Modifier</th>
-        <th style="width: 1%;">Supprimer</th>
+        <th style="width: 1%;">{% trans "Modifier" %}</th>
+        <th style="width: 1%;">{% trans "Supprimer" %}</th>
       {% endif %}
     </tr>
   </thead>
@@ -36,7 +37,7 @@
         <td>
           <a class="btn btn-outline-secondary btn-sm"
              href="{% url 'catalogue:artist-show' artist.id %}">
-            Voir
+            {% trans "Voir" %}
           </a>
         </td>
 
@@ -44,13 +45,13 @@
           <td>
             <a class="btn btn-outline-primary btn-sm"
                href="{% url 'catalogue:artist-edit' artist.id %}">
-              Modifier
+              {% trans "Modifier" %}
             </a>
           </td>
           <td>
             <a class="btn btn-outline-danger btn-sm"
                href="{% url 'catalogue:artist-delete' artist.id %}">
-              Supprimer
+              {% trans "Supprimer" %}
             </a>
           </td>
         {% endif %}
@@ -59,7 +60,7 @@
       <tr>
         <td colspan="{% if user.is_authenticated and user.is_staff %}5{% else %}3{% endif %}"
             class="text-muted text-center">
-          Aucun artiste.
+          {% trans "Aucun artiste." %}
         </td>
       </tr>
     {% endfor %}

@@ -1,24 +1,25 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}{% trans "Dashboard Admin" %}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Dashboard Admin</h1>
+<h1 class="mb-4">{% trans "Dashboard Admin" %}</h1>
 
 <div class="row g-3 mb-4">
   <div class="col-md-4">
     <div class="card text-bg-primary">
       <div class="card-body">
-        <h5 class="card-title">Utilisateurs</h5>
+        <h5 class="card-title">{% trans "Utilisateurs" %}</h5>
         <p class="card-text display-6">{{ total_users }}</p>
-        <a href="{% url 'catalogue:admin-users' %}" class="btn btn-light btn-sm">Gérer</a>
+        <a href="{% url 'catalogue:admin-users' %}" class="btn btn-light btn-sm">{% trans "Gérer" %}</a>
       </div>
     </div>
   </div>
   <div class="col-md-4">
     <div class="card text-bg-success">
       <div class="card-body">
-        <h5 class="card-title">Spectacles</h5>
+        <h5 class="card-title">{% trans "Spectacles" %}</h5>
         <p class="card-text display-6">{{ total_shows }}</p>
       </div>
     </div>
@@ -26,7 +27,7 @@
   <div class="col-md-4">
     <div class="card text-bg-info">
       <div class="card-body">
-        <h5 class="card-title">Représentations</h5>
+        <h5 class="card-title">{% trans "Représentations" %}</h5>
         <p class="card-text display-6">{{ total_representations }}</p>
       </div>
     </div>
@@ -34,7 +35,7 @@
   <div class="col-md-4">
     <div class="card text-bg-warning">
       <div class="card-body">
-        <h5 class="card-title">Artistes</h5>
+        <h5 class="card-title">{% trans "Artistes" %}</h5>
         <p class="card-text display-6">{{ total_artists }}</p>
       </div>
     </div>
@@ -42,11 +43,11 @@
   <div class="col-md-8">
     <div class="card border-secondary">
       <div class="card-body">
-        <h5 class="card-title">Réservations — {{ total_reservations }} au total</h5>
+        <h5 class="card-title">{% trans "Réservations" %} - {{ total_reservations }} {% trans "au total" %}</h5>
         <div class="d-flex gap-3 mt-2">
-          <span class="badge bg-warning text-dark fs-6">En attente : {{ reservations_pending }}</span>
-          <span class="badge bg-success fs-6">Payées : {{ reservations_paid }}</span>
-          <span class="badge bg-danger fs-6">Échouées : {{ reservations_failed }}</span>
+          <span class="badge bg-warning text-dark fs-6">{% trans "En attente" %} : {{ reservations_pending }}</span>
+          <span class="badge bg-success fs-6">{% trans "Payées" %} : {{ reservations_paid }}</span>
+          <span class="badge bg-danger fs-6">{% trans "Échouées" %} : {{ reservations_failed }}</span>
         </div>
       </div>
     </div>
@@ -55,13 +56,13 @@
 
 <div class="row g-4">
   <div class="col-md-6">
-    <h2 class="h5 mb-3">Dernières réservations</h2>
+    <h2 class="h5 mb-3">{% trans "Dernières réservations" %}</h2>
     <table class="table table-bordered table-sm">
       <thead class="table-dark">
         <tr>
-          <th>Utilisateur</th>
-          <th>Date</th>
-          <th>Statut</th>
+          <th>{% trans "Utilisateur" %}</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Statut" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -80,20 +81,20 @@
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="3" class="text-muted">Aucune réservation.</td></tr>
+        <tr><td colspan="3" class="text-muted">{% trans "Aucune réservation." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
   <div class="col-md-6">
-    <h2 class="h5 mb-3">Derniers utilisateurs inscrits</h2>
+    <h2 class="h5 mb-3">{% trans "Derniers utilisateurs inscrits" %}</h2>
     <table class="table table-bordered table-sm">
       <thead class="table-dark">
         <tr>
-          <th>Nom d'utilisateur</th>
-          <th>Inscrit le</th>
-          <th>Groupe</th>
+          <th>{% trans "Nom d'utilisateur" %}</th>
+          <th>{% trans "Inscrit le" %}</th>
+          <th>{% trans "Groupe" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -104,7 +105,7 @@
           <td>{{ u.groups.all|first|default:"—" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="3" class="text-muted">Aucun utilisateur.</td></tr>
+        <tr><td colspan="3" class="text-muted">{% trans "Aucun utilisateur." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>

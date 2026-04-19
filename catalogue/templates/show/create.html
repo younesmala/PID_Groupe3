@@ -1,13 +1,14 @@
 {% extends 'layouts/base.html' %}
+{% load i18n %}
 
-{% block title %}Create Show{% endblock %}
+{% block title %}{% trans "Créer un spectacle" %}{% endblock %}
 
 {% block content %}
-    <h1>Créer un spectacle</h1>
+    <h1>{% trans "Créer un spectacle" %}</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Sauvegarder</button>
+        <button type="submit">{% trans "Sauvegarder" %}</button>
     </form>
-    <a href="{% url 'catalogue:show-index' %}">Retour à la liste</a>
+    <a href="{% url 'catalogue:show-index' %}">{% trans "Retour à la liste" %}</a>
 {% endblock %}
