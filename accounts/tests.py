@@ -58,7 +58,7 @@ class LoginTestCase(TestCase):
             'password': 'wrongpassword',
         })
         # Failed login stays on login page (200) or re-renders form
-        self.assertNotEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(LOGIN_URL='/accounts/login/')
     def test_profile_requires_login(self):

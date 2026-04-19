@@ -145,7 +145,7 @@ class CartTestCase(TestCase):
 
         response = self.client.get(reverse('home'))
         self.assertContains(response, 'badge rounded-pill bg-danger')
-        self.assertContains(response, '>1<')
+        self.assertRegex(response.content.decode(), r'badge[^<]*>\s*1\s*<')
 
     @override_settings(LOGIN_URL='/accounts/login/')
     def test_cart_checkout_requires_login(self):
