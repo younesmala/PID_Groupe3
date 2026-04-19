@@ -31,7 +31,6 @@ class UserUpdateForm(UserChangeForm):
 
         self.fields['username'].help_text = None
 
-
         # Récupérer les metadonnées de l'utilisateur
         user = kwargs.get('instance')
         self.initial['langue'] = user.usermeta.langue

@@ -112,6 +112,7 @@ class ArtistsApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Not found")
 
+
 class ShowsApiTests(APITestCase):
     def setUp(self):
         self.show = Show.objects.create(
@@ -225,6 +226,7 @@ class ShowsApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Spectacle non trouvé")
 
+
 class RepresentationsApiTests(APITestCase):
     def setUp(self):
         self.show = Show.objects.create(
@@ -255,7 +257,8 @@ class RepresentationsApiTests(APITestCase):
         self.assertEqual(len(response.data), 1)
 
     def test_get_representation_detail_returns_200(self):
-        url = reverse("api:representations-detail", args=[self.representation.id])
+        url = reverse("api:representations-detail",
+                      args=[self.representation.id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -290,7 +293,8 @@ class RepresentationsApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_put_representation_valid_data_returns_200(self):
-        url = reverse("api:representations-detail", args=[self.representation.id])
+        url = reverse("api:representations-detail",
+                      args=[self.representation.id])
         data = {
             "schedule": "2026-07-01T21:00:00Z",
         }
@@ -317,7 +321,8 @@ class RepresentationsApiTests(APITestCase):
         self.assertEqual(response.data["detail"], "Représentation non trouvée")
 
     def test_delete_representation_returns_204(self):
-        url = reverse("api:representations-detail", args=[self.representation.id])
+        url = reverse("api:representations-detail",
+                      args=[self.representation.id])
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -340,7 +345,8 @@ class RepresentationsApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_representations_availability_returns_200(self):
-        url = reverse("api:representations-availability", args=[self.representation.id])
+        url = reverse("api:representations-availability",
+                      args=[self.representation.id])
         response = self.client.get(url, {"show": self.show.id})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

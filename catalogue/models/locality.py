@@ -26,4 +26,3 @@ class Locality(models.Model):
 
     def natural_key(self):
         return (self.postal_code, self.locality)
-

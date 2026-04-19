@@ -7,7 +7,37 @@ on:
     branches: [ main ]
 
 jobs:
+
+  # ── 1. Linting Python ──────────────────────────────────────────────────────
+  lint:
+    name: Python Lint (flake8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install flake8
+        run: pip install flake8
+
+      # E501 = line too long (toléré à 120 car Django génère parfois des longues lignes)
+      # migrations/ exclues car générées automatiquement
+      - name: Run flake8
+        run: |
+          flake8 . \
+            --count \
+            --max-line-length=120 \
+            --exclude=env,node_modules,migrations,__pycache__ \
+            --show-source \
+            --statistics
+
+  # ── 2. Tests Django + MySQL 8.0 ────────────────────────────────────────────
   test:
+    name: Django Tests (MySQL 8.0)
     runs-on: ubuntu-latest
 
     services:
@@ -25,10 +55,10 @@ jobs:
           --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
@@ -45,8 +75,8 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           SECRET_KEY: test-secret-key-for-ci
-        run: |
-          python manage.py migrate
+          DEBUG: "False"
+        run: python manage.py migrate
 
       - name: Run tests
         env:
@@ -56,5 +86,26 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           SECRET_KEY: test-secret-key-for-ci
-        run: |
-          python manage.py test accounts catalogue
+          DEBUG: "False"
+        run: python manage.py test accounts catalogue
+
+  # ── 3. Build Frontend React (Vite) ─────────────────────────────────────────
+  frontend:
+    name: Frontend React (npm install + build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build

@@ -35,7 +35,8 @@ def create(request):
         messages.success(request, "L'artiste a été ajouté avec succès.")
         return redirect("catalogue:artist-index")
     elif request.method == "POST" and not form.is_valid():
-        messages.error(request, "Erreur lors de l'ajout de l'artiste. Veuillez vérifier les informations saisies.")
+        messages.error(
+            request, "Erreur lors de l'ajout de l'artiste. Veuillez vérifier les informations saisies.")
 
     return render(request, "artist/create.html", {
         "form": form,
@@ -76,4 +77,3 @@ def delete(request, artist_id):
     return render(request, "artist/delete.html", {
         "artist": artist,
     })
-
