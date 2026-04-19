@@ -1,12 +1,13 @@
-<h1>Inscription</h1>
+{% load i18n %}
+<h1>{% trans "Inscription" %}</h1>
 
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Créer un compte</button>
+  <button type="submit">{% trans "Créer un compte" %}</button>
 </form>
 
 <p>
-  Déjà un compte ?
-  <a href="{% url 'login' %}">Se connecter</a>
+  {% trans "Déjà un compte ?" %}
+  <a href="{% url 'login' %}">{% trans "Se connecter" %}</a>
 </p>

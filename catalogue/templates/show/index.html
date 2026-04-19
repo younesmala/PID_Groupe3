@@ -1,21 +1,22 @@
 {% extends 'layouts/base.html' %}
+{% load i18n %}
 
-{% block title %}Liste des spectacles{% endblock %}
+{% block title %}{% trans "Liste des spectacles" %}{% endblock %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
+    <h1>{% trans "Liste des spectacles" %}</h1>
 
     {% if perms.catalogue.add_show %}
-        <a href="{% url 'catalogue:show-create' %}" class="btn btn-primary">Créer un spectacle</a>
+        <a href="{% url 'catalogue:show-create' %}" class="btn btn-primary">{% trans "Créer un spectacle" %}</a>
     {% endif %}
 
     <table>
         <thead>
             <tr>
-                <th>Titre</th>
-                <th>Description</th>
-                <th>Lieu</th>
-                <th>Bookable</th>
+                <th>{% trans "Titre" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th>{% trans "Lieu" %}</th>
+                <th>{% trans "Bookable" %}</th>
             </tr>
         </thead>
         <tbody>

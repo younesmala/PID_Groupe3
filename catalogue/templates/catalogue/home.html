@@ -1,20 +1,21 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Catalogue{% endblock %}
+{% block title %}{% trans "Catalogue" %}{% endblock %}
 
 {% block content %}
-<h1>Catalogue</h1>
+<h1>{% trans "Catalogue" %}</h1>
 
 <p>
-    Bienvenue dans le catalogue de notre application de gestion de réservations.
+    {% trans "Bienvenue dans le catalogue de notre application de gestion de réservations." %}
 </p>
 
 <ul class="list-group col-md-4">
     <li class="list-group-item">
-        <a href="{% url 'catalogue:show-index' %}">Consulter la liste des spectacles</a>
+        <a href="{% url 'catalogue:show-index' %}">{% trans "Consulter la liste des spectacles" %}</a>
     </li>
     <li class="list-group-item">
-        <a href="{% url 'catalogue:artist-index' %}">Consulter la liste des artistes</a>
+        <a href="{% url 'catalogue:artist-index' %}">{% trans "Consulter la liste des artistes" %}</a>
     </li>
 </ul>
 {% endblock %}

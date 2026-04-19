@@ -1,21 +1,22 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Gestion des utilisateurs{% endblock %}
+{% block title %}{% trans "Utilisateurs" %}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>Utilisateurs</h1>
-  <a href="{% url 'catalogue:admin-dashboard' %}" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+  <h1>{% trans "Utilisateurs" %}</h1>
+  <a href="{% url 'catalogue:admin-dashboard' %}" class="btn btn-outline-secondary btn-sm">← {% trans "Dashboard Admin" %}</a>
 </div>
 
 <table class="table table-bordered table-hover">
   <thead class="table-dark">
     <tr>
-      <th>Nom d'utilisateur</th>
-      <th>Email</th>
-      <th>Inscrit le</th>
-      <th>Groupe</th>
-      <th>Action</th>
+      <th>{% trans "Nom d'utilisateur" %}</th>
+      <th>{% trans "Email" %}</th>
+      <th>{% trans "Inscrit le" %}</th>
+      <th>{% trans "Groupe" %}</th>
+      <th>{% trans "Action" %}</th>
     </tr>
   </thead>
   <tbody>
@@ -27,12 +28,12 @@
       <td>{{ u.groups.all|first|default:"—" }}</td>
       <td>
         <a href="{% url 'catalogue:admin-user-edit' u.pk %}" class="btn btn-sm btn-outline-primary">
-          Changer de rôle
+          {% trans "Modifier" %}
         </a>
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="5" class="text-muted">Aucun utilisateur.</td></tr>
+    <tr><td colspan="5" class="text-muted">{% trans "Aucun utilisateur." %}</td></tr>
     {% endfor %}
   </tbody>
 </table>

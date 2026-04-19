@@ -1,13 +1,14 @@
 {% extends "layouts/base.html" %}
+{% load i18n %}
 
-{% block title %}Mise à jour du profil{% endblock %}
+{% block title %}{% trans "Mise à jour du profil" %}{% endblock %}
 
 {% block content %}
-<h2>Modifier</h2>
+<h2>{% trans "Modifier" %}</h2>
 <form method="post" action="{% url 'accounts:user-update' request.user.id %}">
   {% csrf_token %}
   {{ form }}
-  <button type="submit">Modifier</button>
+  <button type="submit">{% trans "Modifier" %}</button>
 </form>
 {% endblock %}
 
