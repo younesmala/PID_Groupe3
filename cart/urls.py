@@ -6,9 +6,12 @@ app_name = 'cart'
 urlpatterns = [
     path('', views.cart_detail, name='cart_detail'),
     path('add/<int:representation_id>/', views.cart_add, name='cart_add'),
-    path('remove/<int:representation_id>/<int:price_id>/', views.cart_remove, name='cart_remove'),
+    path('remove/<int:representation_id>/<int:price_id>/',
+         views.cart_remove, name='cart_remove'),
     path('clear/', views.cart_clear, name='cart_clear'),
     path('checkout/', views.cart_checkout, name='cart_checkout'),
-    path('payment/<str:reservation_id>/', views.payment_simulation, name='payment_simulation'),
-    path('reservation/<int:reservation_id>/', views.reservation_detail, name='reservation_detail'),
+    path('payment/<str:reservation_id>/',
+         views.payment_simulation, name='payment_simulation'),
+    path('reservation/<int:reservation_id>/',
+         views.reservation_detail, name='reservation_detail'),
 ]

@@ -1,11 +1,13 @@
 from django.db import models
 
+
 class TypeManager(models.Manager):
     def get_by_natural_key(self, type,):
         return self.get(type=type,)
 
+
 class Type(models.Model):
-    type =  models.CharField(max_length=60)
+    type = models.CharField(max_length=60)
 
     objects = TypeManager()
 

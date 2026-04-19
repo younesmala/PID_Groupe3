@@ -24,7 +24,8 @@ def make_show():
 def make_representation(show, available_seats=10):
     return Representation.objects.create(
         show=show,
-        schedule=datetime.datetime(2025, 6, 1, 20, 0, tzinfo=datetime.timezone.utc),
+        schedule=datetime.datetime(
+            2025, 6, 1, 20, 0, tzinfo=datetime.timezone.utc),
         available_seats=available_seats,
     )
 
@@ -112,7 +113,8 @@ class CartTestCase(TestCase):
             'price_id': self.price.id,
             'quantity': 1,
         })
-        response = self.client.post(reverse('cart:cart_remove', args=[self.representation.id, self.price.id]))
+        response = self.client.post(reverse('cart:cart_remove', args=[
+                                    self.representation.id, self.price.id]))
         self.assertEqual(response.status_code, 302)
         session = self.client.session
         self.assertEqual(len(session['cart']), 0)

@@ -54,7 +54,8 @@ class CartAddView(APIView):
         if quantity is None or quantity <= 0:
             return Response({"detail": "Quantité invalide."}, status=status.HTTP_400_BAD_REQUEST)
 
-        representation = get_object_or_404(Representation, pk=representation_id)
+        representation = get_object_or_404(
+            Representation, pk=representation_id)
 
         if price_id:
             price = get_object_or_404(Price, pk=price_id)
@@ -92,7 +93,8 @@ class CartUpdateView(APIView):
         if quantity is None:
             return Response({"detail": "Quantité invalide."}, status=status.HTTP_400_BAD_REQUEST)
 
-        representation = get_object_or_404(Representation, pk=representation_id)
+        representation = get_object_or_404(
+            Representation, pk=representation_id)
 
         if price_id:
             price = get_object_or_404(Price, pk=price_id)
@@ -114,7 +116,8 @@ class CartUpdateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        cart.add(representation=representation, price=price, quantity=quantity, override_quantity=True)
+        cart.add(representation=representation, price=price,
+                 quantity=quantity, override_quantity=True)
         return Response({"detail": "Panier mis à jour.", "cart_count": len(cart)})
 
 
@@ -124,7 +127,8 @@ class CartRemoveView(APIView):
         price_id = request.data.get('price_id')
         price_type = request.data.get('price_type')
 
-        representation = get_object_or_404(Representation, pk=representation_id)
+        representation = get_object_or_404(
+            Representation, pk=representation_id)
 
         if price_id:
             price = get_object_or_404(Price, pk=price_id)

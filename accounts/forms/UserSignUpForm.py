@@ -34,7 +34,6 @@ class UserSignUpForm(UserCreationForm):
         self.fields['password1'].label = 'Mot de passe'
         self.fields['password2'].label = 'Confirmation du mot de passe'
 
-
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
@@ -62,7 +61,6 @@ class UserSignUpForm(UserCreationForm):
         user.last_name = self.cleaned_data.get("last_name", "")
         user.first_name = self.cleaned_data.get("first_name", "")
         user.email = self.cleaned_data.get("email", "")
-
 
      # Ajout de l'utilisateur au groupe MEMBER => rôle de membre
         if commit:
