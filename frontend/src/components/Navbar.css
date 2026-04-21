@@ -3,58 +3,162 @@
   align-items: center;
   justify-content: space-between;
   background: #1a1a1a;
-  padding: 0 32px;
-  height: 60px;
+  padding: 0 40px;
+  height: 64px;
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid #2a2a2a;
 }
 
+/* Logo */
 .navbar-logo a {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.logo-pid {
   color: #ffffff;
   font-weight: 700;
-  font-size: 1.15rem;
-  text-decoration: none;
+  font-size: 1.3rem;
   letter-spacing: 0.5px;
 }
 
-.navbar-links {
-  display: flex;
-  gap: 28px;
+.logo-booking {
+  color: #FF4500;
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
 }
 
-.navbar-links a {
-  color: #aaaaaa;
+/* Nav links */
+.navbar-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-link {
+  color: #ffffff;
   text-decoration: none;
   font-size: 0.95rem;
+  padding-bottom: 4px;
   transition: color 0.2s;
 }
 
-.navbar-links a:hover {
-  color: #ffffff;
+.nav-link:hover {
+  color: #FF4500;
 }
 
+.nav-link--active {
+  color: #FF4500;
+  border-bottom: 2px solid #FF4500;
+}
+
+/* Right section */
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.cart-btn {
+.lang-dropdown {
   position: relative;
-  font-size: 1.2rem;
-  text-decoration: none;
-  padding: 4px 8px;
+}
+
+.btn-lang {
+  background: transparent;
+  border: 1px solid #ffffff;
   color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-lang:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  min-width: 150px;
+  z-index: 1100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lang-option:hover {
+  background: rgba(255, 69, 0, 0.15);
+  color: #FF4500;
+}
+
+.lang-option--active {
+  color: #FF4500;
+}
+
+.lang-flag {
+  font-size: 1rem;
   line-height: 1;
+}
+
+.lang-code {
+  font-weight: 600;
+  min-width: 24px;
+}
+
+.lang-label {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.btn-cart {
+  position: relative;
+  background: transparent;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.btn-cart:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .cart-badge {
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #e63946;
+  background: #FF4500;
   color: #ffffff;
   border-radius: 50%;
   font-size: 0.65rem;
@@ -66,13 +170,7 @@
   justify-content: center;
 }
 
-.navbar-username {
-  color: #cccccc;
-  font-size: 0.9rem;
-}
-
-.btn-login,
-.btn-logout {
+.btn-outline {
   background: transparent;
   border: 1px solid #ffffff;
   color: #ffffff;
@@ -80,28 +178,33 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background 0.2s, color 0.2s;
-}
-
-.btn-login:hover,
-.btn-logout:hover {
-  background: #ffffff;
-  color: #1a1a1a;
-}
-
-.btn-signup {
-  background: #ffffff;
-  color: #1a1a1a;
-  border: 1px solid #ffffff;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   transition: background 0.2s;
 }
 
-.btn-signup:hover {
-  background: #e0e0e0;
-  border-color: #e0e0e0;
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary {
+  background: #FF4500;
+  border: none;
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #e03d00;
+}
+
+.navbar-username {
+  color: #cccccc;
+  font-size: 0.9rem;
 }
