@@ -1,14 +1,40 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import ArtistsList from "./pages/ArtistsList";
-import ArtistDetail from "./pages/ArtistDetail";
-import ArtistEdit from "./pages/ArtistEdit";
-import ShowsList from "./pages/ShowsList";
-import ShowDetail from "./pages/ShowDetail";
-import Cart from "./pages/Cart";
+import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import ArtistsList from './pages/ArtistsList'
+import ArtistDetail from './pages/ArtistDetail'
+import ArtistEdit from './pages/ArtistEdit'
+import ShowsList from './pages/ShowsList'
+import ShowDetail from './pages/ShowDetail'
+import Cart from './pages/Cart'
+import Navbar from './components/Navbar'
+import { getStoredUsername, logout } from './services/authService'
 
 function App() {
+  const [username, setUsername] = useState(getStoredUsername)
+  const [cartCount] = useState(0)
+
+  const isLoggedIn = !!username
+
+  function handleLogin(name) {
+    setUsername(name)
+  }
+
+  async function handleLogout() {
+    try {
+      await logout()
+    } catch (_) {}
+    setUsername(null)
+  }
+
   return (
     <BrowserRouter>
+      <Navbar
+        isLoggedIn={isLoggedIn}
+        username={username}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        cartCount={cartCount}
+      />
       <Routes>
         <Route path="/" element={<ArtistsList />} />
         <Route path="/artist/:id" element={<ArtistDetail />} />
@@ -18,7 +44,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App
