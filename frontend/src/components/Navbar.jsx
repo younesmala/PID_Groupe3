@@ -1,10 +1,41 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import LoginModal from './LoginModal'
 import './Navbar.css'
 
+const LANGUAGES = [
+  { code: 'FR', label: 'Français', flag: '🇫🇷' },
+  { code: 'NL', label: 'Nederlands', flag: '🇳🇱' },
+  { code: 'EN', label: 'English', flag: '🇬🇧' },
+]
+
 function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
+  const { t, i18n } = useTranslation()
   const [showModal, setShowModal] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
+  const [selectedLang, setSelectedLang] = useState(
+    () => localStorage.getItem('language') || 'FR'
+  )
+  const langRef = useRef(null)
+  const location = useLocation()
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  function selectLang(code) {
+    setSelectedLang(code)
+    localStorage.setItem('language', code)
+    i18n.changeLanguage(code.toLowerCase())
+    setLangOpen(false)
+  }
 
   function handleLoginSuccess(name) {
     onLogin(name)
@@ -15,31 +46,68 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
     <>
       <nav className="navbar">
         <div className="navbar-logo">
-          <Link to="/">Reservations</Link>
+          <Link to="/">
+            <span className="logo-pid">PID</span>
+            <span className="logo-booking">Booking</span>
+          </Link>
         </div>
 
         <div className="navbar-links">
-          <Link to="/">Home</Link>
-          <Link to="/catalogue">Catalog</Link>
-          <Link to="/artists">Artists</Link>
-          <Link to="/shows">Shows</Link>
+          <Link
+            to="/shows"
+            className={`nav-link ${location.pathname === '/shows' ? 'nav-link--active' : ''}`}
+          >
+            {t('spectacles')}
+          </Link>
+          <Link
+            to="/"
+            className={`nav-link ${location.pathname === '/' ? 'nav-link--active' : ''}`}
+          >
+            {t('apropos')}
+          </Link>
         </div>
 
         <div className="navbar-right">
-          <Link to="/cart" className="cart-btn">
-            🛒
+          <div className="lang-dropdown" ref={langRef}>
+            <button
+              className="btn-lang"
+              onClick={() => setLangOpen((o) => !o)}
+              aria-expanded={langOpen}
+            >
+              {selectedLang} ▼
+            </button>
+            {langOpen && (
+              <ul className="lang-menu">
+                {LANGUAGES.map(({ code, label, flag }) => (
+                  <li key={code}>
+                    <button
+                      className={`lang-option ${selectedLang === code ? 'lang-option--active' : ''}`}
+                      onClick={() => selectLang(code)}
+                    >
+                      <span className="lang-flag">{flag}</span>
+                      <span className="lang-code">{code}</span>
+                      <span className="lang-label">{label}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <Link to="/cart" className="btn-cart">
+            🛒 {t('panier')}
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </Link>
 
           {isLoggedIn ? (
             <>
               <span className="navbar-username">{username}</span>
-              <button className="btn-logout" onClick={onLogout}>Logout</button>
+              <button className="btn-outline" onClick={onLogout}>{t('deconnexion')}</button>
             </>
           ) : (
             <>
-              <button className="btn-login" onClick={() => setShowModal(true)}>Login</button>
-              <Link to="/signup" className="btn-signup">Sign up</Link>
+              <Link to="/signup" className="btn-outline">{t('inscription')}</Link>
+              <button className="btn-primary" onClick={() => setShowModal(true)}>{t('connexion')}</button>
             </>
           )}
         </div>
