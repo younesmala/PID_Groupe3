@@ -5,5 +5,12 @@
   "panier": "Winkelwagen",
   "inscription": "Registreren",
   "connexion": "Inloggen",
-  "deconnexion": "Uitloggen"
+  "deconnexion": "Uitloggen",
+  "hero": {
+    "subtitle": "VOORSTELLINGEN, CONCERTEN EN LEVENDE SCÈNES",
+    "title": "Ontdek de beste voorstellingen in Brussel",
+    "description": "Een levendige selectie culturele evenementen, in een paar klikken gereserveerd.",
+    "cta": "Bekijk de voorstellingen",
+    "tonight": "Vanavond"
+  }
 }

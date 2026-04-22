@@ -5,5 +5,12 @@
   "panier": "Cart",
   "inscription": "Sign up",
   "connexion": "Login",
-  "deconnexion": "Logout"
+  "deconnexion": "Logout",
+  "hero": {
+    "subtitle": "SHOWS, CONCERTS AND LIVE STAGES",
+    "title": "Discover the best shows in Brussels",
+    "description": "A vibrant selection of cultural events, reserved in just a few clicks.",
+    "cta": "View shows",
+    "tonight": "Tonight"
+  }
 }
