@@ -28,7 +28,7 @@ function Cart() {
   };
 
   useEffect(() => {
-    fetchCartData();
+    queueMicrotask(fetchCartData);
   }, []);
 
   const handleQuantityChange = (itemKey, value) => {
