@@ -96,7 +96,11 @@ def register(request):
     try:
         send_mail(
             subject='Bienvenue sur PIDBooking !',
-            message=f'Bonjour {first_name or username},\n\nVotre compte a été créé avec succès.\n\nL\'équipe PIDBooking',
+            message=(
+                f'Bonjour {first_name or username},\n\n'
+                'Votre compte a été créé avec succès.\n\n'
+                'L\'équipe PIDBooking'
+            ),
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
             fail_silently=True,
