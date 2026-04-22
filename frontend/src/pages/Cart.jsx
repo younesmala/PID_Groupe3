@@ -81,7 +81,7 @@ function Cart() {
       {items.length === 0 ? (
         <div>
           <p>Votre panier est vide.</p>
-          <Link to="/shows" className="btn btn-primary">Voir les spectacles</Link>
+          <Link to="/#shows" className="btn btn-primary">Voir les spectacles</Link>
         </div>
       ) : (
         <>
@@ -165,7 +165,7 @@ function Cart() {
           </div>
 
           <div style={{ marginTop: 30, display: "flex", gap: 10 }}>
-            <Link to="/shows" style={{ textDecoration: "none", color: "#6c757d", border: "1px solid #6c757d", padding: "10px 20px", borderRadius: 4 }}>
+            <Link to="/#shows" style={{ textDecoration: "none", color: "#6c757d", border: "1px solid #6c757d", padding: "10px 20px", borderRadius: 4 }}>
               Continuer les achats
             </Link>
           </div>
