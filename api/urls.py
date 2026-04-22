@@ -11,6 +11,7 @@ from api.views.csv_views import export_shows_csv, import_shows_csv
 from api.views.affiliate_views import (
     register_affiliate, affiliate_catalog, upgrade_affiliate
 )
+from api.views.stats import show_stats, show_stat_detail
 
 app_name = 'api'
 
@@ -174,4 +175,8 @@ urlpatterns = [
     path('affiliate/register/', register_affiliate, name='affiliate-register'),
     path('affiliate/catalog/', affiliate_catalog, name='affiliate-catalog'),
     path('affiliate/upgrade/<int:user_id>/', upgrade_affiliate, name='affiliate-upgrade'),
+
+    # STATS
+    path('stats/shows/', show_stats, name='stats-shows'),
+    path('stats/shows/<int:show_id>/', show_stat_detail, name='stats-show-detail'),
 ]
