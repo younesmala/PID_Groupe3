@@ -5,6 +5,7 @@ from .views import (
     tickets, reviews, producer, admin_api, affiliate, rss, public_api
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
+from api.views.profile import get_profile, update_profile
 
 app_name = 'api'
 
@@ -151,4 +152,8 @@ urlpatterns = [
     path('public/shows/', public_api.PublicShowsView.as_view(), name='public-shows'),
     path('public/representations/', public_api.PublicRepresentationsView.as_view(),
          name='public-representations'),
+
+    # PROFILE
+    path('profile/', get_profile, name='profile'),
+    path('profile/update/', update_profile, name='profile-update'),
 ]
