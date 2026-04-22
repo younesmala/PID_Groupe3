@@ -5,6 +5,13 @@ from .views import (
     tickets, reviews, producer, admin_api, affiliate, rss, public_api
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
+from api.views.profile import get_profile, update_profile
+from api.views.auth import check_username, check_email
+from api.views.csv_views import export_shows_csv, import_shows_csv
+from api.views.affiliate_views import (
+    register_affiliate, affiliate_catalog, upgrade_affiliate
+)
+from api.views.stats import show_stats, show_stat_detail
 
 app_name = 'api'
 
@@ -151,4 +158,25 @@ urlpatterns = [
     path('public/shows/', public_api.PublicShowsView.as_view(), name='public-shows'),
     path('public/representations/', public_api.PublicRepresentationsView.as_view(),
          name='public-representations'),
+
+    # PROFILE
+    path('profile/', get_profile, name='profile'),
+    path('profile/update/', update_profile, name='profile-update'),
+
+    # AUTH CHECK
+    path('auth/check-username/', check_username, name='auth-check-username'),
+    path('auth/check-email/', check_email, name='auth-check-email'),
+
+    # CSV
+    path('export/shows/', export_shows_csv, name='export-shows-csv'),
+    path('import/shows/', import_shows_csv, name='import-shows-csv'),
+
+    # AFFILIATE
+    path('affiliate/register/', register_affiliate, name='affiliate-register'),
+    path('affiliate/catalog/', affiliate_catalog, name='affiliate-catalog'),
+    path('affiliate/upgrade/<int:user_id>/', upgrade_affiliate, name='affiliate-upgrade'),
+
+    # STATS
+    path('stats/shows/', show_stats, name='stats-shows'),
+    path('stats/shows/<int:show_id>/', show_stat_detail, name='stats-show-detail'),
 ]

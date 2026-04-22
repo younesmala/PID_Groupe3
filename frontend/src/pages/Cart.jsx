@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   getCart,
   updateCart,
@@ -10,6 +11,7 @@ import CartItem from "../components/CartItem";
 import CartSummary from "../components/CartSummary";
 
 function Cart() {
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState("0.00");
   const [loading, setLoading] = useState(true);
@@ -35,12 +37,12 @@ function Cart() {
 
   const handleUpdate = (item, nextQuantity) => {
     if (!Number.isInteger(nextQuantity)) {
-      alert("Quantité invalide.");
+      alert(t("cart.invalid_quantity", "Quantité invalide."));
       return;
     }
 
     if (nextQuantity < 0) {
-      alert("La quantité ne peut pas être négative.");
+      alert(t("cart.negative_quantity", "La quantité ne peut pas être négative."));
       return;
     }
 
@@ -50,13 +52,19 @@ function Cart() {
   };
 
   const handleRemove = (repId, priceId) => {
+    if (!window.confirm(t("cart.confirm_remove", "Supprimer cet article du panier ?"))) {
+      return;
+    }
+
     removeFromCart(repId, priceId)
       .then(() => fetchCartData())
       .catch((err) => alert(err.message));
   };
 
   const handleClear = () => {
-    if (!window.confirm("Vider tout le panier ?")) return;
+    if (!window.confirm(t("cart.confirm_clear", "Vider tout le panier ?"))) {
+      return;
+    }
 
     clearCart()
       .then(() => fetchCartData())
@@ -73,7 +81,7 @@ function Cart() {
           padding: "40px",
         }}
       >
-        Chargement...
+        {t("cart.loading", "Chargement...")}
       </div>
     );
   }
@@ -88,7 +96,7 @@ function Cart() {
           padding: "40px",
         }}
       >
-        Erreur : {error}
+        {t("cart.error_label", "Erreur")} : {error}
       </div>
     );
   }
@@ -103,7 +111,9 @@ function Cart() {
       }}
     >
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
-        <h1 style={{ fontSize: "36px", marginBottom: "24px" }}>Mon panier</h1>
+        <h1 style={{ fontSize: "36px", marginBottom: "24px" }}>
+          {t("cart.title", "Mon panier")}
+        </h1>
 
         {items.length === 0 ? (
           <div
@@ -115,7 +125,7 @@ function Cart() {
             }}
           >
             <p style={{ fontSize: "20px", marginBottom: "20px" }}>
-              Votre panier est vide.
+              {t("cart.empty", "Votre panier est vide.")}
             </p>
             <Link
               to="/shows"
@@ -129,7 +139,7 @@ function Cart() {
                 fontWeight: "700",
               }}
             >
-              Voir le catalogue
+              {t("cart.view_catalog", "Voir le catalogue")}
             </Link>
           </div>
         ) : (

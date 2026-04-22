@@ -6,15 +6,27 @@ from catalogue.models import Show
 class ShowForm(ModelForm):
     class Meta:
         model = Show
-        fields = ['slug', 'title', 'description', 'poster_url',
-                  'duration', 'created_in', 'location', 'bookable']
+        fields = [
+            'slug',
+            'title',
+            'description',
+            'poster_url',
+            'duration',
+            'created_in',
+            'artist',
+            'location',
+            'bookable',
+            'publication_status',
+        ]
         labels = {
             'slug': _('Slug'),
             'title': _('Titre'),
             'description': _('Description'),
             'poster_url': _("URL de l'affiche"),
-            'duration': _('Durée'),
-            'created_in': _('Créé en'),
+            'duration': _('Duree'),
+            'created_in': _('Cree en'),
+            'artist': _('Artiste'),
             'location': _('Lieu'),
-            'bookable': _('Réservable'),
+            'bookable': _('Reservable'),
+            'publication_status': _('Statut de publication'),
         }

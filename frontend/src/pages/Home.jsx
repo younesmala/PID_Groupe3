@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import HeroSection from '../components/HeroSection'
-import ShowSlider from '../components/ShowSlider'
+import ShowCards from '../components/ShowCards'
 import { getPublicShows } from '../services/publicShowService'
 import './Home.css'
 
@@ -31,7 +31,7 @@ function Home() {
   return (
     <main className="home-page">
       <HeroSection />
-      <ShowSlider shows={shows} loading={loading} error={error} />
+      <ShowCards shows={shows} loading={loading} error={error} />
     </main>
   )
 }
