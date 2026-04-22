@@ -8,15 +8,28 @@ class ShowManager(models.Manager):
 
 
 class Show(models.Model):
+    class PublicationStatus(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+
     slug = models.CharField(max_length=60, unique=True)
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=255, null=True)
     poster_url = models.CharField(max_length=255, null=True)
     duration = models.PositiveSmallIntegerField(null=True)
     created_in = models.PositiveSmallIntegerField()
+    artist = models.ForeignKey(
+        "Artist", on_delete=models.SET_NULL, null=True, blank=True, related_name="shows"
+    )
     location = models.ForeignKey(
         Location, on_delete=models.SET_NULL, null=True, related_name='shows')
     bookable = models.BooleanField(default=True)
+    publication_status = models.CharField(
+        max_length=20,
+        choices=PublicationStatus.choices,
+        default=PublicationStatus.PENDING,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
 

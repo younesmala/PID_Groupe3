@@ -128,6 +128,7 @@ function ShowSlider({ shows = [], loading = false, error = null }) {
             <p>{trimDescription(activeShow.description)}</p>
             <div className="show-slide__meta">
               {activeShow.duration && <span>{activeShow.duration} min</span>}
+              {activeShow.artist_name && <span>{activeShow.artist_name}</span>}
               {activeShow.slug && <span>#{activeShow.slug}</span>}
             </div>
             <Link to={`/show/${activeShow.id}`} className="show-slide__button">
