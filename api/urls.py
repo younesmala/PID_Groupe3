@@ -6,6 +6,7 @@ from .views import (
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
 from api.views.profile import get_profile, update_profile
+from api.views.auth import check_username, check_email
 
 app_name = 'api'
 
@@ -156,4 +157,8 @@ urlpatterns = [
     # PROFILE
     path('profile/', get_profile, name='profile'),
     path('profile/update/', update_profile, name='profile-update'),
+
+    # AUTH CHECK
+    path('auth/check-username/', check_username, name='auth-check-username'),
+    path('auth/check-email/', check_email, name='auth-check-email'),
 ]
