@@ -9,6 +9,7 @@ import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
 import Navbar from './components/Navbar'
 import { getStoredUsername, logout } from './services/authService'
+import Checkout from './pages/Checkout'
 
 function App() {
   const [username, setUsername] = useState(getStoredUsername)
@@ -45,6 +46,7 @@ function App() {
         <Route path="/shows" element={<ShowsList />} />
         <Route path="/show/:id" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </BrowserRouter>
   )
