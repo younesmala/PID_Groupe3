@@ -7,6 +7,7 @@ from .views import (
 from api.views.artists import ArtistsView, ArtistsDetailView
 from api.views.profile import get_profile, update_profile
 from api.views.auth import check_username, check_email
+from api.views.csv_views import export_shows_csv, import_shows_csv
 
 app_name = 'api'
 
@@ -161,4 +162,8 @@ urlpatterns = [
     # AUTH CHECK
     path('auth/check-username/', check_username, name='auth-check-username'),
     path('auth/check-email/', check_email, name='auth-check-email'),
+
+    # CSV
+    path('export/shows/', export_shows_csv, name='export-shows-csv'),
+    path('import/shows/', import_shows_csv, name='import-shows-csv'),
 ]
