@@ -9,19 +9,14 @@ function RepresentationForm({ rep, prices }) {
   const [selectedPriceId, setSelectedPriceId] = useState(prices[0]?.id ? String(prices[0].id) : "");
   const [status, setStatus] = useState(null);
   const maxQuantity = Math.max(rep.available_seats ?? 0, 0);
-
-  useEffect(() => {
-    if (!selectedPriceId && prices[0]?.id) {
-      setSelectedPriceId(String(prices[0].id));
-    }
-  }, [prices, selectedPriceId]);
+  const effectivePriceId = selectedPriceId || (prices[0]?.id ? String(prices[0].id) : "");
 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus(null);
 
     try {
-      await addToCart(rep.id, quantity, selectedPriceId);
+      await addToCart(rep.id, quantity, effectivePriceId);
       setStatus("ok");
     } catch {
       setStatus("error");
@@ -44,7 +39,7 @@ function RepresentationForm({ rep, prices }) {
       <label style={{ fontSize: 14 }}>
         Tarif :
         <select
-          value={selectedPriceId}
+          value={effectivePriceId}
           onChange={(e) => setSelectedPriceId(e.target.value)}
           style={{ marginLeft: 4 }}
         >

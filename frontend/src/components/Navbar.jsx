@@ -47,23 +47,23 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
       <nav className="navbar">
         <div className="navbar-logo">
           <Link to="/">
-            <span className="logo-pid">PID</span>
-            <span className="logo-booking">Booking</span>
+            <span className="logo-pid">Brussels</span>
+            <span className="logo-booking">Show</span>
           </Link>
         </div>
 
         <div className="navbar-links">
           <Link
+            to="/"
+            className={`nav-link ${location.pathname === '/' ? 'nav-link--active' : ''}`}
+          >
+            {t('accueil')}
+          </Link>
+          <Link
             to="/shows"
             className={`nav-link ${location.pathname === '/shows' ? 'nav-link--active' : ''}`}
           >
             {t('spectacles')}
-          </Link>
-          <Link
-            to="/"
-            className={`nav-link ${location.pathname === '/' ? 'nav-link--active' : ''}`}
-          >
-            {t('apropos')}
           </Link>
         </div>
 
