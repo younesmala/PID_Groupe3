@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 function HeroSection() {
   return (
     <section className="home-hero">
@@ -13,9 +11,9 @@ function HeroSection() {
           Une selection vibrante d'evenements culturels, reservee en quelques clics.
         </p>
         <div className="home-hero__actions">
-          <Link to="/shows" className="home-hero__cta">
+          <a href="#shows" className="home-hero__cta">
             Voir les spectacles
-          </Link>
+          </a>
           <span className="home-hero__note">Nouveautes mises a jour en temps reel</span>
         </div>
       </div>
