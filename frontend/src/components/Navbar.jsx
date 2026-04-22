@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LoginModal from './LoginModal'
 import './Navbar.css'
@@ -18,7 +18,6 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
     () => localStorage.getItem('language') || 'FR'
   )
   const langRef = useRef(null)
-  const location = useLocation()
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -49,21 +48,6 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
           <Link to="/">
             <span className="logo-pid">Brussels</span>
             <span className="logo-booking">Show</span>
-          </Link>
-        </div>
-
-        <div className="navbar-links">
-          <Link
-            to="/"
-            className={`nav-link ${location.pathname === '/' ? 'nav-link--active' : ''}`}
-          >
-            {t('accueil')}
-          </Link>
-          <Link
-            to="/shows"
-            className={`nav-link ${location.pathname === '/shows' ? 'nav-link--active' : ''}`}
-          >
-            {t('spectacles')}
           </Link>
         </div>
 
