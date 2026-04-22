@@ -5,5 +5,12 @@
   "panier": "Panier",
   "inscription": "Inscription",
   "connexion": "Connexion",
-  "deconnexion": "Deconnexion"
+  "deconnexion": "Deconnexion",
+  "hero": {
+    "subtitle": "SPECTACLES, CONCERTS ET SCÈNES VIVANTES",
+    "title": "Découvrez les meilleurs spectacles à Bruxelles",
+    "description": "Une sélection vibrante d'événements culturels, réservée en quelques clics.",
+    "cta": "Voir les spectacles",
+    "tonight": "Ce soir"
+  }
 }
