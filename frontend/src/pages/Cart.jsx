@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getCart, updateCart, removeFromCart, clearCart } from "../services/cartService";
 
 function Cart() {
+  const { t } = useTranslation();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState("0.00");
   const [loading, setLoading] = useState(true);
@@ -43,12 +45,12 @@ function Cart() {
     const nextQuantity = Number(draftQuantities[itemKey]);
 
     if (!Number.isInteger(nextQuantity)) {
-      alert("Quantite invalide.");
+      alert(t('cart.invalid_quantity'));
       return;
     }
 
     if (nextQuantity < 0) {
-      alert("La quantite ne peut pas etre negative.");
+      alert(t('cart.negative_quantity'));
       return;
     }
 
@@ -58,43 +60,43 @@ function Cart() {
   };
 
   const handleRemove = (repId, priceId) => {
-    if (!window.confirm("Retirer cet article ?")) return;
+    if (!window.confirm(t('cart.confirm_remove'))) return;
     removeFromCart(repId, priceId)
       .then(() => fetchCartData())
       .catch((err) => alert(err.message));
   };
 
   const handleClear = () => {
-    if (!window.confirm("Vider tout le panier ?")) return;
+    if (!window.confirm(t('cart.confirm_clear'))) return;
     clearCart()
       .then(() => fetchCartData())
       .catch((err) => alert(err.message));
   };
 
-  if (loading) return <div style={{ padding: 20 }}>Chargement...</div>;
-  if (error) return <div style={{ padding: 20, color: "red" }}>Erreur : {error}</div>;
+  if (loading) return <div style={{ padding: 20 }}>{t('cart.loading')}</div>;
+  if (error) return <div style={{ padding: 20, color: "red" }}>{t('cart.error_label')} : {error}</div>;
 
   return (
     <div style={{ maxWidth: 900, margin: "40px auto", padding: 20, fontFamily: "sans-serif" }}>
-      <h1>Votre panier</h1>
+      <h1>{t('cart.title')}</h1>
 
       {items.length === 0 ? (
         <div>
-          <p>Votre panier est vide.</p>
-          <Link to="/#shows" className="btn btn-primary">Voir les spectacles</Link>
+          <p>{t('cart.empty')}</p>
+          <Link to="/#shows" className="btn btn-primary">{t('show.representations')}</Link>
         </div>
       ) : (
         <>
           <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 24 }}>
             <thead>
               <tr style={{ borderBottom: "2px solid #ddd", textAlign: "left" }}>
-                <th style={{ padding: "12px" }}>Spectacle</th>
-                <th style={{ padding: "12px" }}>Date</th>
-                <th style={{ padding: "12px" }}>Tarif</th>
-                <th style={{ padding: "12px" }}>Prix unitaire</th>
-                <th style={{ padding: "12px" }}>Quantite</th>
-                <th style={{ padding: "12px" }}>Total</th>
-                <th style={{ padding: "12px" }}>Action</th>
+                <th style={{ padding: "12px" }}>{t('cart.col_show')}</th>
+                <th style={{ padding: "12px" }}>{t('show.date')}</th>
+                <th style={{ padding: "12px" }}>{t('show.price')}</th>
+                <th style={{ padding: "12px" }}>{t('cart.col_unit_price')}</th>
+                <th style={{ padding: "12px" }}>{t('cart.col_quantity')}</th>
+                <th style={{ padding: "12px" }}>{t('cart.total')}</th>
+                <th style={{ padding: "12px" }}>{t('cart.col_action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -131,7 +133,7 @@ function Cart() {
                           onClick={() => handleUpdate(item)}
                           style={{ padding: "6px 10px", borderRadius: 4, border: "1px solid #0d6efd", background: "white", color: "#0d6efd", cursor: "pointer" }}
                         >
-                          Mettre a jour
+                          {t('cart.update')}
                         </button>
                       </div>
                     </td>
@@ -142,7 +144,7 @@ function Cart() {
                         onClick={() => handleRemove(item.representation_id, item.price_id)}
                         style={{ color: "white", backgroundColor: "#dc3545", border: "none", padding: "6px 12px", borderRadius: 4, cursor: "pointer" }}
                       >
-                        Retirer
+                        {t('cart.remove')}
                       </button>
                     </td>
                   </tr>
@@ -157,16 +159,16 @@ function Cart() {
               onClick={handleClear}
               style={{ color: "#dc3545", backgroundColor: "transparent", border: "1px solid #dc3545", padding: "8px 16px", borderRadius: 4, cursor: "pointer" }}
             >
-              Vider le panier
+              {t('cart.clear')}
             </button>
             <p style={{ textAlign: "right", fontWeight: "bold", fontSize: 20, margin: 0 }}>
-              Total general : {total} EUR
+              {t('cart.total_label')} : {total} EUR
             </p>
           </div>
 
           <div style={{ marginTop: 30, display: "flex", gap: 10 }}>
             <Link to="/#shows" style={{ textDecoration: "none", color: "#6c757d", border: "1px solid #6c757d", padding: "10px 20px", borderRadius: 4 }}>
-              Continuer les achats
+              {t('cart.continue')}
             </Link>
           </div>
         </>

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getShowById } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
 
 function RepresentationForm({ rep, prices }) {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
   const [selectedPriceId, setSelectedPriceId] = useState(prices[0]?.id ? String(prices[0].id) : "");
   const [status, setStatus] = useState(null);
@@ -26,7 +28,7 @@ function RepresentationForm({ rep, prices }) {
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
       <label style={{ fontSize: 14 }}>
-        Quantite :
+        {t('show.quantity')} :
         <input
           type="number"
           min={1}
@@ -37,7 +39,7 @@ function RepresentationForm({ rep, prices }) {
         />
       </label>
       <label style={{ fontSize: 14 }}>
-        Tarif :
+        {t('show.price')} :
         <select
           value={effectivePriceId}
           onChange={(e) => setSelectedPriceId(e.target.value)}
@@ -51,15 +53,16 @@ function RepresentationForm({ rep, prices }) {
         </select>
       </label>
       <button type="submit" className="btn btn-success btn-sm" disabled={prices.length === 0 || maxQuantity <= 0}>
-        Ajouter au panier
+        {t('show.add_to_cart')}
       </button>
-      {status === "ok" && <span style={{ color: "green", fontSize: 13 }}>Ajoute</span>}
-      {status === "error" && <span style={{ color: "red", fontSize: 13 }}>Erreur</span>}
+      {status === "ok" && <span style={{ color: "green", fontSize: 13 }}>{t('show.added')}</span>}
+      {status === "error" && <span style={{ color: "red", fontSize: 13 }}>{t('show.error')}</span>}
     </form>
   );
 }
 
 function RepresentationCard({ rep, prices }) {
+  const { t } = useTranslation();
   const soldOut = (rep.available_seats ?? 0) <= 0;
 
   return (
@@ -76,12 +79,12 @@ function RepresentationCard({ rep, prices }) {
         {rep.location && <span style={{ marginLeft: 12, color: "#666" }}>{rep.location}</span>}
       </div>
       <div style={{ marginBottom: 12, color: soldOut ? "#b02a37" : "#666" }}>
-        {soldOut ? "Aucune place disponible" : `${rep.available_seats} place(s) restante(s)`}
+        {soldOut ? t('show.no_seats') : `${rep.available_seats} ${t('show.seats_remaining')}`}
       </div>
       {!soldOut && <RepresentationForm rep={rep} prices={prices} />}
       {soldOut && (
         <button type="button" className="btn btn-secondary btn-sm" disabled>
-          Complet
+          {t('show.sold_out')}
         </button>
       )}
     </li>
@@ -89,6 +92,7 @@ function RepresentationCard({ rep, prices }) {
 }
 
 function ShowDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [show, setShow] = useState(null);
@@ -119,8 +123,8 @@ function ShowDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>Erreur : {error}</div>;
+  if (loading) return <div>{t('show.loading')}</div>;
+  if (error) return <div>{t('show.error_label')} : {error}</div>;
 
   const selectedRepresentation = representations.find((rep) => String(rep.id) === selectedRepId);
   const maxReserveQuantity = Math.max(selectedRepresentation?.available_seats ?? 0, 0);
@@ -153,9 +157,9 @@ function ShowDetail() {
       <h1>{show.title}</h1>
       <p className="text-muted">{show.slug}</p>
 
-      <h2 id="representations" style={{ marginTop: 32 }}>Representations</h2>
+      <h2 id="representations" style={{ marginTop: 32 }}>{t('show.representations')}</h2>
       {representations.length === 0 ? (
-        <p>Aucune representation disponible.</p>
+        <p>{t('show.no_representations')}</p>
       ) : (
         <ul style={{ listStyle: "none", padding: 0 }}>
           {representations.map((rep) => (
@@ -165,8 +169,8 @@ function ShowDetail() {
       )}
 
       <div style={{ display: "flex", gap: 16, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
-        <Link to="/#shows">Retour aux spectacles</Link>
-        <Link to="/cart">Voir le panier</Link>
+        <Link to="/#shows">{t('show.back')}</Link>
+        <Link to="/cart">{t('show.view_cart')}</Link>
       </div>
 
       <form
@@ -185,7 +189,7 @@ function ShowDetail() {
         }}
       >
         <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          Date
+          {t('show.date')}
           <select
             value={selectedRepId}
             onChange={(e) => {
@@ -205,7 +209,7 @@ function ShowDetail() {
         </label>
 
         <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          Tarif
+          {t('show.price')}
           <select
             value={selectedPriceId}
             onChange={(e) => setSelectedPriceId(e.target.value)}
@@ -220,7 +224,7 @@ function ShowDetail() {
         </label>
 
         <div style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          Places
+          {t('show.seats')}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <button
               type="button"
@@ -257,12 +261,12 @@ function ShowDetail() {
             padding: "0 24px",
           }}
         >
-          Réserver
+          {t('show.book')}
         </button>
 
         {reserveStatus === "error" && (
           <span style={{ color: "#b91c1c", fontSize: 13 }}>
-            Impossible d'ajouter au panier pour le moment.
+            {t('show.cart_error')}
           </span>
         )}
       </form>
