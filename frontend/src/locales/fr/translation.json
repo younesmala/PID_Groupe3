@@ -1,8 +1,9 @@
 {
+  "accueil": "Accueil",
   "spectacles": "Spectacles",
-  "apropos": "À propos",
+  "apropos": "A propos",
   "panier": "Panier",
   "inscription": "Inscription",
   "connexion": "Connexion",
-  "deconnexion": "Déconnexion"
+  "deconnexion": "Deconnexion"
 }
