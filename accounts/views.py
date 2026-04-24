@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
+from catalogue.models import UserMeta
 from .forms.UserSignUpForm import UserSignUpForm
 from .forms.UserUpdateForm import UserUpdateForm
 
@@ -75,7 +76,11 @@ def profile(request):
         if is_ticket_reservation(reservation)
     ]
 
-    user_lang_code = getattr(request.user.usermeta, 'langue', 'fr')
+    usermeta, _ = UserMeta.objects.get_or_create(
+        user=request.user,
+        defaults={'langue': 'fr'}
+    )
+    user_lang_code = usermeta.langue or 'fr'
 
     return render(request, 'user/profile.html', {
         "user_language": languages.get(user_lang_code, "Français"),

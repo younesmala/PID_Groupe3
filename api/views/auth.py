@@ -15,8 +15,72 @@ import re
 
 
 class AuthSignupView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+        data = request.data
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        confirm_password = data.get('confirm_password', '')
+        email = data.get('email', '').strip()
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+
+        errors = {}
+
+        if not username:
+            errors['username'] = 'Le nom d\'utilisateur est requis.'
+        elif User.objects.filter(username=username).exists():
+            errors['username'] = 'Ce nom d\'utilisateur est déjà pris.'
+
+        if not email:
+            errors['email'] = 'L\'email est requis.'
+        elif User.objects.filter(email=email).exists():
+            errors['email'] = 'Cet email est déjà utilisé.'
+
+        if not password:
+            errors['password'] = 'Le mot de passe est requis.'
+        elif len(password) < 6:
+            errors['password'] = 'Le mot de passe doit contenir au moins 6 caractères.'
+        elif not re.search(r'[A-Z]', password):
+            errors['password'] = 'Le mot de passe doit contenir au moins une majuscule.'
+        elif not re.search(r'[^a-zA-Z0-9]', password):
+            errors['password'] = 'Le mot de passe doit contenir au moins un caractère spécial.'
+
+        if password != confirm_password:
+            errors['confirm_password'] = 'Les mots de passe ne correspondent pas.'
+
+        if errors:
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        try:
+            send_mail(
+                subject='Bienvenue sur Brussels Show !',
+                message=(
+                    f'Bonjour {first_name or username},\n\n'
+                    'Votre compte a été créé avec succès.\n\n'
+                    'L\'équipe Brussels Show'
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+
+        return Response({
+            'message': 'Compte créé avec succès.',
+            'username': user.username,
+            'email': user.email,
+        }, status=status.HTTP_201_CREATED)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
