@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchCurrentUser, getStoredUsername } from '../services/authService'
-import { fetchMyReservations } from '../services/userService'
+import { getCurrentUser } from '../services/userService'
+import { getMyReservations } from '../services/reservationService'
 import './AccountPages.css'
 
 function readValue(...values) {
@@ -46,12 +46,32 @@ function extractReservationTitle(reservation) {
 
 function extractReservationDate(reservation) {
   return readValue(
+    reservation.representation_date,
     reservation.booking_date,
     reservation.date,
     reservation.created_at,
     reservation.created,
     reservation.representation?.when,
-    reservation.representation_date,
+  )
+}
+
+function extractReservationLocation(reservation) {
+  return readValue(
+    reservation.location_name,
+    reservation.location?.name,
+    reservation.location?.slug,
+    reservation.representation?.location?.name,
+    reservation.representation?.location?.slug,
+    reservation.venue,
+    reservation.place,
+  )
+}
+
+function extractReservationStatus(reservation) {
+  return readValue(
+    reservation.status,
+    reservation.payment_status,
+    reservation.state,
   )
 }
 
@@ -66,34 +86,33 @@ function extractReservationQuantity(reservation) {
   )
 }
 
-function buildTicketList(reservations) {
-  return reservations.flatMap((reservation) => {
-    if (Array.isArray(reservation.tickets) && reservation.tickets.length > 0) {
-      return reservation.tickets.map((ticket, index) => ({
-        id: readValue(ticket.id, `${reservation.id || reservation.pk || 'reservation'}-${index}`),
-        title: readValue(ticket.title, ticket.show_title, extractReservationTitle(reservation)),
-        status: formatStatus(readValue(ticket.status, reservation.status, 'Valide')),
-        date: formatDate(readValue(ticket.date, ticket.representation_date, extractReservationDate(reservation))),
-        seat: readValue(ticket.seat, ticket.reference, ticket.code, 'Billet numerique'),
-      }))
-    }
+function isConfirmedOrPaid(status) {
+  if (!status) {
+    return false
+  }
 
-    const quantity = Number(extractReservationQuantity(reservation)) || 1
+  const normalized = String(status).toLowerCase()
+  return (
+    normalized.includes('confirm') ||
+    normalized.includes('paid') ||
+    normalized.includes('paye') ||
+    normalized.includes('valide') ||
+    normalized.includes('success')
+  )
+}
 
-    return Array.from({ length: quantity }, (_, index) => ({
-      id: `${readValue(reservation.id, reservation.pk, 'reservation')}-${index + 1}`,
-      title: extractReservationTitle(reservation),
-      status: formatStatus(readValue(reservation.status, 'Valide')),
-      date: formatDate(extractReservationDate(reservation)),
-      seat: `Ticket ${index + 1}`,
-    }))
-  })
+function buildTicketReservations(reservations) {
+  const reservationsWithStatus = reservations.filter((reservation) => extractReservationStatus(reservation))
+
+  if (reservationsWithStatus.length > 0) {
+    return reservationsWithStatus.filter((reservation) => isConfirmedOrPaid(extractReservationStatus(reservation)))
+  }
+
+  return reservations
 }
 
 function Profile({ isLoggedIn, username }) {
-  const [profile, setProfile] = useState(() => (
-    username ? { username } : null
-  ))
+  const [profile, setProfile] = useState(() => (username ? { username } : null))
   const [reservations, setReservations] = useState([])
   const [profileError, setProfileError] = useState('')
   const [reservationsError, setReservationsError] = useState('')
@@ -108,14 +127,13 @@ function Profile({ isLoggedIn, username }) {
       setProfileError('')
 
       try {
-        const data = await fetchCurrentUser()
+        const data = await getCurrentUser()
         if (active) {
           setProfile(data)
         }
       } catch (error) {
         if (active) {
-          const storedUsername = getStoredUsername()
-          setProfile(storedUsername ? { username: storedUsername } : null)
+          setProfile(username ? { username } : null)
           setProfileError(error.message)
         }
       } finally {
@@ -144,7 +162,7 @@ function Profile({ isLoggedIn, username }) {
       setReservationsError('')
 
       try {
-        const data = await fetchMyReservations()
+        const data = await getMyReservations()
         if (active) {
           setReservations(data)
         }
@@ -171,7 +189,7 @@ function Profile({ isLoggedIn, username }) {
     }
   }, [isLoggedIn])
 
-  const tickets = useMemo(() => buildTicketList(reservations), [reservations])
+  const ticketReservations = useMemo(() => buildTicketReservations(reservations), [reservations])
 
   if (!isLoggedIn) {
     return (
@@ -198,7 +216,7 @@ function Profile({ isLoggedIn, username }) {
           <p className="account-kicker">Mon espace</p>
           <h1>{loadingProfile ? 'Chargement du profil...' : `Bonjour ${readValue(profile?.first_name, profile?.username, username, 'utilisateur')}`}</h1>
           <p>
-            Cette page utilise le backend existant pour afficher le profil utilisateur, les reservations et les tickets associes.
+            Cette page affiche votre profil, vos reservations et vos tickets depuis les endpoints utilisateurs.
           </p>
         </div>
 
@@ -223,7 +241,7 @@ function Profile({ isLoggedIn, username }) {
 
           <dl className="profile-definition-list">
             <div>
-              <dt>Username</dt>
+              <dt>Login</dt>
               <dd>{readValue(profile?.username, username, 'Non disponible')}</dd>
             </div>
             <div>
@@ -237,6 +255,10 @@ function Profile({ isLoggedIn, username }) {
             <div>
               <dt>Nom</dt>
               <dd>{readValue(profile?.last_name, profile?.lastname, 'Non disponible')}</dd>
+            </div>
+            <div>
+              <dt>Langue</dt>
+              <dd>{readValue(profile?.language, profile?.lang, profile?.locale, 'Non disponible')}</dd>
             </div>
           </dl>
         </article>
@@ -262,10 +284,11 @@ function Profile({ isLoggedIn, username }) {
                 >
                   <div>
                     <h3>{extractReservationTitle(reservation)}</h3>
-                    <p>{formatDate(extractReservationDate(reservation))}</p>
+                    <p>Date: {formatDate(extractReservationDate(reservation))}</p>
+                    <p>Lieu: {readValue(extractReservationLocation(reservation), 'Non disponible')}</p>
                   </div>
                   <div className="account-list__meta">
-                    <span>{formatStatus(readValue(reservation.status, 'Statut inconnu'))}</span>
+                    <span>{formatStatus(readValue(extractReservationStatus(reservation), 'Statut inconnu'))}</span>
                     <strong>{extractReservationQuantity(reservation)} ticket(s)</strong>
                   </div>
                 </article>
@@ -277,23 +300,26 @@ function Profile({ isLoggedIn, username }) {
         <article className="account-card account-card--full">
           <div className="account-card__header">
             <h2>Mes tickets</h2>
-            <p>Generation d&apos;une vue ticket a partir des reservations recuperees.</p>
+            <p>Affiche les reservations confirmees/payees si le statut existe.</p>
           </div>
 
           {loadingReservations ? (
             <p className="account-empty-state">Preparation des tickets...</p>
-          ) : tickets.length === 0 ? (
-            <p className="account-empty-state">Aucun ticket a afficher.</p>
+          ) : ticketReservations.length === 0 ? (
+            <p className="account-empty-state">Aucun ticket disponible.</p>
           ) : (
             <div className="ticket-grid">
-              {tickets.map((ticket) => (
-                <article key={ticket.id} className="ticket-card">
+              {ticketReservations.map((reservation, index) => (
+                <article
+                  key={readValue(reservation.id, reservation.pk, index)}
+                  className="ticket-card"
+                >
                   <span className="ticket-card__eyebrow">Ticket numerique</span>
-                  <h3>{ticket.title}</h3>
-                  <p>{ticket.date}</p>
+                  <h3>{extractReservationTitle(reservation)}</h3>
+                  <p>{formatDate(extractReservationDate(reservation))}</p>
                   <div className="ticket-card__footer">
-                    <strong>{ticket.seat}</strong>
-                    <span>{ticket.status}</span>
+                    <strong>{extractReservationQuantity(reservation)} ticket(s)</strong>
+                    <span>{formatStatus(readValue(extractReservationStatus(reservation), 'Valide'))}</span>
                   </div>
                 </article>
               ))}
