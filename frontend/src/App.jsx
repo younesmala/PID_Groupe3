@@ -7,6 +7,8 @@ import Home from './pages/Home'
 import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
+import Signup from './pages/Signup'
+import Profile from './pages/Profile'
 import Navbar from './components/Navbar'
 import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
@@ -18,8 +20,13 @@ function App() {
 
   const isLoggedIn = !!username
 
-  function handleLogin(name) {
-    setUsername(name)
+  function handleLogin(user) {
+    if (typeof user === 'string') {
+      setUsername(user)
+      return
+    }
+
+    setUsername(user?.username || null)
   }
 
   async function handleLogout() {
@@ -48,6 +55,11 @@ function App() {
         <Route path="/show/:id" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/profile"
+          element={<Profile isLoggedIn={isLoggedIn} username={username} />}
+        />
       </Routes>
       <CookieBanner />
     </BrowserRouter>

@@ -85,7 +85,7 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
 
           {isLoggedIn ? (
             <>
-              <span className="navbar-username">{username}</span>
+              <Link to="/profile" className="navbar-username">{username}</Link>
               <button className="btn-outline" onClick={onLogout}>{t('deconnexion')}</button>
             </>
           ) : (

@@ -13,8 +13,8 @@ function LoginModal({ onClose, onLogin }) {
     setError('')
     setLoading(true)
     try {
-      await login(username, password)
-      onLogin(username)
+      const data = await login(username, password)
+      onLogin(data)
     } catch (err) {
       setError(err.message)
     } finally {

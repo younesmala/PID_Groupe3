@@ -1,0 +1,346 @@
+.account-shell {
+  min-height: calc(100vh - 80px);
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 28rem),
+    radial-gradient(circle at 85% 12%, rgba(59, 130, 246, 0.18), transparent 24rem),
+    linear-gradient(160deg, #07111f 0%, #101826 45%, #040812 100%);
+  color: #f8fafc;
+  padding: 44px 24px 72px;
+}
+
+.account-hero,
+.account-card-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.account-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.account-hero--compact {
+  grid-template-columns: 1fr;
+}
+
+.account-hero__content,
+.account-hero__panel,
+.account-card,
+.ticket-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(16px);
+}
+
+.account-hero__content,
+.account-hero__panel {
+  border-radius: 32px;
+  padding: 32px;
+}
+
+.account-kicker,
+.ticket-card__eyebrow {
+  margin: 0 0 14px;
+  color: #fbbf24;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.account-hero__content h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.08em;
+}
+
+.account-hero__content p,
+.account-hero__panel p,
+.account-card__header p,
+.account-list__item p,
+.ticket-card p,
+.account-empty-state,
+.profile-definition-list dd,
+.account-feature-list {
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+
+.account-hero__content p {
+  max-width: 680px;
+  margin-top: 22px;
+}
+
+.account-hero__panel {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  background:
+    linear-gradient(160deg, rgba(249, 115, 22, 0.12), rgba(15, 23, 42, 0.8)),
+    rgba(15, 23, 42, 0.8);
+}
+
+.account-hero__panel span {
+  color: #fde68a;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.account-hero__panel strong {
+  font-size: 1.2rem;
+}
+
+.account-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.account-card-grid--profile {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.account-card {
+  border-radius: 28px;
+  padding: 28px;
+}
+
+.account-card--form,
+.account-card--full {
+  grid-column: span 2;
+}
+
+.account-card__header {
+  margin-bottom: 20px;
+}
+
+.account-card__header h2,
+.account-list__item h3,
+.ticket-card h3 {
+  margin: 0;
+}
+
+.account-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.account-form label {
+  display: grid;
+  gap: 8px;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.account-form label span {
+  font-size: 0.95rem;
+}
+
+.account-form input {
+  min-height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #f8fafc;
+  padding: 0 16px;
+}
+
+.account-form select {
+  min-height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #f8fafc;
+  padding: 0 16px;
+}
+
+.account-form option {
+  color: #0f172a;
+}
+
+.account-field-error {
+  color: #fca5a5;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.account-password-hint {
+  grid-column: span 2;
+  color: #93c5fd;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.account-form label:nth-last-of-type(-n + 2),
+.account-feedback,
+.account-submit {
+  grid-column: span 2;
+}
+
+.account-submit,
+.account-secondary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.account-submit {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #111827;
+  cursor: pointer;
+}
+
+.account-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.account-submit:hover,
+.account-secondary-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.28);
+}
+
+.account-secondary-link {
+  padding: 0 22px;
+  background: transparent;
+  color: #f8fafc;
+}
+
+.account-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.account-feedback {
+  margin: 0;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.account-feedback--error {
+  background: rgba(127, 29, 29, 0.32);
+  color: #fecaca;
+}
+
+.account-feedback--success {
+  background: rgba(20, 83, 45, 0.34);
+  color: #bbf7d0;
+}
+
+.account-feature-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.profile-definition-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 0;
+}
+
+.profile-definition-list div,
+.account-list__item,
+.ticket-card {
+  border-radius: 20px;
+  background: rgba(30, 41, 59, 0.68);
+  padding: 18px;
+}
+
+.profile-definition-list dt {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-definition-list dd {
+  margin: 10px 0 0;
+  font-size: 1.02rem;
+}
+
+.account-list {
+  display: grid;
+  gap: 14px;
+}
+
+.account-list__item,
+.ticket-card__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.account-list__meta {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  text-align: right;
+}
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.ticket-card {
+  display: grid;
+  gap: 12px;
+}
+
+.ticket-card__footer span {
+  color: #fcd34d;
+  font-weight: 700;
+}
+
+.account-empty-state {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .account-hero,
+  .account-card-grid,
+  .account-card-grid--profile,
+  .account-form,
+  .profile-definition-list {
+    grid-template-columns: 1fr;
+  }
+
+  .account-card--form,
+  .account-card--full,
+  .account-feedback,
+  .account-submit,
+  .account-form label:nth-last-of-type(-n + 2) {
+    grid-column: auto;
+  }
+
+  .account-list__item,
+  .ticket-card__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .account-list__meta {
+    justify-items: start;
+    text-align: left;
+  }
+}
