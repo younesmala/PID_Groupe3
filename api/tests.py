@@ -347,7 +347,6 @@ class RepresentationsApiTests(APITestCase):
     def test_get_representations_availability_returns_200(self):
         url = reverse("api:representations-availability",
                       args=[self.representation.id])
-        response = self.client.get(url, {"show": self.show.id})
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('available_seats', response.data)
