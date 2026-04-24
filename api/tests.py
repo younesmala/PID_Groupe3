@@ -350,3 +350,4 @@ class RepresentationsApiTests(APITestCase):
         response = self.client.get(url, {"show": self.show.id})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('available_seats', response.data)
