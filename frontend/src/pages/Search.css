@@ -1,0 +1,98 @@
+.search-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.search-page h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.search-filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.search-input:focus {
+  border-color: #FF4500;
+  outline: none;
+}
+
+.search-select {
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.search-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-card h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.search-card p {
+  color: #666;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  width: fit-content;
+}
+
+.badge--green {
+  background: #e6f4ea;
+  color: #2e7d32;
+}
+
+.badge--red {
+  background: #fce8e6;
+  color: #c62828;
+}
+
+.search-card__link {
+  background: #FF4500;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: bold;
+  margin-top: auto;
+}
