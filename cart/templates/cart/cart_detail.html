@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Panier{% endblock %}
+
+{% block content %}
+  <h1>Panier</h1>
+
+  {% if cart|length %}
+    <table>
+      <thead>
+        <tr>
+          <th>Représentation</th>
+          <th>Prix</th>
+          <th>Quantité</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart %}
+          <tr>
+            <td>{{ item.representation }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.total_price }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>Total panier : {{ cart.get_total_price }}</p>
+  {% else %}
+    <p>Le panier est vide.</p>
+  {% endif %}
+{% endblock %}

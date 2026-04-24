@@ -1,45 +1,48 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from catalogue.models import Representation, Price
-from catalogue.models.reservation import Reservation, RepresentationReservation
 from .cart import Cart
+from catalogue.models import Price, Representation, Reservation
+from catalogue.models.reservation import RepresentationReservation
 
 
 def cart_detail(request):
     cart = Cart(request)
-    return render(request, 'cart/detail.html', {'cart': cart})
+    return render(request, "cart/detail.html", {"cart": cart})
 
 
-@require_POST
 def cart_add(request, representation_id):
-    cart = Cart(request)
-    representation = get_object_or_404(Representation, pk=representation_id)
+    if request.method != "POST":
+        return redirect('cart:cart_detail')
 
+    representation = get_object_or_404(Representation, id=representation_id)
     price_id = request.POST.get('price_id')
-    quantity = int(request.POST.get('quantity', 1))
-    override = request.POST.get('override_quantity') == 'true'
+    price = get_object_or_404(Price, id=price_id)
+    quantity = request.POST.get('quantity', 1)
+    override = request.POST.get('override_quantity') in ['true', 'True', '1', 'on']
 
-    price = get_object_or_404(Price, pk=price_id)
-    cart.add(representation=representation, price=price,
-             quantity=quantity, override_quantity=override)
+    try:
+        quantity = int(quantity)
+    except (TypeError, ValueError):
+        quantity = 1
+
+    Cart(request).add(representation, price, quantity=quantity, override_quantity=override)
     return redirect('cart:cart_detail')
 
 
-@require_POST
 def cart_remove(request, representation_id, price_id):
-    cart = Cart(request)
-    representation = get_object_or_404(Representation, pk=representation_id)
-    price = get_object_or_404(Price, pk=price_id)
-    cart.remove(representation, price)
+    if request.method == 'POST':
+        representation = get_object_or_404(Representation, id=representation_id)
+        price = get_object_or_404(Price, id=price_id)
+        Cart(request).remove(representation, price)
     return redirect('cart:cart_detail')
 
 
-@require_POST
 def cart_clear(request):
-    cart = Cart(request)
-    cart.clear()
+    if request.method == 'POST':
+        Cart(request).clear()
     return redirect('cart:cart_detail')
 
 
