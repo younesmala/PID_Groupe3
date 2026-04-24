@@ -53,5 +53,12 @@
     "negative_quantity": "Quantity cannot be negative.",
     "loading": "Loading...",
     "error_label": "Error"
+  },
+  "cookies": {
+    "title": "🍪 We use cookies",
+    "description": "We use cookies to improve your experience. You can choose which cookies to accept.",
+    "accept_all": "Accept all",
+    "necessary_only": "Necessary only",
+    "decline": "Decline"
   }
 }

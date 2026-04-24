@@ -53,5 +53,12 @@
     "negative_quantity": "Het aantal kan niet negatief zijn.",
     "loading": "Laden...",
     "error_label": "Fout"
+  },
+  "cookies": {
+    "title": "🍪 Wij gebruiken cookies",
+    "description": "Wij gebruiken cookies om uw ervaring te verbeteren. U kunt kiezen welke cookies u accepteert.",
+    "accept_all": "Alles accepteren",
+    "necessary_only": "Alleen noodzakelijke",
+    "decline": "Weigeren"
   }
 }
