@@ -13,6 +13,7 @@ import Navbar from './components/Navbar'
 import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
+import Search from './pages/Search'
 
 function App() {
   const [username, setUsername] = useState(getStoredUsername)
@@ -57,6 +58,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
       <CookieBanner />
     </BrowserRouter>

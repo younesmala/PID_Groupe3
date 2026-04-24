@@ -60,5 +60,19 @@
     "accept_all": "Alles accepteren",
     "necessary_only": "Alleen noodzakelijke",
     "decline": "Weigeren"
+  },
+  "search": {
+    "title": "Voorstellingen zoeken",
+    "placeholder": "Zoeken op titel...",
+    "all": "Alle voorstellingen",
+    "bookable": "Reserveerbaar",
+    "not_bookable": "Niet reserveerbaar",
+    "sort_title": "Sorteren op titel",
+    "sort_date": "Sorteren op datum",
+    "sort_price": "Sorteren op prijs",
+    "loading": "Laden...",
+    "no_results": "Geen voorstellingen gevonden",
+    "results_count": "{{count}} voorstelling(en) gevonden",
+    "view": "Bekijken"
   }
 }
