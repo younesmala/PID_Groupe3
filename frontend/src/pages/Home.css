@@ -227,36 +227,44 @@
 .show-card__poster {
   position: relative;
   display: grid;
-  min-height: 280px;
+  min-height: 320px;
   place-items: center;
   padding: 28px;
   text-align: center;
+  isolation: isolate;
+  overflow: hidden;
 }
 
-.show-card__poster strong {
-  color: #f8fafc;
-  font-size: clamp(1.55rem, 3vw, 2.35rem);
-  line-height: 1.06;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+.show-card__poster-image,
+.show-card__poster-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.show-card__poster-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.show-card__poster-overlay {
+  background:
+    linear-gradient(180deg, rgba(2, 6, 23, 0.04) 0%, rgba(2, 6, 23, 0.18) 48%, rgba(2, 6, 23, 0.58) 100%),
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.12), transparent 30%);
+  z-index: 0;
 }
 
 .show-card__rating {
   position: absolute;
   top: 16px;
   right: 16px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.58);
+  z-index: 1;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.72);
   color: #fbbf24;
-  padding: 6px 10px;
+  padding: 7px 12px;
   font-size: 0.82rem;
   font-weight: 800;
-}
-
-.show-card__spark {
-  position: absolute;
-  bottom: 90px;
-  color: rgba(255, 255, 255, 0.64);
 }
 
 .show-card__poster--green {
@@ -308,25 +316,18 @@
 
 .show-card__actions {
   display: flex;
-  gap: 10px;
 }
 
-.show-card__details,
 .show-card__book {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 38px;
   border-radius: 6px;
+  width: 100%;
   padding: 0 18px;
   font-weight: 800;
   text-decoration: none;
-}
-
-.show-card__details {
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
-  color: #374151;
 }
 
 .show-card__book {
