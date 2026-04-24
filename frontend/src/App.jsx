@@ -8,6 +8,7 @@ import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
 import Navbar from './components/Navbar'
+import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
 
@@ -48,6 +49,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
       </Routes>
+      <CookieBanner />
     </BrowserRouter>
   )
 }

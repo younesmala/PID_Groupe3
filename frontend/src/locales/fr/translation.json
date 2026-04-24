@@ -53,5 +53,12 @@
     "negative_quantity": "La quantité ne peut pas être négative.",
     "loading": "Chargement...",
     "error_label": "Erreur"
+  },
+  "cookies": {
+    "title": "🍪 Nous utilisons des cookies",
+    "description": "Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez choisir quels cookies accepter.",
+    "accept_all": "Tout accepter",
+    "necessary_only": "Nécessaires uniquement",
+    "decline": "Refuser"
   }
 }
