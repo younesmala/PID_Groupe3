@@ -168,8 +168,9 @@ function ShowDetail() {
           alt={show.title}
           style={{
             width: "100%",
-            maxHeight: 420,
-            objectFit: "cover",
+            height: 420,
+            objectFit: "contain",
+            background: "#0f172a",
             borderRadius: 18,
             marginBottom: 24,
             boxShadow: "0 18px 42px rgba(15, 23, 42, 0.18)",

@@ -316,25 +316,18 @@
 
 .show-card__actions {
   display: flex;
-  gap: 10px;
 }
 
-.show-card__details,
 .show-card__book {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 38px;
   border-radius: 6px;
+  width: 100%;
   padding: 0 18px;
   font-weight: 800;
   text-decoration: none;
-}
-
-.show-card__details {
-  border: 1px solid #d1d5db;
-  background: #f9fafb;
-  color: #374151;
 }
 
 .show-card__book {
