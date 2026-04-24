@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 from catalogue.views.home import home as catalogue_home
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views.rss import UpcomingRepresentationsFeed
 
 
@@ -25,6 +26,8 @@ def api_root(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
+    path("api/token/", TokenObtainPairView.as_view()),
+    path("api/token/refresh/", TokenRefreshView.as_view()),
     path("api/", api_root),
     path("api/rss/", UpcomingRepresentationsFeed()),
 
