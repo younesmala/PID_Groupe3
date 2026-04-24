@@ -87,7 +87,7 @@ class RepresentationsCalendarView(APIView):
 
 class RepresentationsAvailabilityView(APIView):
     """
-    GET: Récupère la disponibilité d'une représentation par id
+    GET: Récupère les disponibilités des représentations par location/show
     """
 
     def get(self, request, id, *args, **kwargs):
@@ -96,5 +96,10 @@ class RepresentationsAvailabilityView(APIView):
         except Representation.DoesNotExist:
             return Response({"detail": "Représentation non trouvée"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = RepresentationSerializer(representation)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "id": representation.id,
+            "show": representation.show_id,
+            "schedule": representation.schedule,
+            "location": representation.location_id,
+            "available_seats": representation.available_seats,
+        }, status=status.HTTP_200_OK)
