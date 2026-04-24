@@ -5,6 +5,14 @@ import { getShowById } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
 
+function getPosterSrc(posterUrl) {
+  if (!posterUrl) return null;
+  if (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/")) {
+    return posterUrl;
+  }
+  return `/show-posters/${posterUrl}`;
+}
+
 function RepresentationForm({ rep, prices }) {
   const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
@@ -28,7 +36,7 @@ function RepresentationForm({ rep, prices }) {
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
       <label style={{ fontSize: 14 }}>
-        {t('show.quantity')} :
+        {t("show.quantity")} :
         <input
           type="number"
           min={1}
@@ -39,7 +47,7 @@ function RepresentationForm({ rep, prices }) {
         />
       </label>
       <label style={{ fontSize: 14 }}>
-        {t('show.price')} :
+        {t("show.price")} :
         <select
           value={effectivePriceId}
           onChange={(e) => setSelectedPriceId(e.target.value)}
@@ -53,10 +61,10 @@ function RepresentationForm({ rep, prices }) {
         </select>
       </label>
       <button type="submit" className="btn btn-success btn-sm" disabled={prices.length === 0 || maxQuantity <= 0}>
-        {t('show.add_to_cart')}
+        {t("show.add_to_cart")}
       </button>
-      {status === "ok" && <span style={{ color: "green", fontSize: 13 }}>{t('show.added')}</span>}
-      {status === "error" && <span style={{ color: "red", fontSize: 13 }}>{t('show.error')}</span>}
+      {status === "ok" && <span style={{ color: "green", fontSize: 13 }}>{t("show.added")}</span>}
+      {status === "error" && <span style={{ color: "red", fontSize: 13 }}>{t("show.error")}</span>}
     </form>
   );
 }
@@ -79,12 +87,12 @@ function RepresentationCard({ rep, prices }) {
         {rep.location && <span style={{ marginLeft: 12, color: "#666" }}>{rep.location}</span>}
       </div>
       <div style={{ marginBottom: 12, color: soldOut ? "#b02a37" : "#666" }}>
-        {soldOut ? t('show.no_seats') : `${rep.available_seats} ${t('show.seats_remaining')}`}
+        {soldOut ? t("show.no_seats") : `${rep.available_seats} ${t("show.seats_remaining")}`}
       </div>
       {!soldOut && <RepresentationForm rep={rep} prices={prices} />}
       {soldOut && (
         <button type="button" className="btn btn-secondary btn-sm" disabled>
-          {t('show.sold_out')}
+          {t("show.sold_out")}
         </button>
       )}
     </li>
@@ -123,8 +131,8 @@ function ShowDetail() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div>{t('show.loading')}</div>;
-  if (error) return <div>{t('show.error_label')} : {error}</div>;
+  if (loading) return <div>{t("show.loading")}</div>;
+  if (error) return <div>{t("show.error_label")} : {error}</div>;
 
   const selectedRepresentation = representations.find((rep) => String(rep.id) === selectedRepId);
   const maxReserveQuantity = Math.max(selectedRepresentation?.available_seats ?? 0, 0);
@@ -154,12 +162,46 @@ function ShowDetail() {
 
   return (
     <div style={{ maxWidth: 700, margin: "40px auto", padding: 20 }}>
+      {getPosterSrc(show.poster_url) && (
+        <img
+          src={getPosterSrc(show.poster_url)}
+          alt={show.title}
+          style={{
+            width: "100%",
+            maxHeight: 420,
+            objectFit: "cover",
+            borderRadius: 18,
+            marginBottom: 24,
+            boxShadow: "0 18px 42px rgba(15, 23, 42, 0.18)",
+          }}
+        />
+      )}
       <h1>{show.title}</h1>
       <p className="text-muted">{show.slug}</p>
+      {show.artist_name && (
+        <p style={{ marginTop: 8, color: "#9f1239", fontWeight: 700 }}>
+          Artiste : {show.artist_name}
+        </p>
+      )}
+      <p
+        style={{
+          marginTop: 18,
+          marginBottom: 24,
+          padding: "18px 20px",
+          borderRadius: 16,
+          background: "linear-gradient(135deg, #fff8f1, #ffffff)",
+          border: "1px solid #fed7aa",
+          color: "#374151",
+          lineHeight: 1.75,
+          boxShadow: "0 12px 28px rgba(15, 23, 42, 0.08)",
+        }}
+      >
+        {show.description || "Description a venir."}
+      </p>
 
-      <h2 id="representations" style={{ marginTop: 32 }}>{t('show.representations')}</h2>
+      <h2 id="representations" style={{ marginTop: 32 }}>{t("show.representations")}</h2>
       {representations.length === 0 ? (
-        <p>{t('show.no_representations')}</p>
+        <p>{t("show.no_representations")}</p>
       ) : (
         <ul style={{ listStyle: "none", padding: 0 }}>
           {representations.map((rep) => (
@@ -169,8 +211,8 @@ function ShowDetail() {
       )}
 
       <div style={{ display: "flex", gap: 16, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
-        <Link to="/#shows">{t('show.back')}</Link>
-        <Link to="/cart">{t('show.view_cart')}</Link>
+        <Link to="/#shows">{t("show.back")}</Link>
+        <Link to="/cart">{t("show.view_cart")}</Link>
       </div>
 
       <form
@@ -189,7 +231,7 @@ function ShowDetail() {
         }}
       >
         <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          {t('show.date')}
+          {t("show.date")}
           <select
             value={selectedRepId}
             onChange={(e) => {
@@ -209,7 +251,7 @@ function ShowDetail() {
         </label>
 
         <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          {t('show.price')}
+          {t("show.price")}
           <select
             value={selectedPriceId}
             onChange={(e) => setSelectedPriceId(e.target.value)}
@@ -224,7 +266,7 @@ function ShowDetail() {
         </label>
 
         <div style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          {t('show.seats')}
+          {t("show.seats")}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <button
               type="button"
@@ -261,12 +303,12 @@ function ShowDetail() {
             padding: "0 24px",
           }}
         >
-          {t('show.book')}
+          {t("show.book")}
         </button>
 
         {reserveStatus === "error" && (
           <span style={{ color: "#b91c1c", fontSize: 13 }}>
-            {t('show.cart_error')}
+            {t("show.cart_error")}
           </span>
         )}
       </form>

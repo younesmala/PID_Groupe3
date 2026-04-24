@@ -9,10 +9,12 @@ const CARD_THEMES = [
   'show-card__poster--teal',
 ]
 
-function getShortTitle(title = '') {
-  const words = title.split(' ').filter(Boolean)
-  if (words.length <= 3) return title
-  return words.slice(0, 3).join(' ')
+function getPosterSrc(posterUrl) {
+  if (!posterUrl) return null
+  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
+    return posterUrl
+  }
+  return `/show-posters/${posterUrl}`
 }
 
 function ShowCards({ shows = [], loading = false, error = null }) {
@@ -47,14 +49,20 @@ function ShowCards({ shows = [], loading = false, error = null }) {
         {shows.map((show, index) => (
           <article className="show-card" key={show.id}>
             <div className={`show-card__poster ${CARD_THEMES[index % CARD_THEMES.length]}`}>
-              <span className="show-card__rating">★ {show.duration || 90}</span>
-              <strong>{getShortTitle(show.title)}</strong>
-              <span className="show-card__spark">◆</span>
+              {getPosterSrc(show.poster_url) ? (
+                <img
+                  className="show-card__poster-image"
+                  src={getPosterSrc(show.poster_url)}
+                  alt={show.title}
+                />
+              ) : null}
+              <div className="show-card__poster-overlay" />
+              <span className="show-card__rating">{show.duration || 90} min</span>
             </div>
 
             <div className="show-card__body">
               <h3>{show.title}</h3>
-              <p className="show-card__artist">📍 {show.artist_name || 'Artiste a confirmer'}</p>
+              <p className="show-card__artist">Artiste : {show.artist_name || 'Artiste a confirmer'}</p>
               <p className="show-card__description">
                 {show.description || 'Description a venir.'}
               </p>
