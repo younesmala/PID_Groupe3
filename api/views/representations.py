@@ -90,15 +90,16 @@ class RepresentationsAvailabilityView(APIView):
     GET: Récupère les disponibilités des représentations par location/show
     """
 
-    def get(self, request, *args, **kwargs):
-        location_id = request.query_params.get('location')
-        show_id = request.query_params.get('show')
+    def get(self, request, id, *args, **kwargs):
+        try:
+            representation = Representation.objects.get(id=id)
+        except Representation.DoesNotExist:
+            return Response({"detail": "Représentation non trouvée"}, status=status.HTTP_404_NOT_FOUND)
 
-        representations = Representation.objects.all()
-        if location_id:
-            representations = representations.filter(location_id=location_id)
-        if show_id:
-            representations = representations.filter(show_id=show_id)
-
-        serializer = RepresentationSerializer(representations, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "id": representation.id,
+            "show": representation.show_id,
+            "schedule": representation.schedule,
+            "location": representation.location_id,
+            "available_seats": representation.available_seats,
+        }, status=status.HTTP_200_OK)
