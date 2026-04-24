@@ -12,6 +12,7 @@ from api.views.affiliate_views import (
     register_affiliate, affiliate_catalog, upgrade_affiliate
 )
 from api.views.stats import show_stats, show_stat_detail
+from api.views.external_api import brussels_events, external_shows
 
 app_name = 'api'
 
@@ -179,4 +180,8 @@ urlpatterns = [
     # STATS
     path('stats/shows/', show_stats, name='stats-shows'),
     path('stats/shows/<int:show_id>/', show_stat_detail, name='stats-show-detail'),
+
+    # EXTERNAL APIs
+    path('external/brussels/', brussels_events, name='external-brussels'),
+    path('external/shows/', external_shows, name='external-shows'),
 ]
