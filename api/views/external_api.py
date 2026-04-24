@@ -65,7 +65,7 @@ def brussels_events(request):
                     },
                 ]
             })
-    except Exception as e:
+    except Exception:
         return Response(
             {
                 'source': 'OpenData Brussels (demo)',
