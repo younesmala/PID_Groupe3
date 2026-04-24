@@ -13,6 +13,7 @@ from api.views.affiliate_views import (
 )
 from api.views.stats import show_stats, show_stat_detail
 from api.views.external_api import brussels_events, external_shows
+from api.views.rss import UpcomingRepresentationsFeed
 
 app_name = 'api'
 
@@ -152,7 +153,7 @@ urlpatterns = [
          name='affiliate-subscription'),
 
     # RSS
-    path('rss/next-representations/', rss.RssNextRepresentationsView.as_view(),
+    path('rss/next-representations/', UpcomingRepresentationsFeed(),
          name='rss-next-representations'),
 
     # PUBLIC API
