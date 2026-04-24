@@ -4,6 +4,26 @@ function getErrorMessage(data, fallbackMessage) {
   return data.detail || data.error || fallbackMessage
 }
 
+function parseJsonResponse(res) {
+  return res.json().catch(() => ({}))
+}
+
+function getAuthHeaders() {
+  const token =
+    localStorage.getItem('access_token') ||
+    localStorage.getItem('authToken') ||
+    localStorage.getItem('token')
+
+  return token
+    ? {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      }
+    : {
+        Accept: 'application/json',
+      }
+}
+
 function normalizeCollection(data) {
   if (Array.isArray(data)) {
     return data
@@ -16,6 +36,26 @@ function normalizeCollection(data) {
   return []
 }
 
+export async function getCurrentUser() {
+  const res = await fetch(`${BASE}/users/me/`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: getAuthHeaders(),
+  })
+
+  const data = await parseJsonResponse(res)
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error(getErrorMessage(data, 'Utilisateur non connecte'))
+  }
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, 'Impossible de charger le profil utilisateur'))
+  }
+
+  return data
+}
+
 export async function fetchMyReservations() {
   const res = await fetch(`${BASE}/my/reservations/`, {
     method: 'GET',
@@ -25,7 +65,7 @@ export async function fetchMyReservations() {
     },
   })
 
-  const data = await res.json().catch(() => ({}))
+  const data = await parseJsonResponse(res)
 
   if (!res.ok) {
     throw new Error(getErrorMessage(data, 'Impossible de charger vos reservations'))
