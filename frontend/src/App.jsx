@@ -56,10 +56,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/profile"
-          element={<Profile isLoggedIn={isLoggedIn} username={username} />}
-        />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <CookieBanner />
     </BrowserRouter>
