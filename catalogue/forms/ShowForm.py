@@ -7,7 +7,6 @@ class ShowForm(ModelForm):
     class Meta:
         model = Show
         fields = [
-            'slug',
             'title',
             'description',
             'poster_url',
@@ -19,7 +18,6 @@ class ShowForm(ModelForm):
             'publication_status',
         ]
         labels = {
-            'slug': _('Slug'),
             'title': _('Titre'),
             'description': _('Description'),
             'poster_url': _("URL de l'affiche"),

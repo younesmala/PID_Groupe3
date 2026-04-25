@@ -37,14 +37,14 @@ class ShowsView(generics.GenericAPIView):
 class ShowsDetailView(generics.GenericAPIView):
     serializer_class = ShowSerializer
 
-    def get_object(self, id):
+    def get_object(self, slug):
         try:
-            return Show.objects.get(id=id)
+            return Show.objects.get(slug=slug)
         except Show.DoesNotExist:
             return None
 
-    def get(self, request, id, *args, **kwargs):
-        show = self.get_object(id)
+    def get(self, request, slug, *args, **kwargs):
+        show = self.get_object(slug)
         if show is None:
             return Response(
                 {"detail": "Spectacle non trouvé"},
@@ -53,8 +53,8 @@ class ShowsDetailView(generics.GenericAPIView):
         serializer = ShowSerializer(show)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, id, *args, **kwargs):
-        show = self.get_object(id)
+    def put(self, request, slug, *args, **kwargs):
+        show = self.get_object(slug)
         if show is None:
             return Response(
                 {"detail": "Spectacle non trouvé"},
@@ -66,8 +66,8 @@ class ShowsDetailView(generics.GenericAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, id, *args, **kwargs):
-        show = self.get_object(id)
+    def delete(self, request, slug, *args, **kwargs):
+        show = self.get_object(slug)
         if show is None:
             return Response(
                 {"detail": "Spectacle non trouvé"},

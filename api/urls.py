@@ -66,8 +66,8 @@ urlpatterns = [
 
     # SHOWS
     path('shows/', shows.ShowsView.as_view(), name='shows-list-create'),
-    path('shows/<int:id>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
     path('shows/search/', shows.ShowsSearchView.as_view(), name='shows-search'),
+    path('shows/<slug:slug>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
 
     # REPRESENTATIONS
     path('representations/', representations.RepresentationsView.as_view(),

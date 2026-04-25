@@ -1,4 +1,5 @@
 from django.db import models
+from autoslug import AutoSlugField
 from .location import *
 
 
@@ -13,7 +14,7 @@ class Show(models.Model):
         APPROVED = "approved", "Approved"
         REJECTED = "rejected", "Rejected"
 
-    slug = models.CharField(max_length=60, unique=True)
+    slug = AutoSlugField(populate_from='title', unique=True, max_length=60, always_update=False)
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=255, null=True)
     poster_url = models.CharField(max_length=255, null=True)
