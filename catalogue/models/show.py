@@ -1,5 +1,6 @@
 from django.db import models
 from autoslug import AutoSlugField
+from django.contrib.auth.models import User
 from .location import *
 
 
@@ -25,6 +26,9 @@ class Show(models.Model):
     )
     location = models.ForeignKey(
         Location, on_delete=models.SET_NULL, null=True, related_name='shows')
+    producer = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='produced_shows'
+    )
     bookable = models.BooleanField(default=True)
     publication_status = models.CharField(
         max_length=20,
