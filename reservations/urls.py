@@ -29,15 +29,23 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view()),
     path("api/", api_root),
     path("api/rss/", UpcomingRepresentationsFeed()),
-
     # API endpoints stay language-agnostic
     path("api/", include("api.urls")),
 ]
 
 urlpatterns += i18n_patterns(
+    # Accueil du site (page racine /)
     path("", catalogue_home, name="home"),
+
+    # Catalogue
     path("catalogue/", include(("catalogue.urls", "catalogue"), namespace="catalogue")),
-    path("accounts/", include("django.contrib.auth.urls")),
-    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
+
+    # Cart
     path("cart/", include(("cart.urls", "cart"), namespace="cart")),
+
+    # Auth Django (login/logout/password_reset...)
+    path("accounts/", include("django.contrib.auth.urls")),
+
+    # Accounts app (profile, signup...)
+    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
 )
