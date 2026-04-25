@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     auth, users, artists, types, artist_types, localities, locations,
     shows, representations, prices, cart, checkout, reservations,
-    tickets, reviews, producer, admin_api, affiliate, rss, public_api
+    tickets, reviews, producer, admin_api, affiliate, rss, public_api,
+    comments,
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
 from api.views.profile import get_profile, update_profile
@@ -72,6 +73,7 @@ urlpatterns = [
     path('shows/search/', shows.ShowsSearchView.as_view(), name='shows-search'),
     path('shows/<slug:slug>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
     path('shows/<slug:slug>/reviews/', reviews.ShowReviewsView.as_view(), name='show-reviews'),
+    path('shows/<slug:slug>/comments/', comments.ShowCommentsView.as_view(), name='show-comments'),
 
     # REPRESENTATIONS
     path('representations/', representations.RepresentationsView.as_view(),
@@ -143,6 +145,12 @@ urlpatterns = [
 
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
+    path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
+    path(
+        'admin/comments/<int:id>/moderate/',
+        admin_api.AdminCommentModerateView.as_view(),
+        name='admin-comments-moderate',
+    ),
     path('admin/catalog/import/', admin_api.AdminCatalogImportView.as_view(),
          name='admin-catalog-import'),
     path('admin/catalog/export/', admin_api.AdminCatalogExportView.as_view(),

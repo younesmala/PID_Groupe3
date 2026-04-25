@@ -1,5 +1,6 @@
 from .artist import *
 from .artist_type import *
+from .comment import Comment
 from .artist_type_show import *
 from .locality import *
 from .location import *
