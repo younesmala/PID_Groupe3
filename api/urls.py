@@ -22,6 +22,8 @@ urlpatterns = [
     path('auth/signup/', auth.AuthSignupView.as_view(), name='auth-signup'),
     path('auth/login/', auth.AuthLoginView.as_view(), name='auth-login'),
     path('auth/logout/', auth.AuthLogoutView.as_view(), name='auth-logout'),
+    path('auth/password-reset/', auth.PasswordResetView.as_view(), name='auth-password-reset'),
+    path('auth/password-reset-confirm/', auth.PasswordResetConfirmView.as_view(), name='auth-password-reset-confirm'),
     # TYPES
     path('types/', types.TypesView.as_view(), name='types-list'),
     path('types/<int:pk>/', types.TypesDetailView.as_view(), name='types-detail'),
