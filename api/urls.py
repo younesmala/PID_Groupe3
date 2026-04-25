@@ -70,6 +70,7 @@ urlpatterns = [
     path('shows/', shows.ShowsView.as_view(), name='shows-list-create'),
     path('shows/search/', shows.ShowsSearchView.as_view(), name='shows-search'),
     path('shows/<slug:slug>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
+    path('shows/<slug:slug>/reviews/', reviews.ShowReviewsView.as_view(), name='show-reviews'),
 
     # REPRESENTATIONS
     path('representations/', representations.RepresentationsView.as_view(),
@@ -132,6 +133,8 @@ urlpatterns = [
          producer.ProducerCommentsRejectView.as_view(), name='producer-comments-reject'),
     path('producer/reviews/', producer.ProducerReviewsView.as_view(),
          name='producer-reviews'),
+    path('producer/reviews/<int:id>/moderate/',
+         producer.ProducerReviewModerateView.as_view(), name='producer-reviews-moderate'),
     path('producer/reviews/<int:id>/validate/',
          producer.ProducerReviewsValidateView.as_view(), name='producer-reviews-validate'),
     path('producer/reviews/<int:id>/reject/',

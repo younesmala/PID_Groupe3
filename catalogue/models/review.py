@@ -10,13 +10,27 @@ class ReviewManager(models.Manager):
 
 
 class Review(models.Model):
+    STATUS_PENDING = 'pending'
+    STATUS_APPROVED = 'approved'
+    STATUS_REJECTED = 'rejected'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_APPROVED, 'Approved'),
+        (STATUS_REJECTED, 'Rejected'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.RESTRICT,
                              null=False, related_name='user')
     show = models.ForeignKey(Show, on_delete=models.RESTRICT,
                              null=False, related_name='show')
     review = models.TextField()
     stars = models.PositiveSmallIntegerField()
-    validated = models.BooleanField()
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
+    validated = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
 
