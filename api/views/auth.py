@@ -265,11 +265,20 @@ class PasswordResetConfirmView(APIView):
             return Response({'error': 'Token invalide ou expiré.'}, status=status.HTTP_400_BAD_REQUEST)
 
         if len(new_password) < 6:
-            return Response({'error': 'Le mot de passe doit contenir au moins 6 caractères.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Le mot de passe doit contenir au moins 6 caractères.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if not re.search(r'[A-Z]', new_password):
-            return Response({'error': 'Le mot de passe doit contenir au moins une majuscule.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Le mot de passe doit contenir au moins une majuscule.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if not re.search(r'[^a-zA-Z0-9]', new_password):
-            return Response({'error': 'Le mot de passe doit contenir au moins un caractère spécial.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Le mot de passe doit contenir au moins un caractère spécial.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         user.set_password(new_password)
         user.save()
