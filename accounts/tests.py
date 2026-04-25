@@ -54,7 +54,7 @@ class LoginTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_login_with_wrong_password(self):
-        response = self.client.post('/accounts/login/', {
+        response = self.client.post(reverse('login'), {
             'username': 'loginuser',
             'password': 'wrongpassword',
         })

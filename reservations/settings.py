@@ -1,6 +1,7 @@
 
 from django.utils.translation import gettext_lazy as _
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -195,7 +196,9 @@ SECURE_REFERRER_POLICY = 'same-origin'
 # ============================================
 # RATE LIMITING
 # ============================================
-RATELIMIT_ENABLE = True
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
+
+RATELIMIT_ENABLE = not TESTING
 RATELIMIT_USE_CACHE = 'default'
 
 CACHES = {
@@ -210,14 +213,14 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
+    'DEFAULT_THROTTLE_CLASSES': [] if TESTING else [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
     ],
-    'DEFAULT_THROTTLE_RATES': {
+    'DEFAULT_THROTTLE_RATES': {} if TESTING else {
         'anon': '10/minute',
         'user': '100/minute',
-    }
+    },
 }
 
 # ============================================
