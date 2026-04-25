@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from catalogue.models import Show
@@ -75,6 +76,38 @@ class ShowsDetailView(generics.GenericAPIView):
             )
         show.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ShowBulkActionsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    VALID_ACTIONS = ('publish', 'unpublish', 'delete')
+
+    def post(self, request):
+        action = request.data.get('action')
+        ids = request.data.get('ids')
+
+        if action not in self.VALID_ACTIONS:
+            return Response(
+                {'error': f"Action invalide. Valeurs acceptées : {', '.join(self.VALID_ACTIONS)}."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if not isinstance(ids, list) or not ids:
+            return Response(
+                {'error': "Le champ 'ids' doit être une liste non vide d'identifiants."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        queryset = Show.objects.filter(id__in=ids)
+
+        if action == 'publish':
+            affected = queryset.update(publication_status=Show.PublicationStatus.APPROVED)
+        elif action == 'unpublish':
+            affected = queryset.update(publication_status=Show.PublicationStatus.PENDING)
+        else:
+            affected, _ = queryset.delete()
+
+        return Response({'action': action, 'affected': affected}, status=status.HTTP_200_OK)
 
 
 class ShowsSearchView(generics.GenericAPIView):

@@ -71,6 +71,7 @@ urlpatterns = [
     # SHOWS
     path('shows/', shows.ShowsView.as_view(), name='shows-list-create'),
     path('shows/search/', shows.ShowsSearchView.as_view(), name='shows-search'),
+    path('shows/bulk-actions/', shows.ShowBulkActionsView.as_view(), name='shows-bulk-actions'),
     path('shows/<slug:slug>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
     path('shows/<slug:slug>/reviews/', reviews.ShowReviewsView.as_view(), name='show-reviews'),
     path('shows/<slug:slug>/comments/', comments.ShowCommentsView.as_view(), name='show-comments'),
