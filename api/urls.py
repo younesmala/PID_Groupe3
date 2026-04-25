@@ -3,7 +3,7 @@ from .views import (
     auth, users, artists, types, artist_types, localities, locations,
     shows, representations, prices, cart, checkout, reservations,
     tickets, reviews, producer, admin_api, affiliate, rss, public_api,
-    comments,
+    comments, show_prices,
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
 from api.views.profile import get_profile, update_profile
@@ -74,6 +74,8 @@ urlpatterns = [
     path('shows/<slug:slug>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
     path('shows/<slug:slug>/reviews/', reviews.ShowReviewsView.as_view(), name='show-reviews'),
     path('shows/<slug:slug>/comments/', comments.ShowCommentsView.as_view(), name='show-comments'),
+    path('shows/<slug:slug>/prices/', show_prices.ShowPricesView.as_view(), name='show-prices'),
+    path('shows/<slug:slug>/prices/<int:pk>/', show_prices.ShowPricesDetailView.as_view(), name='show-prices-detail'),
 
     # REPRESENTATIONS
     path('representations/', representations.RepresentationsView.as_view(),
