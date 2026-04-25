@@ -94,6 +94,9 @@ msgstr "Latest registered users"
 msgid "Nom d'utilisateur"
 msgstr "Username"
 
+msgid "Mot de passe"
+msgstr "Password"
+
 #: .\catalogue\templates\admin\dashboard.html:88
 msgid "Inscrit le"
 msgstr "Registered on"
@@ -140,7 +143,6 @@ msgstr "Password"
 
 msgid "Mot de passe oublié ?"
 msgstr "Forgot password?"
-
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
 msgstr "No account yet?"

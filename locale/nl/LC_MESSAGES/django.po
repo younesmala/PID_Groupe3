@@ -89,7 +89,6 @@ msgstr "Onjuiste inloggegevens. Probeer het opnieuw."
 
 msgid "Mot de passe oublié ?"
 msgstr "Wachtwoord vergeten?"
-
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
 msgstr "Nog geen account?"
