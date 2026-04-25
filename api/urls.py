@@ -8,6 +8,7 @@ from api.views.artists import ArtistsView, ArtistsDetailView
 from api.views.profile import get_profile, update_profile
 from api.views.auth import check_username, check_email
 from api.views.csv_views import export_shows_csv, import_shows_csv
+from api.views.xml_views import import_shows_xml
 from api.views.affiliate_views import (
     register_affiliate, affiliate_catalog, upgrade_affiliate
 )
@@ -177,6 +178,9 @@ urlpatterns = [
     # CSV
     path('export/shows/', export_shows_csv, name='export-shows-csv'),
     path('import/shows/', import_shows_csv, name='import-shows-csv'),
+
+    # XML
+    path('import/shows/xml/', import_shows_xml, name='import-shows-xml'),
 
     # AFFILIATE
     path('affiliate/register/', register_affiliate, name='affiliate-register'),
