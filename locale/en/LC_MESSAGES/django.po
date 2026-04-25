@@ -129,6 +129,18 @@ msgstr "Sign up"
 msgid "Se connecter"
 msgstr "Sign in"
 
+msgid "Connecte-toi pour accéder au projet."
+msgstr "Sign in to access the project."
+
+msgid "Identifiants incorrects. Veuillez réessayer."
+msgstr "Invalid credentials. Please try again."
+
+msgid "Mot de passe"
+msgstr "Password"
+
+msgid "Mot de passe oublié ?"
+msgstr "Forgot password?"
+
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
 msgstr "No account yet?"

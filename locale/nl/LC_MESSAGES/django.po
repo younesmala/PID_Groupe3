@@ -81,6 +81,15 @@ msgstr "Registreren"
 msgid "Se connecter"
 msgstr "Aanmelden"
 
+msgid "Connecte-toi pour accéder au projet."
+msgstr "Meld je aan om toegang te krijgen tot het project."
+
+msgid "Identifiants incorrects. Veuillez réessayer."
+msgstr "Onjuiste inloggegevens. Probeer het opnieuw."
+
+msgid "Mot de passe oublié ?"
+msgstr "Wachtwoord vergeten?"
+
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
 msgstr "Nog geen account?"
@@ -257,6 +266,9 @@ msgstr "Laatst ingeschreven gebruikers"
 #: .\catalogue\templates\admin\dashboard.html:87
 msgid "Nom d'utilisateur"
 msgstr "Gebruikersnaam"
+
+msgid "Mot de passe"
+msgstr "Wachtwoord"
 
 #: .\catalogue\templates\admin\dashboard.html:88
 msgid "Inscrit le"
