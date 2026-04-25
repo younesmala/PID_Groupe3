@@ -1,7 +1,6 @@
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
 from catalogue.views.home import home as catalogue_home
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -26,14 +25,13 @@ def api_root(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
-    path("accounts/", include("django.contrib.auth.urls")),
     path("api/token/", TokenObtainPairView.as_view()),
     path("api/token/refresh/", TokenRefreshView.as_view()),
     path("api/", api_root),
     path("api/rss/", UpcomingRepresentationsFeed()),
 
-    # Accueil du SITE (page racine /)
-    path("", TemplateView.as_view(template_name="catalogue/home.html"), name="home"),
+    # API endpoints stay language-agnostic
+    path("api/", include("api.urls")),
 ]
 
 urlpatterns += i18n_patterns(
@@ -42,5 +40,4 @@ urlpatterns += i18n_patterns(
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
     path("cart/", include(("cart.urls", "cart"), namespace="cart")),
-    path("api/", include(("api.urls", "api"), namespace="api")),
 )
