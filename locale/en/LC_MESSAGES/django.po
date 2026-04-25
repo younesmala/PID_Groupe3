@@ -469,6 +469,21 @@ msgstr "Dutch"
 msgid "English"
 msgstr "English"
 
+msgid "Pseudo"
+msgstr "Username"
+
+msgid "Adresse e-mail"
+msgstr "Email address"
+
+msgid "Confirmation du mot de passe"
+msgstr "Password confirmation"
+
+msgid "Choisissez votre langue"
+msgstr "Choose your language"
+
+msgid "Remplissez le formulaire pour vous inscrire."
+msgstr "Fill out the form to create your account."
+
 #: .\catalogue\templates\admin\user\edit.html:5
 msgid "Changer le rôle de %(username)s"
 msgstr "Change role of %(username)s"
