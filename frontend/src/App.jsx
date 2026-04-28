@@ -14,6 +14,7 @@ import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
 import Search from './pages/Search'
+import Reviews from './pages/Reviews'
 
 function App() {
   const [username, setUsername] = useState(getStoredUsername)
@@ -53,12 +54,13 @@ function App() {
         <Route path="/artist/:id" element={<ArtistDetail />} />
         <Route path="/artist/:id/edit" element={<ArtistEdit />} />
         <Route path="/shows" element={<ShowsList />} />
-        <Route path="/show/:id" element={<ShowDetail />} />
+        <Route path="/shows/:slug" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/reviews" element={<Reviews />} />
       </Routes>
       <CookieBanner />
     </BrowserRouter>
