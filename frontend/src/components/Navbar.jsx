@@ -83,6 +83,12 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </Link>
 
+          {isLoggedIn && (
+            <Link to="/admin/dashboard" className="btn-admin">
+              📊 Dashboard
+            </Link>
+          )}
+
           {isLoggedIn ? (
             <>
               <span className="navbar-username">{username}</span>
