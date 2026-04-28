@@ -38,7 +38,6 @@ export async function login(username, password) {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken'),
     },
     body: JSON.stringify({ username, password }),
   })
@@ -54,6 +53,11 @@ export async function login(username, password) {
   }
 
   localStorage.setItem('username', data.username || username)
+
+  if (data.csrf_token) {
+    localStorage.setItem('csrf_token', data.csrf_token)
+  }
+
   return data
 }
 
@@ -112,10 +116,12 @@ export async function logout() {
     method: 'POST',
     credentials: 'include',
     headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
+      'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '',
     },
   })
+
   localStorage.removeItem('username')
+  localStorage.removeItem('csrf_token')
 }
 
 export function getStoredUsername() {

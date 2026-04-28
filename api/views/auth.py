@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 import re
 
 
@@ -88,6 +89,9 @@ class AuthSignupView(APIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AuthLoginView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', '')
         password = request.data.get('password', '')
@@ -100,12 +104,14 @@ class AuthLoginView(APIView):
             )
 
         auth_login(request, user)
+        csrf_token = get_token(request)
+
         return Response({
             "success": True,
             "username": user.username,
             "email": user.email,
+            "csrf_token": csrf_token,
         })
-
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AuthLogoutView(APIView):
