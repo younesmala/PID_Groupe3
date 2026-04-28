@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
+import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
 import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
@@ -47,6 +48,7 @@ function App() {
         <Route path="/show/:id" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   )
