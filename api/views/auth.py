@@ -87,6 +87,7 @@ class AuthSignupView(APIView):
         }, status=status.HTTP_201_CREATED)
 
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class AuthLoginView(APIView):
     authentication_classes = []
