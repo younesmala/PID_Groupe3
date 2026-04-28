@@ -31,7 +31,8 @@
     "error": "Erreur",
     "cart_error": "Impossible d'ajouter au panier pour le moment.",
     "loading": "Chargement...",
-    "error_label": "Erreur"
+    "error_label": "Erreur",
+    "view_reviews": "Voir les avis"
   },
   "cart": {
     "title": "Mon panier",
