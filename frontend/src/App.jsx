@@ -7,8 +7,7 @@ import Home from './pages/Home'
 import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
-import Signup from './pages/Signup'
-import Profile from './pages/Profile'
+import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
 import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
@@ -56,9 +55,7 @@ function App() {
         <Route path="/show/:id" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/search" element={<Search />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
       <CookieBanner />
     </BrowserRouter>
