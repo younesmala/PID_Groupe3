@@ -74,5 +74,17 @@
     "no_results": "Aucun spectacle trouvé",
     "results_count": "{{count}} spectacle(s) trouvé(s)",
     "view": "Voir"
+  },
+  "checkout": {
+    "title": "Finaliser ma commande",
+    "summary": "1. Résumé des articles",
+    "next": "Confirmer l'achat",
+    "processing": "Traitement...",
+    "error_msg": "Une erreur est survenue lors de la validation."
+  },
+  "confirmation": {
+    "title": "Commande Confirmée",
+    "thank_you": "Merci pour votre achat !",
+    "back_home": "Retour à l'accueil"
   }
 }
