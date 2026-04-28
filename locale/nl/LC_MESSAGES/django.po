@@ -81,6 +81,14 @@ msgstr "Registreren"
 msgid "Se connecter"
 msgstr "Aanmelden"
 
+msgid "Connecte-toi pour accéder au projet."
+msgstr "Meld je aan om toegang te krijgen tot het project."
+
+msgid "Identifiants incorrects. Veuillez réessayer."
+msgstr "Onjuiste inloggegevens. Probeer het opnieuw."
+
+msgid "Mot de passe oublié ?"
+msgstr "Wachtwoord vergeten?"
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
 msgstr "Nog geen account?"
@@ -257,6 +265,9 @@ msgstr "Laatst ingeschreven gebruikers"
 #: .\catalogue\templates\admin\dashboard.html:87
 msgid "Nom d'utilisateur"
 msgstr "Gebruikersnaam"
+
+msgid "Mot de passe"
+msgstr "Wachtwoord"
 
 #: .\catalogue\templates\admin\dashboard.html:88
 msgid "Inscrit le"
@@ -495,6 +506,21 @@ msgstr "Nederlands"
 #: .\reservations\settings.py:130
 msgid "English"
 msgstr "Engels"
+
+msgid "Pseudo"
+msgstr "Gebruikersnaam"
+
+msgid "Adresse e-mail"
+msgstr "E-mailadres"
+
+msgid "Confirmation du mot de passe"
+msgstr "Wachtwoordbevestiging"
+
+msgid "Choisissez votre langue"
+msgstr "Kies je taal"
+
+msgid "Remplissez le formulaire pour vous inscrire."
+msgstr "Vul het formulier in om je account aan te maken."
 
 #: .\catalogue\templates\admin\user\edit.html:5
 msgid "Changer le rôle de %(username)s"

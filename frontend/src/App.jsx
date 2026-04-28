@@ -9,8 +9,10 @@ import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
 import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
+import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
+import Search from './pages/Search'
 
 function App() {
   const [username, setUsername] = useState(getStoredUsername)
@@ -18,8 +20,13 @@ function App() {
 
   const isLoggedIn = !!username
 
-  function handleLogin(name) {
-    setUsername(name)
+  function handleLogin(user) {
+    if (typeof user === 'string') {
+      setUsername(user)
+      return
+    }
+
+    setUsername(user?.username || null)
   }
 
   async function handleLogout() {
@@ -50,6 +57,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
+      <CookieBanner />
     </BrowserRouter>
   )
 }

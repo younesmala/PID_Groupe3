@@ -2,13 +2,14 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext_lazy as _
 from catalogue.models import UserMeta
 from django.db import models
 
 
 class UserSignUpForm(UserCreationForm):
     class Language(models.TextChoices):
-        NONE = "", "Choisissez votre langue"
+        NONE = "", _("Choisissez votre langue")
         FRENCH = "fr", "Français"
         ENGLISH = "en", "English"
         DUTCH = "nl", "Nederlands"
@@ -27,12 +28,12 @@ class UserSignUpForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].label = 'Pseudo'
-        self.fields['last_name'].label = 'Nom'
-        self.fields['first_name'].label = 'Prénom'
-        self.fields['email'].label = 'Adresse e-mail'
-        self.fields['password1'].label = 'Mot de passe'
-        self.fields['password2'].label = 'Confirmation du mot de passe'
+        self.fields['username'].label = _('Pseudo')
+        self.fields['last_name'].label = _('Nom')
+        self.fields['first_name'].label = _('Prénom')
+        self.fields['email'].label = _('Adresse e-mail')
+        self.fields['password1'].label = _('Mot de passe')
+        self.fields['password2'].label = _('Confirmation du mot de passe')
 
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None

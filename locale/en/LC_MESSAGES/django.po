@@ -94,6 +94,9 @@ msgstr "Latest registered users"
 msgid "Nom d'utilisateur"
 msgstr "Username"
 
+msgid "Mot de passe"
+msgstr "Password"
+
 #: .\catalogue\templates\admin\dashboard.html:88
 msgid "Inscrit le"
 msgstr "Registered on"
@@ -129,6 +132,14 @@ msgstr "Sign up"
 msgid "Se connecter"
 msgstr "Sign in"
 
+msgid "Connecte-toi pour accéder au projet."
+msgstr "Sign in to access the project."
+
+msgid "Identifiants incorrects. Veuillez réessayer."
+msgstr "Invalid credentials. Please try again."
+
+msgid "Mot de passe oublié ?"
+msgstr "Forgot password?"
 #: .\accounts\templates\registration\login.html:11
 msgid "Pas encore de compte ?"
 msgstr "No account yet?"
@@ -457,6 +468,21 @@ msgstr "Dutch"
 #: .\reservations\settings.py:130
 msgid "English"
 msgstr "English"
+
+msgid "Pseudo"
+msgstr "Username"
+
+msgid "Adresse e-mail"
+msgstr "Email address"
+
+msgid "Confirmation du mot de passe"
+msgstr "Password confirmation"
+
+msgid "Choisissez votre langue"
+msgstr "Choose your language"
+
+msgid "Remplissez le formulaire pour vous inscrire."
+msgstr "Fill out the form to create your account."
 
 #: .\catalogue\templates\admin\user\edit.html:5
 msgid "Changer le rôle de %(username)s"

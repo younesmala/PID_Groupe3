@@ -53,5 +53,26 @@
     "negative_quantity": "Quantity cannot be negative.",
     "loading": "Loading...",
     "error_label": "Error"
+  },
+  "cookies": {
+    "title": "🍪 We use cookies",
+    "description": "We use cookies to improve your experience. You can choose which cookies to accept.",
+    "accept_all": "Accept all",
+    "necessary_only": "Necessary only",
+    "decline": "Decline"
+  },
+  "search": {
+    "title": "Search shows",
+    "placeholder": "Search by title...",
+    "all": "All shows",
+    "bookable": "Bookable",
+    "not_bookable": "Not bookable",
+    "sort_title": "Sort by title",
+    "sort_date": "Sort by date",
+    "sort_price": "Sort by price",
+    "loading": "Loading...",
+    "no_results": "No shows found",
+    "results_count": "{{count}} show(s) found",
+    "view": "View"
   }
 }

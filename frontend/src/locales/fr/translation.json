@@ -53,5 +53,26 @@
     "negative_quantity": "La quantité ne peut pas être négative.",
     "loading": "Chargement...",
     "error_label": "Erreur"
+  },
+  "cookies": {
+    "title": "🍪 Nous utilisons des cookies",
+    "description": "Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez choisir quels cookies accepter.",
+    "accept_all": "Tout accepter",
+    "necessary_only": "Nécessaires uniquement",
+    "decline": "Refuser"
+  },
+  "search": {
+    "title": "Rechercher des spectacles",
+    "placeholder": "Rechercher par titre...",
+    "all": "Tous les spectacles",
+    "bookable": "Réservable",
+    "not_bookable": "Non réservable",
+    "sort_title": "Trier par titre",
+    "sort_date": "Trier par date",
+    "sort_price": "Trier par prix",
+    "loading": "Chargement...",
+    "no_results": "Aucun spectacle trouvé",
+    "results_count": "{{count}} spectacle(s) trouvé(s)",
+    "view": "Voir"
   }
 }

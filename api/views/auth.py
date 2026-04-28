@@ -1,9 +1,12 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -15,8 +18,72 @@ import re
 
 
 class AuthSignupView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+        data = request.data
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        confirm_password = data.get('confirm_password', '')
+        email = data.get('email', '').strip()
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+
+        errors = {}
+
+        if not username:
+            errors['username'] = 'Le nom d\'utilisateur est requis.'
+        elif User.objects.filter(username=username).exists():
+            errors['username'] = 'Ce nom d\'utilisateur est déjà pris.'
+
+        if not email:
+            errors['email'] = 'L\'email est requis.'
+        elif User.objects.filter(email=email).exists():
+            errors['email'] = 'Cet email est déjà utilisé.'
+
+        if not password:
+            errors['password'] = 'Le mot de passe est requis.'
+        elif len(password) < 6:
+            errors['password'] = 'Le mot de passe doit contenir au moins 6 caractères.'
+        elif not re.search(r'[A-Z]', password):
+            errors['password'] = 'Le mot de passe doit contenir au moins une majuscule.'
+        elif not re.search(r'[^a-zA-Z0-9]', password):
+            errors['password'] = 'Le mot de passe doit contenir au moins un caractère spécial.'
+
+        if password != confirm_password:
+            errors['confirm_password'] = 'Les mots de passe ne correspondent pas.'
+
+        if errors:
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        try:
+            send_mail(
+                subject='Bienvenue sur Brussels Show !',
+                message=(
+                    f'Bonjour {first_name or username},\n\n'
+                    'Votre compte a été créé avec succès.\n\n'
+                    'L\'équipe Brussels Show'
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+
+        return Response({
+            'message': 'Compte créé avec succès.',
+            'username': user.username,
+            'email': user.email,
+        }, status=status.HTTP_201_CREATED)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -139,3 +206,81 @@ def check_email(request):
         'available': not exists,
         'message': 'Disponible' if not exists else 'Déjà utilisé'
     })
+
+
+class PasswordResetView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email', '').strip()
+        if not email:
+            return Response({'error': "L'email est requis."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            # Ne pas révéler si l'email existe ou non
+            return Response({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'})
+
+        token = PasswordResetTokenGenerator().make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        reset_url = f'http://localhost:5173/reset-password?token={token}&uid={uid}'
+
+        send_mail(
+            subject='Réinitialisation de votre mot de passe — Brussels Show',
+            message=(
+                f'Bonjour {user.first_name or user.username},\n\n'
+                'Vous avez demandé la réinitialisation de votre mot de passe.\n\n'
+                f'Cliquez sur ce lien pour choisir un nouveau mot de passe :\n{reset_url}\n\n'
+                'Ce lien est valable 24 heures.\n\n'
+                "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.\n\n"
+                "L'équipe Brussels Show"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return Response({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'})
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        uid = request.data.get('uid', '')
+        token = request.data.get('token', '')
+        new_password = request.data.get('new_password', '')
+
+        if not uid or not token or not new_password:
+            return Response({'error': 'Tous les champs sont requis.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user_pk = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=user_pk)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({'error': 'Lien invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            return Response({'error': 'Token invalide ou expiré.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if len(new_password) < 6:
+            return Response(
+                {'error': 'Le mot de passe doit contenir au moins 6 caractères.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if not re.search(r'[A-Z]', new_password):
+            return Response(
+                {'error': 'Le mot de passe doit contenir au moins une majuscule.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if not re.search(r'[^a-zA-Z0-9]', new_password):
+            return Response(
+                {'error': 'Le mot de passe doit contenir au moins un caractère spécial.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({'message': 'Mot de passe réinitialisé avec succès.'})

@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
+from catalogue.models import UserMeta
 from .forms.UserSignUpForm import UserSignUpForm
 from .forms.UserUpdateForm import UserUpdateForm
 
@@ -57,8 +58,34 @@ def profile(request):
         "nl": "Nederlands",
     }
 
+    user_reservations = request.user.reservations.select_related(
+        'representation__show',
+        'representation__location',
+    ).order_by('-booking_date')
+
+    def is_ticket_reservation(reservation):
+        status = (reservation.status or '').lower()
+        payment_status = (reservation.payment_status or '').lower()
+        return (
+            status in {'confirmed', 'paid'}
+            or payment_status in {'paid'}
+        )
+
+    ticket_reservations = [
+        reservation for reservation in user_reservations
+        if is_ticket_reservation(reservation)
+    ]
+
+    usermeta, _ = UserMeta.objects.get_or_create(
+        user=request.user,
+        defaults={'langue': 'fr'}
+    )
+    user_lang_code = usermeta.langue or 'fr'
+
     return render(request, 'user/profile.html', {
-        "user_language": languages[request.user.usermeta.langue],
+        "user_language": languages.get(user_lang_code, "Français"),
+        "reservations": user_reservations,
+        "ticket_reservations": ticket_reservations,
     })
 
 

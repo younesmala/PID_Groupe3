@@ -1,4 +1,6 @@
 from django.db import models
+from autoslug import AutoSlugField
+from django.contrib.auth.models import User
 from .location import *
 
 
@@ -13,7 +15,7 @@ class Show(models.Model):
         APPROVED = "approved", "Approved"
         REJECTED = "rejected", "Rejected"
 
-    slug = models.CharField(max_length=60, unique=True)
+    slug = AutoSlugField(populate_from='title', unique=True, max_length=60, always_update=False)
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=255, null=True)
     poster_url = models.CharField(max_length=255, null=True)
@@ -24,6 +26,9 @@ class Show(models.Model):
     )
     location = models.ForeignKey(
         Location, on_delete=models.SET_NULL, null=True, related_name='shows')
+    producer = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='produced_shows'
+    )
     bookable = models.BooleanField(default=True)
     publication_status = models.CharField(
         max_length=20,

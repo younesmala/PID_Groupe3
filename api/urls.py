@@ -2,16 +2,20 @@ from django.urls import path
 from .views import (
     auth, users, artists, types, artist_types, localities, locations,
     shows, representations, prices, cart, checkout, reservations,
-    tickets, reviews, producer, admin_api, affiliate, rss, public_api
+    tickets, reviews, producer, admin_api, affiliate, rss, public_api,
+    comments, show_prices,
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
 from api.views.profile import get_profile, update_profile
 from api.views.auth import check_username, check_email
 from api.views.csv_views import export_shows_csv, import_shows_csv
+from api.views.xml_views import import_shows_xml
 from api.views.affiliate_views import (
     register_affiliate, affiliate_catalog, upgrade_affiliate
 )
 from api.views.stats import show_stats, show_stat_detail
+from api.views.external_api import brussels_events, external_shows
+from api.views.rss import UpcomingRepresentationsFeed
 
 app_name = 'api'
 
@@ -20,6 +24,8 @@ urlpatterns = [
     path('auth/signup/', auth.AuthSignupView.as_view(), name='auth-signup'),
     path('auth/login/', auth.AuthLoginView.as_view(), name='auth-login'),
     path('auth/logout/', auth.AuthLogoutView.as_view(), name='auth-logout'),
+    path('auth/password-reset/', auth.PasswordResetView.as_view(), name='auth-password-reset'),
+    path('auth/password-reset-confirm/', auth.PasswordResetConfirmView.as_view(), name='auth-password-reset-confirm'),
     # TYPES
     path('types/', types.TypesView.as_view(), name='types-list'),
     path('types/<int:pk>/', types.TypesDetailView.as_view(), name='types-detail'),
@@ -64,8 +70,13 @@ urlpatterns = [
 
     # SHOWS
     path('shows/', shows.ShowsView.as_view(), name='shows-list-create'),
-    path('shows/<int:id>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
     path('shows/search/', shows.ShowsSearchView.as_view(), name='shows-search'),
+    path('shows/bulk-actions/', shows.ShowBulkActionsView.as_view(), name='shows-bulk-actions'),
+    path('shows/<slug:slug>/', shows.ShowsDetailView.as_view(), name='shows-detail'),
+    path('shows/<slug:slug>/reviews/', reviews.ShowReviewsView.as_view(), name='show-reviews'),
+    path('shows/<slug:slug>/comments/', comments.ShowCommentsView.as_view(), name='show-comments'),
+    path('shows/<slug:slug>/prices/', show_prices.ShowPricesView.as_view(), name='show-prices'),
+    path('shows/<slug:slug>/prices/<int:pk>/', show_prices.ShowPricesDetailView.as_view(), name='show-prices-detail'),
 
     # REPRESENTATIONS
     path('representations/', representations.RepresentationsView.as_view(),
@@ -128,6 +139,8 @@ urlpatterns = [
          producer.ProducerCommentsRejectView.as_view(), name='producer-comments-reject'),
     path('producer/reviews/', producer.ProducerReviewsView.as_view(),
          name='producer-reviews'),
+    path('producer/reviews/<int:id>/moderate/',
+         producer.ProducerReviewModerateView.as_view(), name='producer-reviews-moderate'),
     path('producer/reviews/<int:id>/validate/',
          producer.ProducerReviewsValidateView.as_view(), name='producer-reviews-validate'),
     path('producer/reviews/<int:id>/reject/',
@@ -135,6 +148,12 @@ urlpatterns = [
 
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
+    path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
+    path(
+        'admin/comments/<int:id>/moderate/',
+        admin_api.AdminCommentModerateView.as_view(),
+        name='admin-comments-moderate',
+    ),
     path('admin/catalog/import/', admin_api.AdminCatalogImportView.as_view(),
          name='admin-catalog-import'),
     path('admin/catalog/export/', admin_api.AdminCatalogExportView.as_view(),
@@ -151,7 +170,7 @@ urlpatterns = [
          name='affiliate-subscription'),
 
     # RSS
-    path('rss/next-representations/', rss.RssNextRepresentationsView.as_view(),
+    path('rss/next-representations/', UpcomingRepresentationsFeed(),
          name='rss-next-representations'),
 
     # PUBLIC API
@@ -171,6 +190,9 @@ urlpatterns = [
     path('export/shows/', export_shows_csv, name='export-shows-csv'),
     path('import/shows/', import_shows_csv, name='import-shows-csv'),
 
+    # XML
+    path('import/shows/xml/', import_shows_xml, name='import-shows-xml'),
+
     # AFFILIATE
     path('affiliate/register/', register_affiliate, name='affiliate-register'),
     path('affiliate/catalog/', affiliate_catalog, name='affiliate-catalog'),
@@ -179,4 +201,8 @@ urlpatterns = [
     # STATS
     path('stats/shows/', show_stats, name='stats-shows'),
     path('stats/shows/<int:show_id>/', show_stat_detail, name='stats-show-detail'),
+
+    # EXTERNAL APIs
+    path('external/brussels/', brussels_events, name='external-brussels'),
+    path('external/shows/', external_shows, name='external-shows'),
 ]
