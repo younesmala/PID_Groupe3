@@ -26,7 +26,7 @@ function ShowsList() {
             <h3>{show.title}</h3>
             <p className="text-muted">{show.slug}</p>
             <div className="card-actions">
-              <Link to={`/show/${show.id}`}>
+              <Link to={`/shows/${show.slug}`}>
                 <button className="btn btn-primary">Voir</button>
               </Link>
             </div>

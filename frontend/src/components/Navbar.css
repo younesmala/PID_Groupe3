@@ -154,6 +154,26 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.btn-admin {
+  background: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-admin:hover {
+  background: #007bff;
+  border-color: #007bff;
+  color: #ffffff;
+}
+
 .cart-badge {
   position: absolute;
   top: -6px;

@@ -1,132 +1,165 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { checkout } from '../services/reservationService'
-
+import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { Link } from "react-router-dom"
+import { getCart } from "../services/cartService"
+import { checkout } from "../services/reservationService"
+import "./Checkout.css"
+import "./AccountPages.css"
 
 function Checkout() {
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(null)
+  const { t } = useTranslation()
+  const [cart, setCart] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null)
 
-  async function handlePayment() {
-  setLoading(true)
-  setError(null)
-  setSuccess(null)
+  useEffect(() => {
+    getCart()
+      .then((data) => {
+        setCart(data)
+        if (!data.items || data.items.length === 0) {
+          setError(t("cart.empty", "Votre panier est vide."))
+        }
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
+  }, [t])
 
-  try {
-    const data = await checkout()
-    setSuccess(data)
-      } catch (err) {
-    setError(err.message)
-      } finally {
-    setLoading(false)
-      }
-   }
+  async function handleSubmit() {
+    if (submitting || !cart?.items?.length) return
+
+    setSubmitting(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const data = await checkout()
+      setSuccess(data)
+      setCart({ items: [], total: "0.00" })
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (loading) {
+    return <div className="checkout-page">{t("show.loading", "Chargement...")}</div>
+  }
+
+  if (success) {
+    return (
+      <div className="checkout-page">
+        <div className="checkout-container">
+          <h1 className="checkout-title">
+            {t("checkout.confirmed", "Commande confirmée")}
+          </h1>
+
+          <p className="account-feedback account-feedback--success">
+            {t(
+              "checkout.success_msg",
+              "Vos réservations ont été créées avec succès."
+            )}
+          </p>
+
+          {success.reservation_ids?.length > 0 && (
+            <section className="checkout-card">
+              <h2>{t("checkout.reservation_numbers", "Numéros de réservation")}</h2>
+              <ul>
+                {success.reservation_ids.map((id) => (
+                  <li key={id}>Réservation #{id}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <Link
+            to="/profile"
+            className="account-secondary-link"
+            style={{ marginTop: "20px", display: "inline-block" }}
+          >
+            {t("profile.title", "Voir mon profil")}
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (error && !cart?.items?.length) {
+    return (
+      <div className="checkout-page">
+        <div className="checkout-container">
+          <p className="account-feedback account-feedback--error">{error}</p>
+          <Link
+            to="/cart"
+            className="account-secondary-link"
+            style={{ marginTop: "20px", display: "inline-block" }}
+          >
+            {t("cart.continue", "Retour au panier")}
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div
-      style={{
-        backgroundColor: '#111113',
-        color: 'white',
-        minHeight: '100vh',
-        padding: '40px 20px',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '800px',
-          margin: '0 auto',
-          backgroundColor: '#1a1a1d',
-          border: '1px solid #2a2a2e',
-          borderRadius: '16px',
-          padding: '30px',
-        }}
-      >
-        <h1 style={{ marginTop: 0 }}>Paiement</h1>
-
-        {!success && (
-          <>
-            <p style={{ color: '#cfcfcf' }}>
-              Vérifiez votre panier avant de confirmer la commande.
-            </p>
-
-            <button
-              type="button"
-              onClick={handlePayment}
-              disabled={loading}
-              style={{
-                backgroundColor: '#e05a2b',
-                color: 'white',
-                border: 'none',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                marginTop: '20px',
-              }}
-            >
-              {loading ? 'Traitement...' : 'Confirmer et payer'}
-            </button>
-
-            <div style={{ marginTop: '20px' }}>
-              <Link
-                to="/cart"
-                style={{
-                  color: 'white',
-                  textDecoration: 'none',
-                  border: '1px solid #666',
-                  padding: '10px 16px',
-                  borderRadius: '8px',
-                  display: 'inline-block',
-                }}
-              >
-                Retour au panier
-              </Link>
-            </div>
-          </>
-        )}
+    <div className="checkout-page">
+      <div className="checkout-container">
+        <h1 className="checkout-title">
+          {t("checkout.title", "Finaliser ma commande")}
+        </h1>
 
         {error && (
-          <p style={{ color: '#ff6b6b', marginTop: '20px' }}>
-            Erreur : {error}
-          </p>
+          <p className="account-feedback account-feedback--error">{error}</p>
         )}
 
-        {success && (
-          <div>
-            <h2>Commande confirmée ✅</h2>
-            <p style={{ color: '#cfcfcf' }}>
-              Vos réservations ont été créées avec succès.
-            </p>
+        <section className="checkout-card">
+          <h2>{t("checkout.summary", "1. Résumé des articles")}</h2>
 
-            {success.reservation_ids?.length > 0 && (
-              <div style={{ marginTop: '20px' }}>
-                <strong>Numéros de réservation :</strong>
-                <ul>
-                  {success.reservation_ids.map((id) => (
-                    <li key={id}>Réservation #{id}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <Link
-              to="/profile"
-              style={{
-                backgroundColor: '#e05a2b',
-                color: 'white',
-                textDecoration: 'none',
-                padding: '12px 18px',
-                borderRadius: '8px',
-                fontWeight: '700',
-                display: 'inline-block',
-                marginTop: '20px',
-              }}
+          {cart?.items?.map((item) => (
+            <div
+              key={`${item.representation_id}_${item.price_id}`}
+              className="checkout-item"
             >
-              Voir mon profil
-            </Link>
+              <span>
+                {item.show_title ||
+                  item.representation?.split(" @ ")[0] ||
+                  t("show.title", "Spectacle")}{" "}
+                (x{item.quantity})
+              </span>
+              <span>
+                {Number(item.subtotal ?? item.total_price ?? item.unit_price * item.quantity).toFixed(2)} €
+              </span>
+            </div>
+          ))}
+
+          <div className="checkout-total">
+            <span>{t("checkout.total", "Total à régler")} :</span>
+            <span className="price-highlight">{cart?.total} €</span>
           </div>
-        )}
+        </section>
+
+        <div className="checkout-actions">
+          <button
+            className="account-submit"
+            onClick={handleSubmit}
+            disabled={submitting || !cart?.items?.length}
+            style={submitting ? { cursor: "wait" } : {}}
+          >
+            {submitting
+              ? t("checkout.processing", "Traitement...")
+              : t("checkout.next", "Confirmer l'achat")}
+          </button>
+
+          <Link
+            to="/cart"
+            className="account-secondary-link"
+            style={{ marginTop: "16px", display: "inline-block" }}
+          >
+            {t("cart.continue", "Retour au panier")}
+          </Link>
+        </div>
       </div>
     </div>
   )

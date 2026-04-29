@@ -214,6 +214,7 @@ function ShowDetail() {
       <div style={{ display: "flex", gap: 16, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
         <Link to="/#shows">{t("show.back")}</Link>
         <Link to="/cart">{t("show.view_cart")}</Link>
+        <Link to="/reviews">{t("show.view_reviews")}</Link>
       </div>
 
       <form
