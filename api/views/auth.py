@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 import re
 
 
@@ -88,6 +89,9 @@ class AuthSignupView(APIView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AuthLoginView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', '')
         password = request.data.get('password', '')
@@ -100,10 +104,13 @@ class AuthLoginView(APIView):
             )
 
         auth_login(request, user)
+        csrf_token = get_token(request)
+
         return Response({
             "success": True,
             "username": user.username,
             "email": user.email,
+            "csrf_token": csrf_token,
         })
 
 
@@ -214,13 +221,17 @@ class PasswordResetView(APIView):
     def post(self, request):
         email = request.data.get('email', '').strip()
         if not email:
-            return Response({'error': "L'email est requis."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': "L'email est requis."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            # Ne pas révéler si l'email existe ou non
-            return Response({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'})
+            return Response({
+                'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'
+            })
 
         token = PasswordResetTokenGenerator().make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -241,7 +252,9 @@ class PasswordResetView(APIView):
             fail_silently=False,
         )
 
-        return Response({'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'})
+        return Response({
+            'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'
+        })
 
 
 class PasswordResetConfirmView(APIView):
@@ -253,16 +266,25 @@ class PasswordResetConfirmView(APIView):
         new_password = request.data.get('new_password', '')
 
         if not uid or not token or not new_password:
-            return Response({'error': 'Tous les champs sont requis.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Tous les champs sont requis.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             user_pk = force_str(urlsafe_base64_decode(uid))
             user = User.objects.get(pk=user_pk)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return Response({'error': 'Lien invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Lien invalide.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if not PasswordResetTokenGenerator().check_token(user, token):
-            return Response({'error': 'Token invalide ou expiré.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Token invalide ou expiré.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if len(new_password) < 6:
             return Response(

@@ -12,15 +12,16 @@ function LoginModal({ onClose, onLogin }) {
     e.preventDefault()
     setError('')
     setLoading(true)
-    try {
-      const data = await login(username, password)
-      onLogin(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
+   try {
+  const data = await login(username, password)
+  onLogin(data)
+  onClose()
+  } catch (err) {
+  setError(err.message)
+  } finally {
+  setLoading(false)
   }
+}
 
   return (
     <div className="modal-overlay" onClick={onClose}>
