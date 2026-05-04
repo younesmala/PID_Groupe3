@@ -105,11 +105,14 @@ class AuthLoginView(APIView):
 
         auth_login(request, user)
         csrf_token = get_token(request)
+        role = user.groups.values_list('name', flat=True).first() or ''
 
         return Response({
             "success": True,
             "username": user.username,
             "email": user.email,
+            "is_staff": user.is_staff,
+            "role": role,
             "csrf_token": csrf_token,
         })
 
