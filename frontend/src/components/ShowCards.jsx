@@ -67,7 +67,7 @@ function ShowCards({ shows = [], loading = false, error = null }) {
                 {show.description || 'Description a venir.'}
               </p>
               <div className="show-card__actions">
-                <Link to={`/show/${show.id}`} className="show-card__book">
+                <Link to={`/shows/${show.slug}`} className="show-card__book">
                   Reserve ta place !
                 </Link>
               </div>

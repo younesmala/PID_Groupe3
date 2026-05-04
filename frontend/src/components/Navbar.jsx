@@ -25,8 +25,18 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
         setLangOpen(false)
       }
     }
+
+    function handleOpenLoginModal() {
+      setShowModal(true)
+    }
+
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    window.addEventListener('open-login-modal', handleOpenLoginModal)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('open-login-modal', handleOpenLoginModal)
+    }
   }, [])
 
   function selectLang(code) {
