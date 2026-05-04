@@ -298,11 +298,11 @@
 }
 
 .nav-dropdown--producer .nav-dropdown-trigger:hover {
-  background: rgba(255, 69, 0, 0.12);
+  background: rgba(255, 69, 0, 0.1);
 }
 
 .nav-dropdown--producer .nav-dropdown-item:hover {
-  background: rgba(255, 69, 0, 0.12);
+  background: rgba(255, 69, 0, 0.1);
   color: #FF4500;
 }
 

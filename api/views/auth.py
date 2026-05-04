@@ -105,7 +105,7 @@ class AuthLoginView(APIView):
 
         auth_login(request, user)
         csrf_token = get_token(request)
-        role = user.groups.values_list('name', flat=True).first() or ''
+        role = user.profile.role if hasattr(user, 'profile') else 'USER'
 
         return Response({
             "success": True,
