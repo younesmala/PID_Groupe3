@@ -14,6 +14,8 @@ import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
 import Search from './pages/Search'
 import Reviews from './pages/Reviews'
+import Signup from './pages/Signup'
+import Profile from './pages/Profile'
 
 function App() {
   const [username, setUsername] = useState(getStoredUsername)
