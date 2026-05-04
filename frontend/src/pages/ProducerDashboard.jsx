@@ -37,18 +37,18 @@ export default function ProducerDashboard({ user }) {
       .finally(() => setLoading(false))
   }, [])
 
-  const totalShows    = stats?.total_shows    ?? stats?.shows_count    ?? 0
-  const totalRevenue  = stats?.total_revenue  ?? stats?.revenue        ?? 0
-  const ticketsSold   = stats?.tickets_sold   ?? stats?.total_tickets  ?? 0
-  const upcomingShows = stats?.upcoming_shows ?? stats?.upcoming       ?? 0
+  const shows = Array.isArray(stats?.shows) ? stats.shows : []
 
-  const chartData = Array.isArray(stats?.shows)
-    ? stats.shows.map((s) => ({
-        name:    s.title?.slice(0, 18) || `#${s.id}`,
-        billets: s.tickets_sold ?? 0,
-        revenu:  Number(s.revenue ?? 0),
-      }))
-    : []
+  const totalShows    = stats?.total_shows ?? 0
+  const totalRevenue  = stats?.total_revenue  ?? 0
+  const ticketsSold   = stats?.tickets_sold   ?? 0
+  const upcomingShows = stats?.upcoming_shows ?? 0
+
+  const chartData = shows.map((s) => ({
+    name:            s.title?.slice(0, 18) || `#${s.show_id}`,
+    representations: s.total_representations ?? 0,
+    places:          s.total_available_seats  ?? 0,
+  }))
 
   function exportJSON() {
     const blob = new Blob([JSON.stringify(stats, null, 2)], {
@@ -64,8 +64,8 @@ export default function ProducerDashboard({ user }) {
 
   function exportCSV() {
     if (!chartData.length) return
-    const header = 'Spectacle,Billets vendus,Revenu (€)'
-    const rows   = chartData.map((r) => `"${r.name}",${r.billets},${r.revenu}`)
+    const header = 'Spectacle,Représentations,Places disponibles'
+    const rows   = chartData.map((r) => `"${r.name}",${r.representations},${r.places}`)
     const blob   = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' })
     const url    = URL.createObjectURL(blob)
     const a      = document.createElement('a')
@@ -103,10 +103,10 @@ export default function ProducerDashboard({ user }) {
       {!loading && !error && (
         <>
           <section className="pd-cards">
-            <StatCard label="Spectacles au total" value={totalShows}    icon="🎭" />
+            <StatCard label="Spectacles au total" value={totalShows}                              icon="🎭" />
             <StatCard label="Revenu total"         value={`${Number(totalRevenue).toFixed(2)} €`} icon="💶" />
-            <StatCard label="Billets vendus"       value={ticketsSold}  icon="🎟️" />
-            <StatCard label="Événements à venir"   value={upcomingShows} icon="📅" />
+            <StatCard label="Billets vendus"       value={ticketsSold}                             icon="🎟️" />
+            <StatCard label="Événements à venir"   value={upcomingShows}                           icon="📅" />
           </section>
 
           <section className="pd-chart-section">
@@ -128,8 +128,8 @@ export default function ProducerDashboard({ user }) {
                     labelStyle={{ color: '#fff' }}
                     itemStyle={{ color: '#ccc' }}
                   />
-                  <Bar dataKey="billets" name="Billets vendus" fill="#FF4500" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="revenu"  name="Revenu (€)"     fill="#4a9eff" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="representations" name="Représentations"   fill="#FF4500" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="places"         name="Places disponibles" fill="#4a9eff" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
