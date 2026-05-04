@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getShowById } from "../services/showService";
+import { getShowByIdentifier } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
+import { getStoredUsername } from "../services/authService";
 
 function getPosterSrc(posterUrl) {
   if (!posterUrl) return null;
@@ -13,13 +14,39 @@ function getPosterSrc(posterUrl) {
   return `/show-posters/${posterUrl}`;
 }
 
-function RepresentationForm({ rep, prices }) {
+function RepresentationForm({ rep, prices, isLoggedIn, onLoginRequired }) {
   const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
   const [selectedPriceId, setSelectedPriceId] = useState(prices[0]?.id ? String(prices[0].id) : "");
   const [status, setStatus] = useState(null);
   const maxQuantity = Math.max(rep.available_seats ?? 0, 0);
   const effectivePriceId = selectedPriceId || (prices[0]?.id ? String(prices[0].id) : "");
+
+  if (!isLoggedIn) {
+    return (
+      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+        <span style={{ fontSize: 14, color: "#666" }}>
+          {rep.available_seats} {t("show.seats_remaining")}
+        </span>
+        <button
+          type="button"
+          onClick={onLoginRequired}
+          style={{
+            border: "none",
+            borderRadius: 999,
+            background: "linear-gradient(135deg, #f97316, #ef4444)",
+            color: "white",
+            cursor: "pointer",
+            fontWeight: 800,
+            minHeight: 38,
+            padding: "0 18px",
+          }}
+        >
+          Connecte-toi pour reserver
+        </button>
+      </div>
+    );
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -60,7 +87,22 @@ function RepresentationForm({ rep, prices }) {
           ))}
         </select>
       </label>
-      <button type="submit" className="btn btn-success btn-sm" disabled={prices.length === 0 || maxQuantity <= 0}>
+      <button
+        type="submit"
+        disabled={prices.length === 0 || maxQuantity <= 0}
+        style={{
+          border: "none",
+          borderRadius: 999,
+          background: prices.length === 0 || maxQuantity <= 0
+            ? "#d1d5db"
+            : "linear-gradient(135deg, #f97316, #ef4444)",
+          color: "white",
+          cursor: prices.length === 0 || maxQuantity <= 0 ? "not-allowed" : "pointer",
+          fontWeight: 800,
+          minHeight: 38,
+          padding: "0 18px",
+        }}
+      >
         {t("show.add_to_cart")}
       </button>
       {status === "ok" && <span style={{ color: "green", fontSize: 13 }}>{t("show.added")}</span>}
@@ -69,7 +111,7 @@ function RepresentationForm({ rep, prices }) {
   );
 }
 
-function RepresentationCard({ rep, prices }) {
+function RepresentationCard({ rep, prices, isLoggedIn, onLoginRequired }) {
   const { t } = useTranslation();
   const soldOut = (rep.available_seats ?? 0) <= 0;
 
@@ -89,7 +131,14 @@ function RepresentationCard({ rep, prices }) {
       <div style={{ marginBottom: 12, color: soldOut ? "#b02a37" : "#666" }}>
         {soldOut ? t("show.no_seats") : `${rep.available_seats} ${t("show.seats_remaining")}`}
       </div>
-      {!soldOut && <RepresentationForm rep={rep} prices={prices} />}
+      {!soldOut && (
+        <RepresentationForm
+          rep={rep}
+          prices={prices}
+          isLoggedIn={isLoggedIn}
+          onLoginRequired={onLoginRequired}
+        />
+      )}
       {soldOut && (
         <button type="button" className="btn btn-secondary btn-sm" disabled>
           {t("show.sold_out")}
@@ -101,8 +150,9 @@ function RepresentationCard({ rep, prices }) {
 
 function ShowDetail() {
   const { t } = useTranslation();
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const navigate = useNavigate();
+  const isLoggedIn = !!getStoredUsername();
   const [show, setShow] = useState(null);
   const [representations, setRepresentations] = useState([]);
   const [prices, setPrices] = useState([]);
@@ -114,12 +164,14 @@ function ShowDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const identifier = slug || id;
+
     Promise.all([
-      getShowById(id),
-      getRepresentationsByShow(id),
+      getShowByIdentifier(identifier),
       fetch("/api/prices/").then((r) => r.json()),
     ])
-      .then(([showData, repsData, pricesData]) => {
+      .then(async ([showData, pricesData]) => {
+        const repsData = await getRepresentationsByShow(showData.id);
         setShow(showData);
         setRepresentations(repsData);
         setPrices(pricesData);
@@ -129,7 +181,7 @@ function ShowDetail() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, slug]);
 
   if (loading) return <div>{t("show.loading")}</div>;
   if (error) return <div>{t("show.error_label")} : {error}</div>;
@@ -158,6 +210,10 @@ function ShowDetail() {
     } catch {
       setReserveStatus("error");
     }
+  }
+
+  function handleLoginRedirect() {
+    window.dispatchEvent(new Event("open-login-modal"));
   }
 
   return (
@@ -206,7 +262,13 @@ function ShowDetail() {
       ) : (
         <ul style={{ listStyle: "none", padding: 0 }}>
           {representations.map((rep) => (
-            <RepresentationCard key={rep.id} rep={rep} prices={prices} />
+            <RepresentationCard
+              key={rep.id}
+              rep={rep}
+              prices={prices}
+              isLoggedIn={isLoggedIn}
+              onLoginRequired={handleLoginRedirect}
+            />
           ))}
         </ul>
       )}
@@ -217,103 +279,127 @@ function ShowDetail() {
         <Link to="/reviews">{t("show.view_reviews")}</Link>
       </div>
 
-      <form
-        onSubmit={handleQuickReservation}
-        style={{
-          display: "flex",
-          gap: 14,
-          alignItems: "center",
-          flexWrap: "wrap",
-          marginTop: 22,
-          padding: "16px 18px",
-          borderRadius: 14,
-          background: "linear-gradient(135deg, #fff7ed, #ffffff)",
-          border: "1px solid #fed7aa",
-          boxShadow: "0 14px 34px rgba(239, 68, 68, 0.12)",
-        }}
-      >
-        <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          {t("show.date")}
-          <select
-            value={selectedRepId}
-            onChange={(e) => {
-              setSelectedRepId(e.target.value);
-              setReserveQuantity(1);
-            }}
-            style={{ minWidth: 220, padding: "8px 10px", borderRadius: 8, border: "1px solid #fdba74" }}
-          >
-            {representations
-              .filter((rep) => (rep.available_seats ?? 0) > 0)
-              .map((rep) => (
-                <option key={rep.id} value={rep.id}>
-                  {new Date(rep.schedule).toLocaleString("fr-FR")} - {rep.available_seats} place(s)
-                </option>
-              ))}
-          </select>
-        </label>
-
-        <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          {t("show.price")}
-          <select
-            value={selectedPriceId}
-            onChange={(e) => setSelectedPriceId(e.target.value)}
-            style={{ minWidth: 150, padding: "8px 10px", borderRadius: 8, border: "1px solid #fdba74" }}
-          >
-            {prices.map((price) => (
-              <option key={price.id} value={price.id}>
-                {price.type} - {price.price} EUR
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <div style={{ display: "grid", gap: 4, fontSize: 13 }}>
-          {t("show.seats")}
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button
-              type="button"
-              onClick={() => updateReserveQuantity(reserveQuantity - 1)}
-              disabled={!canReserve || reserveQuantity <= 1}
-              style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "white", cursor: "pointer" }}
-            >
-              -
-            </button>
-            <span style={{ minWidth: 28, textAlign: "center", fontWeight: 700 }}>{reserveQuantity}</span>
-            <button
-              type="button"
-              onClick={() => updateReserveQuantity(reserveQuantity + 1)}
-              disabled={!canReserve || reserveQuantity >= maxReserveQuantity}
-              style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "white", cursor: "pointer" }}
-            >
-              +
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={!canReserve}
+      {representations.length > 0 && (
+        <form
+          onSubmit={handleQuickReservation}
           style={{
-            alignSelf: "end",
-            border: "none",
-            borderRadius: 999,
-            background: canReserve ? "linear-gradient(135deg, #f97316, #ef4444)" : "#d1d5db",
-            color: "white",
-            cursor: canReserve ? "pointer" : "not-allowed",
-            fontWeight: 800,
-            minHeight: 42,
-            padding: "0 24px",
+            display: "flex",
+            gap: 14,
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginTop: 22,
+            padding: "16px 18px",
+            borderRadius: 14,
+            background: "linear-gradient(135deg, #fff7ed, #ffffff)",
+            border: "1px solid #fed7aa",
+            boxShadow: "0 14px 34px rgba(239, 68, 68, 0.12)",
           }}
         >
-          {t("show.book")}
-        </button>
+          <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
+            {t("show.date")}
+            <select
+              value={selectedRepId}
+              onChange={(e) => {
+                setSelectedRepId(e.target.value);
+                setReserveQuantity(1);
+              }}
+              style={{ minWidth: 260, padding: "8px 10px", borderRadius: 8, border: "1px solid #fdba74" }}
+            >
+              {representations
+                .filter((rep) => (rep.available_seats ?? 0) > 0)
+                .map((rep) => (
+                  <option key={rep.id} value={rep.id}>
+                    {new Date(rep.schedule).toLocaleString("fr-FR")} - {rep.available_seats} place(s) dispo
+                  </option>
+                ))}
+            </select>
+          </label>
 
-        {reserveStatus === "error" && (
-          <span style={{ color: "#b91c1c", fontSize: 13 }}>
-            {t("show.cart_error")}
-          </span>
-        )}
-      </form>
+          {isLoggedIn ? (
+            <>
+              <label style={{ display: "grid", gap: 4, fontSize: 13 }}>
+                {t("show.price")}
+                <select
+                  value={selectedPriceId}
+                  onChange={(e) => setSelectedPriceId(e.target.value)}
+                  style={{ minWidth: 150, padding: "8px 10px", borderRadius: 8, border: "1px solid #fdba74" }}
+                >
+                  {prices.map((price) => (
+                    <option key={price.id} value={price.id}>
+                      {price.type} - {price.price} EUR
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div style={{ display: "grid", gap: 4, fontSize: 13 }}>
+                {t("show.seats")}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => updateReserveQuantity(reserveQuantity - 1)}
+                    disabled={!canReserve || reserveQuantity <= 1}
+                    style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "white", cursor: "pointer" }}
+                  >
+                    -
+                  </button>
+                  <span style={{ minWidth: 28, textAlign: "center", fontWeight: 700 }}>{reserveQuantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => updateReserveQuantity(reserveQuantity + 1)}
+                    disabled={!canReserve || reserveQuantity >= maxReserveQuantity}
+                    style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "white", cursor: "pointer" }}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={!canReserve}
+                style={{
+                  alignSelf: "end",
+                  border: "none",
+                  borderRadius: 999,
+                  background: canReserve ? "linear-gradient(135deg, #f97316, #ef4444)" : "#d1d5db",
+                  color: "white",
+                  cursor: canReserve ? "pointer" : "not-allowed",
+                  fontWeight: 800,
+                  minHeight: 42,
+                  padding: "0 24px",
+                }}
+              >
+                {t("show.book")}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={handleLoginRedirect}
+              style={{
+                alignSelf: "end",
+                border: "none",
+                borderRadius: 999,
+                background: "linear-gradient(135deg, #f97316, #ef4444)",
+                color: "white",
+                cursor: "pointer",
+                fontWeight: 800,
+                minHeight: 42,
+                padding: "0 24px",
+              }}
+            >
+              Connecte-toi pour reserver
+            </button>
+          )}
+
+          {reserveStatus === "error" && isLoggedIn && (
+            <span style={{ color: "#b91c1c", fontSize: 13 }}>
+              {t("show.cart_error")}
+            </span>
+          )}
+        </form>
+      )}
     </div>
   );
 }

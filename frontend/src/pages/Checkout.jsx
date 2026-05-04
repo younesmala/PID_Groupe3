@@ -37,6 +37,11 @@ function Checkout() {
       const data = await checkout()
       setSuccess(data)
       setCart({ items: [], total: "0.00" })
+      window.dispatchEvent(
+        new CustomEvent("cart-updated", {
+          detail: { cartCount: 0 },
+        })
+      )
     } catch (err) {
       setError(err.message)
     } finally {
