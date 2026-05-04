@@ -132,6 +132,44 @@ Note Windows : si mysqlclient pose problème à l'installation, pymysql est util
 
 ---
 
+## Mise a jour avant de commencer
+
+Avant de demarrer une nouvelle tache, pensez a mettre votre branche locale a jour avec `main`. Cela permet de recuperer les derniers correctifs, les migrations, les changements frontend et les donnees attendues par le projet.
+
+### 1. Mettre sa branche a jour
+
+Depuis la racine du projet :
+
+    git pull origin main
+
+Si le projet a recu de nouvelles dependances ou migrations :
+
+    pip install -r requirements.txt
+    python manage.py migrate
+
+### 2. Mettre a jour la base locale
+
+Une partie importante de l'affichage frontend depend aussi des donnees locales en base. Cela concerne notamment :
+
+- les descriptions des spectacles
+- les images des spectacles (`poster_url`)
+- les representations et autres donnees associees
+
+Si votre base locale n'est pas a jour, le site peut afficher des spectacles incomplets, des images manquantes ou des pages detail incorrectes.
+
+Selon ce qui est partage par l'equipe, il faut donc :
+
+- soit importer le dernier dump SQL
+- soit recharger les fixtures mises a jour
+
+Exemple pour recharger les spectacles :
+
+    python manage.py loaddata catalogue/fixtures/shows.json
+
+En resume : avant de coder, mettez a jour votre branche et votre base locale pour eviter des bugs qui ne viennent pas du code mais de donnees obsoletes.
+
+---
+
 ## ▶️ Lancement du projet
 
 ### Backend Django (port 8000)
