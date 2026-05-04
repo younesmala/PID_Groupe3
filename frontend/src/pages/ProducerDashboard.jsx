@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 import './ProducerDashboard.css'
 
@@ -25,6 +26,28 @@ function StatCard({ label, value, icon }) {
   )
 }
 
+function CustomTooltip({ active, payload, label }) {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{
+        background: '#1a1a1a',
+        border: '1px solid #FF4500',
+        borderRadius: '8px',
+        padding: '12px 16px',
+        color: '#fff'
+      }}>
+        <p style={{ color: '#FF4500', fontWeight: 700, marginBottom: 8 }}>{label}</p>
+        {payload.map((p, i) => (
+          <p key={i} style={{ color: p.color, margin: '4px 0', fontSize: '0.85rem' }}>
+            {p.name} : <strong>{p.value}</strong>
+          </p>
+        ))}
+      </div>
+    )
+  }
+  return null
+}
+
 export default function ProducerDashboard({ user }) {
   const [stats,   setStats]   = useState(null)
   const [loading, setLoading] = useState(true)
@@ -37,18 +60,18 @@ export default function ProducerDashboard({ user }) {
       .finally(() => setLoading(false))
   }, [])
 
-  const totalShows    = stats?.total_shows    ?? stats?.shows_count    ?? 0
-  const totalRevenue  = stats?.total_revenue  ?? stats?.revenue        ?? 0
-  const ticketsSold   = stats?.tickets_sold   ?? stats?.total_tickets  ?? 0
-  const upcomingShows = stats?.upcoming_shows ?? stats?.upcoming       ?? 0
+  const shows = Array.isArray(stats?.shows) ? stats.shows : []
 
-  const chartData = Array.isArray(stats?.shows)
-    ? stats.shows.map((s) => ({
-        name:    s.title?.slice(0, 18) || `#${s.id}`,
-        billets: s.tickets_sold ?? 0,
-        revenu:  Number(s.revenue ?? 0),
-      }))
-    : []
+  const totalShows    = stats?.total_shows ?? 0
+  const totalRevenue  = stats?.total_revenue  ?? 0
+  const ticketsSold   = stats?.tickets_sold   ?? 0
+  const upcomingShows = stats?.upcoming_shows ?? 0
+
+  const chartData = shows.map((s) => ({
+    name:            s.title?.slice(0, 15) || `#${s.show_id}`,
+    available_seats: s.total_available_seats ?? 0,
+    tickets_sold:    s.tickets_sold          ?? 0,
+  }))
 
   function exportJSON() {
     const blob = new Blob([JSON.stringify(stats, null, 2)], {
@@ -64,8 +87,8 @@ export default function ProducerDashboard({ user }) {
 
   function exportCSV() {
     if (!chartData.length) return
-    const header = 'Spectacle,Billets vendus,Revenu (€)'
-    const rows   = chartData.map((r) => `"${r.name}",${r.billets},${r.revenu}`)
+    const header = 'Spectacle,Places disponibles,Billets vendus'
+    const rows   = chartData.map((r) => `"${r.name}",${r.available_seats},${r.tickets_sold}`)
     const blob   = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' })
     const url    = URL.createObjectURL(blob)
     const a      = document.createElement('a')
@@ -103,37 +126,48 @@ export default function ProducerDashboard({ user }) {
       {!loading && !error && (
         <>
           <section className="pd-cards">
-            <StatCard label="Spectacles au total" value={totalShows}    icon="🎭" />
+            <StatCard label="Spectacles au total" value={totalShows}                              icon="🎭" />
             <StatCard label="Revenu total"         value={`${Number(totalRevenue).toFixed(2)} €`} icon="💶" />
-            <StatCard label="Billets vendus"       value={ticketsSold}  icon="🎟️" />
-            <StatCard label="Événements à venir"   value={upcomingShows} icon="📅" />
+            <StatCard label="Billets vendus"       value={ticketsSold}                             icon="🎟️" />
+            <StatCard label="Événements à venir"   value={upcomingShows}                           icon="📅" />
           </section>
 
           <section className="pd-chart-section">
-            <h2 className="pd-section-title">Performance des spectacles</h2>
+            <h2 className="pd-section-title">Capacité &amp; performance par spectacle</h2>
             {chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={chartData} margin={{ top: 8, right: 24, left: 0, bottom: 48 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fill: '#aaa', fontSize: 12 }}
-                    angle={-30}
-                    textAnchor="end"
-                    interval={0}
-                  />
+              <ResponsiveContainer width="100%" height={350}>
+                <ComposedChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="orangeGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#FF4500" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#FF8C00" stopOpacity={0.6} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                  <XAxis dataKey="name" tick={{ fill: '#aaa', fontSize: 12 }} />
                   <YAxis tick={{ fill: '#aaa', fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{ background: '#1e1e1e', border: '1px solid #333', borderRadius: 6 }}
-                    labelStyle={{ color: '#fff' }}
-                    itemStyle={{ color: '#ccc' }}
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend wrapperStyle={{ color: '#aaa', fontSize: 13, paddingTop: 16 }} />
+                  <Bar
+                    dataKey="available_seats"
+                    name="Places disponibles"
+                    fill="url(#orangeGradient)"
+                    radius={[6, 6, 0, 0]}
+                    isAnimationActive={true}
                   />
-                  <Bar dataKey="billets" name="Billets vendus" fill="#FF4500" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="revenu"  name="Revenu (€)"     fill="#4a9eff" radius={[4, 4, 0, 0]} />
-                </BarChart>
+                  <Line
+                    type="monotone"
+                    dataKey="tickets_sold"
+                    name="Billets vendus"
+                    stroke="#4a9eff"
+                    strokeWidth={2}
+                    dot={{ fill: '#4a9eff', r: 5 }}
+                    isAnimationActive={true}
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
             ) : (
-              <p className="pd-state">Aucune donnée de performance disponible.</p>
+              <p className="pd-state">Aucune donnée disponible.</p>
             )}
           </section>
         </>
