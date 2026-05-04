@@ -1,3 +1,6 @@
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -5,11 +8,18 @@ from catalogue.models import Representation
 from api.serializers.representations import RepresentationSerializer
 
 
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class RepresentationsView(APIView):
     """
     GET: Récupère toutes les représentations
     POST: Crée une représentation
     """
+    authentication_classes = [CsrfExemptSessionAuthentication]
 
     def get(self, request, *args, **kwargs):
         qs = Representation.objects.all()

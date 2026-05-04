@@ -18,6 +18,7 @@ import Profile from './pages/Profile'
 import { getCart } from './services/cartService'
 import ProducerDashboard from './pages/ProducerDashboard'
 import ProducerShows from './pages/ProducerShows'
+import ProducerSessions from './pages/ProducerSessions'
 
 function ProtectedRoute({ user, children }) {
   if (!user?.username) return <Navigate to="/" replace />
@@ -137,7 +138,7 @@ function App() {
           path="/producer/shows/:slug/sessions"
           element={
             <ProtectedRoute user={user}>
-              <PlaceholderPage title="Séances du spectacle" />
+              <ProducerSessions />
             </ProtectedRoute>
           }
         />
