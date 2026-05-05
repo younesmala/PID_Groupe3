@@ -9,12 +9,17 @@ const CARD_THEMES = [
   'show-card__poster--teal',
 ]
 
+const POSTER_OVERRIDES = {
+  'cible.jpg': 'cible-mouvante.png',
+}
+
 function getPosterSrc(posterUrl) {
   if (!posterUrl) return null
   if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
     return posterUrl
   }
-  return `/show-posters/${posterUrl}`
+  const resolved = POSTER_OVERRIDES[posterUrl] ?? posterUrl.replace(/\.[^.]+$/, '.png')
+  return `/show-posters/${resolved}`
 }
 
 function ShowCards({ shows = [], loading = false, error = null }) {
@@ -67,7 +72,7 @@ function ShowCards({ shows = [], loading = false, error = null }) {
                 {show.description || 'Description a venir.'}
               </p>
               <div className="show-card__actions">
-                <Link to={`/show/${show.id}`} className="show-card__book">
+                <Link to={`/shows/${show.slug}`} className="show-card__book">
                   Reserve ta place !
                 </Link>
               </div>

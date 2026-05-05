@@ -1,3 +1,8 @@
+body {
+  background: #111111;
+  margin: 0;
+}
+
 /* ===== CARD ===== */
 .card {
   background: white;

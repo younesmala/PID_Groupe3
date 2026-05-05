@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getPublicShows, getPublicLocations } from "../services/showService";
 
+function getPosterSrc(posterUrl) {
+  if (!posterUrl) return null
+  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
+    return posterUrl
+  }
+  const name = posterUrl.replace(/\.[^.]+$/, '.png')
+  return `/show-posters/${name}`
+}
+
 function StarRating({ rating }) {
   if (!rating) return <span className="shows-no-rating">Non noté</span>;
   const full = Math.floor(rating);
@@ -26,11 +35,13 @@ function ShowCard({ show }) {
       })
     : null;
 
+  const posterSrc = getPosterSrc(show.poster_url);
+
   return (
     <div className="show-card">
       <div className="show-card-image">
-        {show.poster_url ? (
-          <img src={show.poster_url} alt={show.title} />
+        {posterSrc ? (
+          <img src={posterSrc} alt={show.title} />
         ) : (
           <div className="show-card-placeholder">🎭</div>
         )}

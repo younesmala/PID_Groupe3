@@ -1,9 +1,11 @@
 from .artist import *
 from .artist_type import *
+from .comment import Comment
 from .artist_type_show import *
 from .locality import *
 from .location import *
 from .price import *
+from .show_price import ShowPrice
 from .representation import *
 from .reservation import Reservation, RepresentationReservation
 from .review import *

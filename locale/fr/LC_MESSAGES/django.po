@@ -339,3 +339,18 @@ msgstr "Néerlandais"
 #: .\reservations\settings.py:130
 msgid "English"
 msgstr "Anglais"
+
+msgid "Pseudo"
+msgstr "Pseudo"
+
+msgid "Adresse e-mail"
+msgstr "Adresse e-mail"
+
+msgid "Confirmation du mot de passe"
+msgstr "Confirmation du mot de passe"
+
+msgid "Choisissez votre langue"
+msgstr "Choisissez votre langue"
+
+msgid "Remplissez le formulaire pour vous inscrire."
+msgstr "Remplissez le formulaire pour vous inscrire."

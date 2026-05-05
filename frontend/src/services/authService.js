@@ -38,7 +38,6 @@ export async function login(username, password) {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken'),
     },
     body: JSON.stringify({ username, password }),
   })
@@ -54,6 +53,11 @@ export async function login(username, password) {
   }
 
   localStorage.setItem('username', data.username || username)
+
+  if (data.csrf_token) {
+    localStorage.setItem('csrf_token', data.csrf_token)
+  }
+
   return data
 }
 
@@ -112,12 +116,32 @@ export async function logout() {
     method: 'POST',
     credentials: 'include',
     headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
+      'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '',
     },
   })
+
   localStorage.removeItem('username')
+  localStorage.removeItem('csrf_token')
+  localStorage.removeItem('user_role')
+  localStorage.removeItem('user_is_staff')
 }
 
 export function getStoredUsername() {
   return localStorage.getItem('username')
+}
+
+export function getStoredUser() {
+  const username = localStorage.getItem('username')
+  if (!username) return null
+  return {
+    username,
+    role: localStorage.getItem('user_role') || null,
+    is_staff: localStorage.getItem('user_is_staff') === 'true',
+  }
+}
+
+export function storeUser(data) {
+  if (data?.username) localStorage.setItem('username', data.username)
+  if (data?.role !== undefined) localStorage.setItem('user_role', data.role || '')
+  if (data?.is_staff !== undefined) localStorage.setItem('user_is_staff', String(data.is_staff))
 }

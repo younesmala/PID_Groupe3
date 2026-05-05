@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.db.models import Avg
 from django.utils import timezone
 from catalogue.models import Show
+from api.serializers.show_prices import ShowPriceSerializer
 
 
 class ShowSerializer(serializers.ModelSerializer):
@@ -9,15 +10,22 @@ class ShowSerializer(serializers.ModelSerializer):
     location_name = serializers.SerializerMethodField()
     next_schedule = serializers.SerializerMethodField()
     next_location_name = serializers.SerializerMethodField()
+    artist_name = serializers.SerializerMethodField()
+    prices = ShowPriceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Show
         fields = [
             "id", "slug", "title", "description", "poster_url", "duration",
-            "created_in", "location", "location_name", "bookable",
-            "created_at", "updated_at", "artist_types",
-            "rating", "next_schedule", "next_location_name",
+            "created_in", "artist", "artist_name", "location", "location_name", "bookable",
+            "publication_status", "created_at", "updated_at", "artist_types",
+            "rating", "next_schedule", "next_location_name", "prices",
         ]
+
+    def get_artist_name(self, obj):
+        if obj.artist:
+            return str(obj.artist)
+        return None
 
     def get_rating(self, obj):
         avg = obj.show.filter(validated=True).aggregate(Avg('stars'))['stars__avg']

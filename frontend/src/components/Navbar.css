@@ -154,6 +154,26 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.btn-admin {
+  background: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-admin:hover {
+  background: #007bff;
+  border-color: #007bff;
+  color: #ffffff;
+}
+
 .cart-badge {
   position: absolute;
   top: -6px;
@@ -207,4 +227,96 @@
 .navbar-username {
   color: #cccccc;
   font-size: 0.9rem;
+}
+
+/* ── Language button trigger ── */
+.btn-lang {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-lang-arrow {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* ── Generic nav dropdown ── */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-trigger {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.nav-dropdown-trigger:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  min-width: 200px;
+  z-index: 1100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.nav-dropdown-item {
+  display: block;
+  padding: 9px 16px;
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Producer accent — orange */
+.nav-dropdown--producer .nav-dropdown-trigger {
+  border-color: #FF4500;
+  color: #FF4500;
+}
+
+.nav-dropdown--producer .nav-dropdown-trigger:hover {
+  background: rgba(255, 69, 0, 0.1);
+}
+
+.nav-dropdown--producer .nav-dropdown-item:hover {
+  background: rgba(255, 69, 0, 0.1);
+  color: #FF4500;
+}
+
+/* Admin accent — blue */
+.nav-dropdown--admin .nav-dropdown-trigger {
+  border-color: #4a9eff;
+  color: #4a9eff;
+}
+
+.nav-dropdown--admin .nav-dropdown-trigger:hover {
+  background: rgba(74, 158, 255, 0.12);
+}
+
+.nav-dropdown--admin .nav-dropdown-item:hover {
+  background: rgba(74, 158, 255, 0.12);
+  color: #4a9eff;
 }
