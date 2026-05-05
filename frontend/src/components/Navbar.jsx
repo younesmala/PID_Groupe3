@@ -78,6 +78,10 @@ function Navbar({ isLoggedIn, username, onLogin, onLogout, cartCount = 0 }) {
             )}
           </div>
 
+          <Link to="/locations" className="btn-admin">
+            📍 Nos lieux
+          </Link>
+
           <Link to="/cart" className="btn-cart">
             🛒 {t('panier')}
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
