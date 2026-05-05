@@ -7,7 +7,12 @@ export async function getShows() {
 }
 
 export async function getShowById(slug) {
-  const res = await fetch(`${BASE}/shows/${slug}/`)
-  if (!res.ok) throw new Error('Show introuvable')
-  return res.json()
+  const shows = await getShows()
+  const show = shows.find((item) => item.slug === slug)
+
+  if (!show) {
+    throw new Error('Show introuvable')
+  }
+
+  return show
 }

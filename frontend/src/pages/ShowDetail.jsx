@@ -101,7 +101,7 @@ function RepresentationCard({ rep, prices }) {
 
 function ShowDetail() {
   const { t } = useTranslation();
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [show, setShow] = useState(null);
   const [representations, setRepresentations] = useState([]);
@@ -114,22 +114,34 @@ function ShowDetail() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      getShowById(id),
-      getRepresentationsByShow(id),
-      fetch("/api/prices/").then((r) => r.json()),
-    ])
-      .then(([showData, repsData, pricesData]) => {
-        setShow(showData);
-        setRepresentations(repsData);
-        setPrices(pricesData);
-        const firstAvailableRep = repsData.find((rep) => (rep.available_seats ?? 0) > 0);
-        setSelectedRepId(firstAvailableRep?.id ? String(firstAvailableRep.id) : "");
-        setSelectedPriceId(pricesData[0]?.id ? String(pricesData[0].id) : "");
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [id]);
+  async function loadShowDetail() {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const showData = await getShowById(slug);
+      const repsData = await getRepresentationsByShow(showData.id);
+      const pricesData = await fetch("/api/prices/").then((r) => r.json());
+
+      setShow(showData);
+      setRepresentations(repsData);
+      setPrices(pricesData);
+
+      const firstAvailableRep = repsData.find(
+        (rep) => (rep.available_seats ?? 0) > 0
+      );
+
+      setSelectedRepId(firstAvailableRep?.id ? String(firstAvailableRep.id) : "");
+      setSelectedPriceId(pricesData[0]?.id ? String(pricesData[0].id) : "");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadShowDetail();
+}, [slug]);
 
   if (loading) return <div>{t("show.loading")}</div>;
   if (error) return <div>{t("show.error_label")} : {error}</div>;
