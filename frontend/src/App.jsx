@@ -8,6 +8,9 @@ import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
 import AdminDashboard from './pages/AdminDashboard'
+import AdminUsers from './pages/AdminUsers'
+import AdminReservations from './pages/AdminReservations'
+import Locations from './pages/Locations'
 import Navbar from './components/Navbar'
 import CookieBanner from './components/CookieBanner'
 import { getStoredUsername, logout } from './services/authService'
@@ -55,7 +58,10 @@ function App() {
         <Route path="/show/:id" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/locations" element={<Locations />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/reservations" element={<AdminReservations />} />
       </Routes>
       <CookieBanner />
     </BrowserRouter>
