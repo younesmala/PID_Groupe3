@@ -20,11 +20,6 @@ export async function getShows() {
   return res.json()
 }
 
-export async function getPublicShows() {
-  const res = await fetch(`${BASE}/public/shows/`)
-  if (!res.ok) throw new Error('Erreur chargement spectacles publics')
-  return res.json()
-}
 
 async function getShowBySlug(slug) {
   const res = await fetch(`${BASE}/shows/${slug}/`)

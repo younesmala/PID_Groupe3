@@ -171,6 +171,12 @@
   font-weight: 500;
 }
 
+.account-field-checking {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
 .account-password-hint {
   grid-column: span 2;
   color: #93c5fd;
