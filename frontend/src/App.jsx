@@ -23,6 +23,7 @@ import ProducerShows from './pages/ProducerShows'
 import ProducerSessions from './pages/ProducerSessions'
 import ProducerAllSessions from './pages/ProducerAllSessions'
 import ProducerStats from './pages/ProducerStats'
+import ProducerShowForm from './pages/ProducerShowForm'
 
 function ProtectedRoute({ user, children }) {
   if (!user?.username) return <Navigate to="/" replace />
@@ -122,6 +123,14 @@ function App() {
           element={
             <ProtectedRoute user={user}>
               <ProducerShows />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/producer/shows/new"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
             </ProtectedRoute>
           }
         />

@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -10,6 +11,8 @@ from api.filters import ShowFilter
 
 
 class ShowsView(generics.GenericAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Show.objects.all()
     serializer_class = ShowSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -28,10 +31,14 @@ class ShowsView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        print('USER:', request.user, 'AUTH:', request.user.is_authenticated)
         serializer = ShowSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if request.user.is_authenticated:
+                show = serializer.save(producer=request.user)
+            else:
+                show = serializer.save()
+            return Response(ShowSerializer(show).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
