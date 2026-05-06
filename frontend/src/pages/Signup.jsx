@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { signup } from '../services/authService'
+import { signup, checkUsername, checkEmail } from '../services/authService'
 import './AccountPages.css'
 
 const initialForm = {
@@ -64,8 +64,10 @@ function Signup() {
   const [serverError, setServerError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [asyncErrors, setAsyncErrors] = useState({})
+  const [asyncChecking, setAsyncChecking] = useState({})
   const errors = useMemo(() => validateForm(form), [form])
-  const isFormValid = Object.keys(errors).length === 0
+  const isFormValid = Object.keys(errors).length === 0 && Object.keys(asyncErrors).length === 0
 
   function updateField(event) {
     const { name, value } = event.target
@@ -80,12 +82,33 @@ function Signup() {
     }))
   }
 
-  function handleBlur(event) {
-    const { name } = event.target
-    setTouched((current) => ({
-      ...current,
-      [name]: true,
-    }))
+  async function handleBlur(event) {
+    const { name, value } = event.target
+    setTouched((current) => ({ ...current, [name]: true }))
+
+    if (name === 'username' && value.trim() && !errors.username) {
+      setAsyncChecking((c) => ({ ...c, username: true }))
+      setAsyncErrors((c) => { const n = { ...c }; delete n.username; return n })
+      try {
+        const data = await checkUsername(value.trim())
+        if (data.available === false) {
+          setAsyncErrors((c) => ({ ...c, username: 'Ce login est deja utilise.' }))
+        }
+      } catch (_) { /* réseau indisponible, on ignore */ }
+      setAsyncChecking((c) => ({ ...c, username: false }))
+    }
+
+    if (name === 'email' && value.trim() && !errors.email) {
+      setAsyncChecking((c) => ({ ...c, email: true }))
+      setAsyncErrors((c) => { const n = { ...c }; delete n.email; return n })
+      try {
+        const data = await checkEmail(value.trim())
+        if (data.available === false) {
+          setAsyncErrors((c) => ({ ...c, email: 'Cette adresse email est deja utilisee.' }))
+        }
+      } catch (_) { /* réseau indisponible, on ignore */ }
+      setAsyncChecking((c) => ({ ...c, email: false }))
+    }
   }
 
   function getFieldError(name) {
@@ -93,7 +116,7 @@ function Signup() {
       return ''
     }
 
-    return errors[name] || ''
+    return errors[name] || asyncErrors[name] || ''
   }
 
   async function handleSubmit(event) {
@@ -169,6 +192,7 @@ function Signup() {
                 onBlur={handleBlur}
                 required
               />
+              {asyncChecking.email && <span className="account-field-checking">Verification...</span>}
               {getFieldError('email') && <span className="account-field-error">{getFieldError('email')}</span>}
             </label>
 
@@ -204,6 +228,7 @@ function Signup() {
                 onBlur={handleBlur}
                 required
               />
+              {asyncChecking.username && <span className="account-field-checking">Verification...</span>}
               {getFieldError('username') && <span className="account-field-error">{getFieldError('username')}</span>}
             </label>
 

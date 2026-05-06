@@ -6,40 +6,162 @@ Application web de gestion et de réservation de spectacles, développée avec *
 
 ---
 
-## 📖 Description du projet
-
-**Projet Réservations** est une application web permettant de gérer un catalogue complet de spectacles, artistes, représentations et réservations associées.
-
-Le projet comprend actuellement :
-
-- un **catalogue d'artistes** (CRUD complet)
-- un **catalogue de spectacles** avec représentations et lieux
-- un système de **panier et réservation** pour les utilisateurs
-- un **back-office administrateur** (Django Admin)
-- une **API REST** (Django REST Framework) pour les interactions frontend
-- une **interface React** moderne avec Vite
-- le support du **multilingue** (i18n) via django-modeltranslation
-
----
-
 ## 🎓 Contexte académique
-
-- **École** : Institut des Carrières Commerciales (ICC) – Ville de Bruxelles
+- **École** : Institut des Carrières Commerciales (ICC) – Bruxelles
 - **Cursus** : Bachelier en Informatique – orientation Développement d'Applications
 - **Cours** : Projet d'Intégration Développement (PID)
 - **Enseignant** : Cédric Ruth
 
 ---
 
-## 👥 Équipe de développement
+## 👥 Équipe & Répartition des tâches
 
-- Younes
-- Morad
-- Randy
-- Vianney
-- Soufiane
-- Oumar
-- Nicolas
+### 🟢 Randy
+**Rôle : API REST + i18n Frontend**
+
+✅ Réalisé :
+- Navbar React dark (PIDBooking) avec logo orange
+- Login/Logout fonctionnel (anna/anna123)
+- i18n FR/NL/EN sur toute la navbar
+- Sélecteur de langue avec drapeaux 🇫🇷🇳🇱🇬🇧
+- Fix 404 sur /api/ → API Root endpoint
+- GET/PUT /api/profile/ — profil utilisateur
+- Validation complète à l'inscription
+- GET /api/auth/check-username/ et check-email/
+- Email de confirmation à l'inscription
+- GET /api/rss/ — flux RSS représentations
+- GET /api/export/shows/ — export CSV
+- POST /api/import/shows/ — import CSV
+- Système affiliés Free/Starter/Premium
+- GET /api/stats/shows/ — statistiques producteur
+- i18n HeroSection FR/NL/EN
+- i18n ShowDetail et Cart FR/NL/EN
+- Traductions DB (description_nl, description_en)
+
+🔜 À faire :
+- Page d'inscription React connectée à l'API
+- Page profil utilisateur React
+- Intégrer les stats dans un dashboard React
+
+---
+
+### 🟢 Younes
+**Rôle : Page d'accueil + Catalogue**
+
+✅ Réalisé :
+- Page d'accueil React (BrusselsShow)
+- Hero Section avec animation
+- Cartes de spectacles (ShowCards)
+- Page détail spectacle (ShowDetail)
+- Endpoint /api/public/shows/
+- Données spectacles dans la DB (6 spectacles)
+- Publication status APPROVED
+
+🔜 À faire :
+- Upload images des spectacles
+- Nouveau dump SQL complet avec tous les spectacles
+- Remplir title_nl, title_en dans la DB
+- Page de recherche / filtres spectacles
+
+---
+
+### 🟢 Vianney
+**Rôle : Panier React**
+
+✅ Réalisé :
+- Page panier React (Cart.jsx)
+- Connexion à /api/cart/
+
+🔜 À faire :
+- Page de paiement React
+- Confirmation de commande
+- Historique des réservations
+
+---
+
+### 🟡 Morad
+**Rôle : Page liste des spectacles**
+
+✅ Réalisé :
+- Page liste des spectacles React avec cards (rating, lieu, date, affiches)
+- Filtres Tous / Aujourd'hui / Prochainement
+- Dropdown lieu et sélecteur date
+- Connexion à /api/public/shows/ avec paramètres de filtrage
+- API publique enrichie (rating, next_schedule, next_location_name)
+
+🔜 À faire :
+- Page d'inscription React connectée à /api/auth/register/
+- Validation asynchrone (check-username, check-email)
+- Page profil utilisateur React connectée à /api/profile/
+- Formulaire de modification du profil
+
+---
+
+### 🟡 Soufiane
+**Rôle : Reviews / Avis**
+
+🔜 À faire :
+- Page avis spectacles React
+- Connecter à GET/POST /api/reviews/
+- Système de notation (étoiles)
+- Modération des avis (admin)
+
+---
+
+### 🟡 Oumar
+**Rôle : Dashboard Admin**
+
+🔜 À faire :
+- Dashboard admin React
+- Connecter à /api/stats/shows/
+- Gestion des spectacles (CRUD)
+- Gestion des utilisateurs
+
+---
+
+### 🟡 Nicolas
+**Rôle : CI/CD + Tests**
+
+✅ Réalisé :
+- GitHub Actions (3 jobs parallèles)
+- Lint Python (flake8)
+- Tests Django
+- Build React
+
+🔜 À faire :
+- Augmenter la couverture des tests
+- Tests d'intégration API
+- Tests frontend (Jest/Vitest)
+
+---
+
+## ✅ État des fonctionnalités
+
+| Fonctionnalité | État | Responsable |
+|---|---|---|
+| Navbar React i18n | ✅ Terminé | Randy |
+| Login/Logout | ✅ Terminé | Randy |
+| API Root | ✅ Terminé | Randy |
+| Profil utilisateur API | ✅ Terminé | Randy |
+| Inscription complète | ✅ Terminé | Randy |
+| Flux RSS | ✅ Terminé | Randy |
+| Export/Import CSV | ✅ Terminé | Randy |
+| API Affiliés | ✅ Terminé | Randy |
+| Statistiques producteur | ✅ Terminé | Randy |
+| i18n Frontend complet | ✅ Terminé | Randy |
+| Page d'accueil React | ✅ Terminé | Younes |
+| Cartes spectacles | ✅ Terminé | Younes |
+| Page détail spectacle | ✅ Terminé | Younes |
+| Page liste spectacles (filtres + cards) | ✅ Terminé | Morad |
+| API publique enrichie | ✅ Terminé | Morad |
+| Panier React | 🟡 En cours | Vianney |
+| Page inscription React | 🔴 À faire | Morad |
+| Page profil React | 🔴 À faire | Morad |
+| Avis/Reviews React | 🔴 À faire | Soufiane |
+| Dashboard admin React | 🔴 À faire | Oumar |
+| Tests complets | 🔴 À faire | Nicolas |
+| Images spectacles | 🔴 À faire | Younes |
+| Page paiement React | 🔴 À faire | Vianney |
 
 ---
 
@@ -49,278 +171,134 @@ Le projet comprend actuellement :
 - Python 3.12
 - Django 5.0.14
 - Django REST Framework 3.15.2
-- django-modeltranslation 0.18.11 (i18n)
-- python-dotenv 1.1.1 (variables d'environnement)
-- mysqlclient 2.2.7 (connecteur MySQL)
+- django-modeltranslation 0.18.11
+- python-dotenv 1.1.1
+- mysqlclient 2.2.7
 
 ### Frontend
 - React 19.2.4
 - Vite 8.0.1
 - React Router DOM 7.13.2
-- ESLint 9.39.4
+- react-i18next (FR/NL/EN)
 
 ### Base de données
-- MySQL 8.0 (via MAMP sur macOS ou installation directe sur Windows)
+- MySQL 8.0 (via MAMP)
 
 ### CI/CD
-- GitHub Actions (3 jobs parallèles : lint Python, tests Django, build React)
+- GitHub Actions (3 jobs parallèles)
 
 ---
 
-## 📋 Prérequis
+## 📡 API Endpoints complets
 
-Avant de commencer, assurez-vous d'avoir installé :
+### Auth
+- POST /api/auth/login/
+- POST /api/auth/logout/
+- POST /api/auth/register/
+- GET /api/auth/check-username/
+- GET /api/auth/check-email/
 
-- Python 3.12 (https://www.python.org/downloads/)
-- Node.js 20+ et npm (https://nodejs.org/)
-- MySQL 8.0 (via MAMP sur macOS, ou MySQL Installer sur Windows)
-- Git (https://git-scm.com/)
+### Profil
+- GET /api/profile/
+- PUT /api/profile/update/
 
----
-
-## 🚀 Installation
-
-### 1. Cloner le dépôt
-
-    git clone https://github.com/younesmala/PID_Groupe3.git
-    cd PID_Groupe3
-
-### 2. Configuration du backend Django
-
-**Sur macOS / Linux :**
-
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-
-**Sur Windows :**
-
-    python -m venv venv
-    venv\Scripts\activate
-    pip install -r requirements.txt
-
-Note Windows : si mysqlclient pose problème à l'installation, pymysql est utilisé automatiquement en fallback.
-
-### 3. Configuration de la base de données
-
-1. Démarrer MySQL (via MAMP sur macOS, ou le service MySQL sur Windows)
-
-2. Créer la base de données :
-
-    CREATE DATABASE reservation CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-3. Créer le fichier .env à la racine :
-
-    cp .env.example .env      # macOS / Linux
-    copy .env.example .env    # Windows
-
-4. Éditer .env avec vos credentials MySQL locaux.
-
-### 4. Appliquer les migrations
-
-    python manage.py migrate
-
-### 5. Créer un super-utilisateur (optionnel)
-
-    python manage.py createsuperuser
-
-### 6. Configuration du frontend React
-
-    cd frontend
-    npm install
-    cd ..
-
----
-
-## Mise a jour avant de commencer
-
-Avant de demarrer une nouvelle tache, pensez a mettre votre branche locale a jour avec `main`. Cela permet de recuperer les derniers correctifs, les migrations, les changements frontend et les donnees attendues par le projet.
-
-### 1. Mettre sa branche a jour
-
-Depuis la racine du projet :
-
-    git pull origin main
-
-Si le projet a recu de nouvelles dependances ou migrations :
-
-    pip install -r requirements.txt
-    python manage.py migrate
-
-### 2. Mettre a jour la base locale
-
-Une partie importante de l'affichage frontend depend aussi des donnees locales en base. Cela concerne notamment :
-
-- les descriptions des spectacles
-- les images des spectacles (`poster_url`)
-- les representations et autres donnees associees
-
-Si votre base locale n'est pas a jour, le site peut afficher des spectacles incomplets, des images manquantes ou des pages detail incorrectes.
-
-Selon ce qui est partage par l'equipe, il faut donc :
-
-- soit importer le dernier dump SQL
-- soit recharger les fixtures mises a jour
-
-Exemple pour recharger les spectacles :
-
-    python manage.py loaddata catalogue/fixtures/shows.json
-
-En resume : avant de coder, mettez a jour votre branche et votre base locale pour eviter des bugs qui ne viennent pas du code mais de donnees obsoletes.
-
----
-
-## ▶️ Lancement du projet
-
-### Backend Django (port 8000)
-
-    source venv/bin/activate    # macOS/Linux
-    venv\Scripts\activate       # Windows
-    python manage.py runserver
-
-### Frontend React (port 5173)
-
-Dans un second terminal :
-
-    cd frontend
-    npm run dev
-
----
-
-## 🌐 Accès à l'application
-
-- http://127.0.0.1:8000/ — Page d'accueil Django
-- http://127.0.0.1:8000/catalogue/artist/ — Catalogue des artistes
-- http://127.0.0.1:8000/admin/ — Interface d'administration
-- http://127.0.0.1:8000/api/ — API REST (DRF Browsable API)
-- http://localhost:5173/ — Application React (frontend)
-
----
-
-## 📡 Documentation API
-
-### Authentification
-- POST /api/auth/login/ — Connexion
-- POST /api/auth/register/ — Inscription
-- POST /api/auth/logout/ — Déconnexion
-
-### Spectacles & Représentations
-- GET /api/shows/ — Liste des spectacles
-- GET /api/shows/<id>/ — Détail d'un spectacle
-- GET /api/representations/ — Liste des représentations
+### Spectacles
+- GET /api/ — API Root
+- GET /api/public/shows/
+- GET /api/shows/
+- GET /api/shows/{id}/
+- GET /api/representations/
+- GET /api/rss/
 
 ### Artistes
-- GET /api/artists/ — Liste des artistes
-- GET /api/artists/<id>/ — Détail d'un artiste
-- GET /api/types/ — Types d'artistes
+- GET /api/artists/
+- GET /api/artists/{id}/
+- GET /api/types/
 
 ### Lieux
-- GET /api/locations/ — Liste des salles
-- GET /api/localities/ — Liste des localités
+- GET /api/locations/
+- GET /api/localities/
 
-### Panier & Réservation
-- GET /api/cart/ — Contenu du panier
-- POST /api/cart/add/ — Ajouter au panier
-- POST /api/checkout/ — Finaliser la commande
-- GET /api/reservations/ — Liste des réservations
-- GET /api/tickets/ — Liste des tickets
+### Panier & Réservations
+- GET /api/cart/
+- POST /api/cart/add/
+- POST /api/checkout/
+- GET /api/reservations/
+- GET /api/tickets/
 
 ### Avis
-- GET /api/reviews/ — Liste des avis
-- POST /api/reviews/ — Créer un avis
+- GET /api/reviews/
+- POST /api/reviews/
 
-### Utilisateurs & Admin
-- GET /api/users/ — Liste des utilisateurs (admin)
-- GET /api/admin/ — Endpoints administrateur
+### CSV
+- GET /api/export/shows/
+- POST /api/import/shows/
 
-Astuce : explorez l'API interactivement via http://127.0.0.1:8000/api/
+### Affiliés
+- POST /api/affiliate/register/
+- GET /api/affiliate/catalog/
+- PUT /api/affiliate/upgrade/{id}/
+
+### Statistiques
+- GET /api/stats/shows/
+- GET /api/stats/shows/{id}/
+
+### Admin
+- GET /api/users/
+- GET /api/admin/
 
 ---
 
-## 🧪 Tests
+## 🚀 Lancer le projet
 
-### Tests Django
+**Terminal 1 — Django :**
+```bash
+python manage.py runserver
+```
 
-    python manage.py test
+**Terminal 2 — React :**
+```bash
+cd frontend
+npm run dev
+```
 
-### Linting Python (flake8)
+**URLs :**
+- React → http://localhost:5173/
+- Django → http://localhost:8000/en/
+- Admin → http://localhost:8000/admin/
+- API → http://localhost:8000/api/
 
-    pip install flake8
-    flake8 .
+---
 
-### Linting JavaScript (ESLint)
-
-    cd frontend
-    npm run lint
+## 🔑 Compte de test
+- **Username** : anna / **Password** : anna123 — Rôle : ADMIN
 
 ---
 
 ## 📁 Structure du projet
 
-    PID_Groupe3/
-    ├── .github/workflows/    # Configuration CI/CD GitHub Actions
-    ├── accounts/             # Gestion des comptes utilisateurs
-    ├── api/                  # API REST (Django REST Framework)
-    │   ├── serializers/
-    │   └── views/
-    ├── cart/                 # Gestion du panier
-    ├── catalogue/            # Modèles et vues du catalogue
-    │   ├── models/
-    │   ├── forms/
-    │   └── views/
-    ├── frontend/             # Application React + Vite
-    │   ├── src/
-    │   └── public/
-    ├── locale/               # Fichiers de traduction (i18n)
-    ├── member/               # Gestion des membres
-    ├── reservations/         # Configuration Django principale
-    │   ├── settings.py
-    │   └── urls.py
-    ├── Templates/            # Templates Django
-    ├── .env.example          # Modèle de configuration
-    ├── .flake8               # Configuration du linter Python
-    ├── .gitignore
-    ├── manage.py             # Point d'entrée Django
-    ├── requirements.txt      # Dépendances Python
-    └── README.md
-
----
-
-## 🔄 CI/CD
-
-Le projet utilise GitHub Actions pour automatiser les vérifications à chaque push et pull request. Le workflow exécute 3 jobs en parallèle :
-
-1. Python Lint (flake8) — Vérification du style de code Python
-2. Django Tests (MySQL 8.0) — Tests unitaires Django avec base MySQL
-3. Frontend React (npm install + build) — Build du frontend React
-
-Le workflow est défini dans .github/workflows/main.yml.
-
----
-
-## 🤝 Contribution
-
-Le projet suit un workflow Git basé sur les pull requests :
-
-1. Créer une branche depuis main : git checkout -b feature/ma-fonctionnalite
-2. Committer ses changements : git commit -m "feat: description"
-3. Pousser sur le dépôt : git push origin feature/ma-fonctionnalite
-4. Ouvrir une Pull Request sur GitHub
-5. Attendre la validation de la CI/CD et la revue de code
-6. Merger après approbation
-
-### Convention de nommage des branches
-
-- feature/* — Nouvelles fonctionnalités
-- fix/* — Corrections de bugs
-- chore/* — Tâches de maintenance (refacto, config)
-- dev_* — Branches de développement d'étapes
-
----
-
-## 📝 Licence
-
-Projet académique réalisé dans le cadre du Bachelier en Informatique de l'ICC Bruxelles.
+```
+PID_Groupe3/
+├── .github/workflows/    # Configuration CI/CD GitHub Actions
+├── accounts/             # Gestion des comptes utilisateurs
+├── api/                  # API REST (Django REST Framework)
+│   ├── serializers/
+│   └── views/
+├── cart/                 # Gestion du panier
+├── catalogue/            # Modèles et vues du catalogue
+│   ├── models/
+│   ├── forms/
+│   └── views/
+├── frontend/             # Application React + Vite
+│   ├── src/
+│   └── public/
+├── locale/               # Fichiers de traduction (i18n)
+├── reservations/         # Configuration Django principale
+├── Templates/            # Templates Django
+├── manage.py
+├── requirements.txt
+└── README.md
+```
 
 ---
 
