@@ -84,18 +84,19 @@ class AdminUsersRolesView(APIView):
                 {'detail': 'User not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
         role_name = request.data.get('role')
         if not role_name:
             return Response(
                 {'detail': 'Role is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
         try:
             group = Group.objects.get(name=role_name)
             user.groups.add(group)
-            return Response({'detail': f'Role {role_name} added'}, status=status.HTTP_200_OK)
+            return Response(
+                {'detail': f'Role {role_name} added'},
+                status=status.HTTP_200_OK
+            )
         except Group.DoesNotExist:
             return Response(
                 {'detail': f'Role {role_name} not found'},
@@ -111,41 +112,26 @@ class AdminUsersRolesView(APIView):
                 {'detail': 'User not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+
         role_name = request.data.get('role')
         if not role_name:
             return Response(
                 {'detail': 'Role is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         try:
             group = Group.objects.get(name=role_name)
             user.groups.remove(group)
-            return Response({'detail': f'Role {role_name} removed'}, status=status.HTTP_200_OK)
+            return Response(
+                {'detail': f'Role {role_name} removed'},
+                status=status.HTTP_200_OK
+            )
         except Group.DoesNotExist:
             return Response(
                 {'detail': f'Role {role_name} not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-
-    def delete(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-
-class AdminUsersRolesView(APIView):
-    def get(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def put(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def delete(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
 
 class UsersSubscriptionView(APIView):
     def get(self, request, *args, **kwargs):
