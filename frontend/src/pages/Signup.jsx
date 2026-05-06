@@ -59,6 +59,8 @@ function validateForm(form) {
 
 function Signup() {
   const [form, setForm] = useState(initialForm)
+  const [isProducer, setIsProducer] = useState(false)
+  const role = isProducer ? 'PRODUCER' : 'USER'
   const [touched, setTouched] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState('')
@@ -125,7 +127,11 @@ function Signup() {
     setServerError('')
     setSuccess('')
 
-    if (!isFormValid) {
+    const password = form.password
+    const confirmPassword = form.passwordConfirm
+    console.log('password:', password, 'confirm:', confirmPassword)
+
+    if (password !== confirmPassword || !isFormValid) {
       return
     }
 
@@ -138,8 +144,9 @@ function Signup() {
         last_name: form.last_name,
         username: form.username,
         password: form.password,
-        password_confirm: form.passwordConfirm,
+        confirm_password: form.passwordConfirm,
         language: form.language,
+        role,
       })
       setSuccess('Inscription terminee. Vous pouvez maintenant vous connecter des que la page de connexion est disponible.')
       setForm(initialForm)
@@ -279,6 +286,15 @@ function Signup() {
 
             <div className="account-password-hint">
               Le mot de passe doit contenir au minimum 6 caracteres, une majuscule et un caractere special.
+            </div>
+
+            <div className={`producer-card${isProducer ? ' producer-card--active' : ''}`} onClick={() => setIsProducer(!isProducer)}>
+              <span className="producer-card-icon">🎭</span>
+              <div>
+                <strong>S&apos;inscrire en tant que Producteur</strong>
+                <p>Gérez vos spectacles, séances et statistiques</p>
+              </div>
+              <span className="producer-card-check">{isProducer ? '✓' : ''}</span>
             </div>
 
             <button className="account-submit" type="submit" disabled={loading || !isFormValid}>

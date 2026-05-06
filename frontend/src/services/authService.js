@@ -131,6 +131,7 @@ export async function logout() {
   localStorage.removeItem('csrf_token')
   localStorage.removeItem('user_role')
   localStorage.removeItem('user_is_staff')
+  localStorage.removeItem('user_email')
 }
 
 export function getStoredUsername() {
@@ -144,6 +145,7 @@ export function getStoredUser() {
     username,
     role: localStorage.getItem('user_role') || null,
     is_staff: localStorage.getItem('user_is_staff') === 'true',
+    email: localStorage.getItem('user_email') || null,
   }
 }
 
@@ -151,6 +153,7 @@ export function storeUser(data) {
   if (data?.username) localStorage.setItem('username', data.username)
   if (data?.role !== undefined) localStorage.setItem('user_role', data.role || '')
   if (data?.is_staff !== undefined) localStorage.setItem('user_is_staff', String(data.is_staff))
+  if (data?.email !== undefined) localStorage.setItem('user_email', data.email || '')
 }
 
 export async function checkUsername(username) {
