@@ -41,6 +41,21 @@
   padding: 32px;
 }
 
+.account-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #111827;
+  font-size: 1.6rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+}
+
 .account-kicker,
 .ticket-card__eyebrow {
   margin: 0 0 14px;
@@ -91,8 +106,36 @@
   text-transform: uppercase;
 }
 
-.account-hero__panel strong {
-  font-size: 1.2rem;
+.account-stat {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account-stat strong {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1;
+}
+
+.account-stat p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.account-secondary-link--panel {
+  margin-top: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+  font-size: 0.9rem;
+  min-height: 44px;
+  padding: 0 20px;
 }
 
 .account-card-grid {

@@ -4,6 +4,15 @@ import { getCurrentUser, updateProfile } from '../services/userService'
 import { getMyReservations } from '../services/reservationService'
 import './AccountPages.css'
 
+function Avatar({ firstName, lastName, username }) {
+  const initials = firstName && lastName
+    ? `${firstName[0]}${lastName[0]}`.toUpperCase()
+    : firstName
+      ? firstName[0].toUpperCase()
+      : (username || '?')[0].toUpperCase()
+  return <div className="account-avatar">{initials}</div>
+}
+
 function readValue(...values) {
   return values.find((value) => value !== undefined && value !== null && value !== '')
 }
@@ -253,20 +262,29 @@ function Profile({ isLoggedIn, username }) {
     <main className="account-shell">
       <section className="account-hero">
         <div className="account-hero__content">
+          <Avatar
+            firstName={profile?.first_name}
+            lastName={profile?.last_name}
+            username={profile?.username || username}
+          />
           <p className="account-kicker">Mon espace</p>
-          <h1>{loadingProfile ? 'Chargement du profil...' : `Bonjour ${readValue(profile?.first_name, profile?.username, username, 'utilisateur')}`}</h1>
-          <p>
-            Cette page affiche votre profil, vos reservations et vos tickets depuis les endpoints utilisateurs.
-          </p>
+          <h1>{loadingProfile ? 'Chargement...' : `Bonjour, ${readValue(profile?.first_name, profile?.username, username, 'utilisateur')} !`}</h1>
+          <p>Bienvenue sur votre espace personnel. Retrouvez vos informations, vos reservations et vos billets.</p>
         </div>
 
         <div className="account-hero__panel">
-          <span>API connectee</span>
-          <strong>GET /api/users/me/</strong>
-          <strong>GET /api/my/reservations/</strong>
-          <p>
-            Les indisponibilites backend sont remontees dans l&apos;interface sans bloquer le rendu des sections.
-          </p>
+          <span>Mes statistiques</span>
+          <div className="account-stat">
+            <strong>{loadingReservations ? '—' : reservations.length}</strong>
+            <p>Reservation(s)</p>
+          </div>
+          <div className="account-stat">
+            <strong>{loadingReservations ? '—' : ticketReservations.length}</strong>
+            <p>Billet(s) actif(s)</p>
+          </div>
+          <Link className="account-secondary-link account-secondary-link--panel" to="/tickets">
+            Voir mes billets →
+          </Link>
         </div>
       </section>
 
