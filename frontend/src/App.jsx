@@ -17,6 +17,7 @@ import Reviews from './pages/Reviews'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import { getCart } from './services/cartService'
+import MyTickets from './pages/MyTickets'
 import ProducerDashboard from './pages/ProducerDashboard'
 import ProducerShows from './pages/ProducerShows'
 import ProducerSessions from './pages/ProducerSessions'
@@ -117,6 +118,7 @@ function App() {
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} username={username} />} />
         <Route path="/search" element={<Search />} />
         <Route path="/reviews" element={<Reviews />} />
+        <Route path="/tickets" element={<MyTickets isLoggedIn={isLoggedIn} />} />
 
         {/* ── Espace Producteur ── */}
         <Route
