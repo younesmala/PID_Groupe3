@@ -43,6 +43,8 @@ class ShowsView(generics.GenericAPIView):
 
 
 class ShowsDetailView(generics.GenericAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ShowSerializer
 
     def get_object(self, slug):
@@ -73,6 +75,9 @@ class ShowsDetailView(generics.GenericAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, slug, *args, **kwargs):
+        return self.put(request, slug, *args, **kwargs)
 
     def delete(self, request, slug, *args, **kwargs):
         show = self.get_object(slug)

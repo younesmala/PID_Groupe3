@@ -135,6 +135,14 @@ function App() {
           }
         />
         <Route
+          path="/producer/shows/:slug/edit"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/producer/shows/:slug/sessions"
           element={
             <ProtectedRoute user={user}>

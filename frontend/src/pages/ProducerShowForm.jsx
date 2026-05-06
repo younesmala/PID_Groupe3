@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import './ProducerShowForm.css'
 
 const BASE = '/api'
@@ -13,6 +13,8 @@ function getCookie(name) {
 
 export default function ProducerShowForm() {
   const navigate   = useNavigate()
+  const { slug }   = useParams()
+  const isEdit     = !!slug
   const fileRef    = useRef(null)
 
   const [types,      setTypes]      = useState([])
@@ -28,6 +30,25 @@ export default function ProducerShowForm() {
   const [posterPreview, setPosterPreview] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [errors,     setErrors]     = useState({})
+  const [loading,    setLoading]    = useState(isEdit)
+
+  useEffect(() => {
+    if (!isEdit) return
+    fetch(`${BASE}/shows/${slug}/`, { credentials: 'include', headers: { Accept: 'application/json' } })
+      .then((r) => { if (!r.ok) throw new Error(); return r.json() })
+      .then((data) => {
+        setForm({
+          title:       data.title       ?? '',
+          description: data.description ?? '',
+          genre:       data.artist_types?.[0] ?? '',
+          duration:    data.duration    ?? '',
+          created_in:  data.created_in  ?? '',
+        })
+        if (data.poster_url) setPosterPreview(data.poster_url)
+      })
+      .catch(() => setErrors({ _global: 'Impossible de charger le spectacle.' }))
+      .finally(() => setLoading(false))
+  }, [slug, isEdit])
 
   useEffect(() => {
     const opts = { credentials: 'include', headers: { Accept: 'application/json' } }
@@ -88,8 +109,8 @@ export default function ProducerShowForm() {
     if (posterFile)              fd.append('poster', posterFile)
 
     try {
-      const res = await fetch(`${BASE}/shows/`, {
-        method:      'POST',
+      const res = await fetch(isEdit ? `${BASE}/shows/${slug}/` : `${BASE}/shows/`, {
+        method:      isEdit ? 'PATCH' : 'POST',
         credentials: 'include',
         headers:     { 'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '' },
         body:        fd,
@@ -110,6 +131,8 @@ export default function ProducerShowForm() {
     }
   }
 
+  if (loading) return <div className="psf-page">Chargement…</div>
+
   return (
     <div className="psf-page">
       <button className="psf-breadcrumb" onClick={() => navigate('/producer/shows')}>
@@ -117,7 +140,7 @@ export default function ProducerShowForm() {
       </button>
 
       <header className="psf-header">
-        <h1 className="psf-title">Ajouter un spectacle</h1>
+        <h1 className="psf-title">{isEdit ? 'Modifier le spectacle' : 'Ajouter un spectacle'}</h1>
       </header>
 
       <form className="psf-form" onSubmit={handleSubmit} noValidate>
@@ -266,7 +289,9 @@ export default function ProducerShowForm() {
             className="psf-btn psf-btn--primary"
             disabled={submitting}
           >
-            {submitting ? 'Enregistrement…' : 'Enregistrer'}
+            {submitting
+              ? (isEdit ? 'Mise à jour…' : 'Enregistrement…')
+              : (isEdit ? 'Mettre à jour' : 'Enregistrer')}
           </button>
         </div>
       </form>
