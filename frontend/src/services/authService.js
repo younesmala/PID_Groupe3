@@ -22,7 +22,14 @@ function formatValidationErrors(data) {
 
   return entries
     .map(([field, value]) => {
-      const messages = Array.isArray(value) ? value.join(', ') : String(value)
+      let messages
+      if (Array.isArray(value)) {
+        messages = value.join(', ')
+      } else if (typeof value === 'object' && value !== null) {
+        messages = Object.values(value).flat().join(', ')
+      } else {
+        messages = String(value)
+      }
       return `${field}: ${messages}`
     })
     .join(' | ')
@@ -73,7 +80,7 @@ export async function signup(userData) {
       username: userData.username,
       email: userData.email,
       password: userData.password,
-      password_confirm: userData.password_confirm,
+      confirm_password: userData.password_confirm,
       first_name: userData.first_name,
       last_name: userData.last_name,
       language: userData.language,
@@ -144,4 +151,22 @@ export function storeUser(data) {
   if (data?.username) localStorage.setItem('username', data.username)
   if (data?.role !== undefined) localStorage.setItem('user_role', data.role || '')
   if (data?.is_staff !== undefined) localStorage.setItem('user_is_staff', String(data.is_staff))
+}
+
+export async function checkUsername(username) {
+  const res = await fetch(`${BASE}/auth/check-username/?username=${encodeURIComponent(username)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return res.json().catch(() => ({}))
+}
+
+export async function checkEmail(email) {
+  const res = await fetch(`${BASE}/auth/check-email/?email=${encodeURIComponent(email)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return res.json().catch(() => ({}))
 }
