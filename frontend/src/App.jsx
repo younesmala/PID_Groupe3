@@ -22,6 +22,7 @@ import ProducerDashboard from './pages/ProducerDashboard'
 import ProducerShows from './pages/ProducerShows'
 import ProducerSessions from './pages/ProducerSessions'
 import ProducerAllSessions from './pages/ProducerAllSessions'
+import ProducerStats from './pages/ProducerStats'
 
 function ProtectedRoute({ user, children }) {
   if (!user?.username) return <Navigate to="/" replace />
@@ -142,7 +143,11 @@ function App() {
         />
         <Route
           path="/producer/stats"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Mes statistiques" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerStats />
+            </ProtectedRoute>
+          }
         />
 
         {/* ── Administration ── */}
