@@ -130,6 +130,9 @@ function Signup() {
     const password = form.password
     const confirmPassword = form.passwordConfirm
     console.log('password:', password, 'confirm:', confirmPassword)
+    console.log('errors:', errors)
+    console.log('asyncErrors:', asyncErrors)
+    console.log('isFormValid:', isFormValid)
 
     if (password !== confirmPassword || !isFormValid) {
       return
