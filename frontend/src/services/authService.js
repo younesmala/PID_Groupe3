@@ -76,15 +76,7 @@ export async function signup(userData) {
       'Content-Type': 'application/json',
       'X-CSRFToken': getCookie('csrftoken'),
     },
-    body: JSON.stringify({
-      username: userData.username,
-      email: userData.email,
-      password: userData.password,
-      confirm_password: userData.password_confirm,
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-      language: userData.language,
-    }),
+    body: JSON.stringify(userData),
   })
 
   const data = await parseJsonResponse(res)
