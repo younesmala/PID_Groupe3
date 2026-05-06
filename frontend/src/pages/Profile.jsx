@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getCurrentUser } from '../services/userService'
+import { getCurrentUser, updateProfile } from '../services/userService'
 import { getMyReservations } from '../services/reservationService'
 import './AccountPages.css'
 
@@ -111,6 +111,12 @@ function buildTicketReservations(reservations) {
   return reservations
 }
 
+const languageOptions = [
+  { value: 'fr', label: 'Francais' },
+  { value: 'en', label: 'Anglais' },
+  { value: 'nl', label: 'Neerlandais' },
+]
+
 function Profile({ isLoggedIn, username }) {
   const [profile, setProfile] = useState(() => (username ? { username } : null))
   const [reservations, setReservations] = useState([])
@@ -118,6 +124,11 @@ function Profile({ isLoggedIn, username }) {
   const [reservationsError, setReservationsError] = useState('')
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [loadingReservations, setLoadingReservations] = useState(true)
+  const [editMode, setEditMode] = useState(false)
+  const [editForm, setEditForm] = useState({})
+  const [editLoading, setEditLoading] = useState(false)
+  const [editError, setEditError] = useState('')
+  const [editSuccess, setEditSuccess] = useState('')
 
   useEffect(() => {
     let active = true
@@ -191,6 +202,35 @@ function Profile({ isLoggedIn, username }) {
 
   const ticketReservations = useMemo(() => buildTicketReservations(reservations), [reservations])
 
+  function openEdit() {
+    setEditForm({
+      first_name: profile?.first_name || '',
+      last_name: profile?.last_name || '',
+      email: profile?.email || '',
+      language: profile?.language || '',
+    })
+    setEditError('')
+    setEditSuccess('')
+    setEditMode(true)
+  }
+
+  async function handleEditSubmit(event) {
+    event.preventDefault()
+    setEditLoading(true)
+    setEditError('')
+    setEditSuccess('')
+    try {
+      const updated = await updateProfile(editForm)
+      setProfile((prev) => ({ ...prev, ...updated }))
+      setEditSuccess('Profil mis a jour avec succes.')
+      setEditMode(false)
+    } catch (err) {
+      setEditError(err.message)
+    } finally {
+      setEditLoading(false)
+    }
+  }
+
   if (!isLoggedIn) {
     return (
       <main className="account-shell">
@@ -238,29 +278,86 @@ function Profile({ isLoggedIn, username }) {
           </div>
 
           {profileError && <p className="account-feedback account-feedback--error">{profileError}</p>}
+          {editSuccess && <p className="account-feedback account-feedback--success">{editSuccess}</p>}
 
-          <dl className="profile-definition-list">
-            <div>
-              <dt>Login</dt>
-              <dd>{readValue(profile?.username, username, 'Non disponible')}</dd>
-            </div>
-            <div>
-              <dt>Email</dt>
-              <dd>{readValue(profile?.email, 'Non disponible')}</dd>
-            </div>
-            <div>
-              <dt>Prenom</dt>
-              <dd>{readValue(profile?.first_name, profile?.firstname, 'Non disponible')}</dd>
-            </div>
-            <div>
-              <dt>Nom</dt>
-              <dd>{readValue(profile?.last_name, profile?.lastname, 'Non disponible')}</dd>
-            </div>
-            <div>
-              <dt>Langue</dt>
-              <dd>{readValue(profile?.language, profile?.lang, profile?.locale, 'Non disponible')}</dd>
-            </div>
-          </dl>
+          {!editMode ? (
+            <>
+              <dl className="profile-definition-list">
+                <div>
+                  <dt>Login</dt>
+                  <dd>{readValue(profile?.username, username, 'Non disponible')}</dd>
+                </div>
+                <div>
+                  <dt>Email</dt>
+                  <dd>{readValue(profile?.email, 'Non disponible')}</dd>
+                </div>
+                <div>
+                  <dt>Prenom</dt>
+                  <dd>{readValue(profile?.first_name, profile?.firstname, 'Non disponible')}</dd>
+                </div>
+                <div>
+                  <dt>Nom</dt>
+                  <dd>{readValue(profile?.last_name, profile?.lastname, 'Non disponible')}</dd>
+                </div>
+                <div>
+                  <dt>Langue</dt>
+                  <dd>{readValue(profile?.language, profile?.lang, profile?.locale, 'Non disponible')}</dd>
+                </div>
+              </dl>
+              <button className="account-submit" style={{ marginTop: '1rem' }} onClick={openEdit}>
+                Modifier le profil
+              </button>
+            </>
+          ) : (
+            <form className="account-form" onSubmit={handleEditSubmit}>
+              {editError && <p className="account-feedback account-feedback--error">{editError}</p>}
+              <label>
+                <span>Prenom</span>
+                <input
+                  type="text"
+                  value={editForm.first_name}
+                  onChange={(e) => setEditForm((f) => ({ ...f, first_name: e.target.value }))}
+                />
+              </label>
+              <label>
+                <span>Nom</span>
+                <input
+                  type="text"
+                  value={editForm.last_name}
+                  onChange={(e) => setEditForm((f) => ({ ...f, last_name: e.target.value }))}
+                />
+              </label>
+              <label>
+                <span>Email</span>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                  required
+                />
+              </label>
+              <label>
+                <span>Langue</span>
+                <select
+                  value={editForm.language}
+                  onChange={(e) => setEditForm((f) => ({ ...f, language: e.target.value }))}
+                >
+                  <option value="">Choisir une langue</option>
+                  {languageOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </label>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button className="account-submit" type="submit" disabled={editLoading}>
+                  {editLoading ? 'Enregistrement...' : 'Enregistrer'}
+                </button>
+                <button className="account-submit" type="button" onClick={() => setEditMode(false)} style={{ background: '#555' }}>
+                  Annuler
+                </button>
+              </div>
+            </form>
+          )}
         </article>
 
         <article className="account-card">
