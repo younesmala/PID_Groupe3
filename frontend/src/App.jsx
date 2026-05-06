@@ -21,6 +21,9 @@ import MyTickets from './pages/MyTickets'
 import ProducerDashboard from './pages/ProducerDashboard'
 import ProducerShows from './pages/ProducerShows'
 import ProducerSessions from './pages/ProducerSessions'
+import ProducerAllSessions from './pages/ProducerAllSessions'
+import ProducerStats from './pages/ProducerStats'
+import ProducerShowForm from './pages/ProducerShowForm'
 
 function ProtectedRoute({ user, children }) {
   if (!user?.username) return <Navigate to="/" replace />
@@ -124,6 +127,22 @@ function App() {
           }
         />
         <Route
+          path="/producer/shows/new"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/producer/shows/:slug/edit"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/producer/shows/:slug/sessions"
           element={
             <ProtectedRoute user={user}>
@@ -133,11 +152,19 @@ function App() {
         />
         <Route
           path="/producer/sessions"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Mes séances" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerAllSessions />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/producer/stats"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Mes statistiques" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerStats />
+            </ProtectedRoute>
+          }
         />
 
         {/* ── Administration ── */}

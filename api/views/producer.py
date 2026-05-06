@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +10,7 @@ from api.serializers.shows import ShowSerializer
 
 
 class ProducerShowsView(APIView):
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -24,6 +26,7 @@ class ProducerShowsView(APIView):
 
 
 class ProducerShowDetailView(APIView):
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, slug, *args, **kwargs):
@@ -38,6 +41,9 @@ class ProducerShowDetailView(APIView):
 
 
 class ProducerShowsStatsView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
 
@@ -52,6 +58,9 @@ class ProducerShowsStatsView(APIView):
 
 
 class ProducerCommentsView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
 
@@ -66,6 +75,9 @@ class ProducerCommentsView(APIView):
 
 
 class ProducerCommentsValidateView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
 
@@ -80,6 +92,9 @@ class ProducerCommentsValidateView(APIView):
 
 
 class ProducerCommentsRejectView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
 
@@ -94,6 +109,7 @@ class ProducerCommentsRejectView(APIView):
 
 
 class ProducerReviewsView(APIView):
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
@@ -105,6 +121,7 @@ class ProducerReviewsView(APIView):
 
 
 class ProducerReviewModerateView(APIView):
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, id):
@@ -125,10 +142,16 @@ class ProducerReviewModerateView(APIView):
 
 
 class ProducerReviewsValidateView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
 
 
 class ProducerReviewsRejectView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
