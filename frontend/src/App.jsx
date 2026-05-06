@@ -10,7 +10,7 @@ import Cart from './pages/Cart'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
-import { getStoredUser, storeUser, logout, fetchCurrentUser } from './services/authService'
+import { getStoredUser, storeUser, logout } from './services/authService'
 import Checkout from './pages/Checkout'
 import Search from './pages/Search'
 import Reviews from './pages/Reviews'
@@ -35,28 +35,14 @@ function App() {
   const username = user?.username || null
   const isLoggedIn = !!username
 
-  async function handleLogin(loginData) {
-    if (typeof loginData === 'string') {
-      setUser((prev) => ({ ...prev, username: loginData }))
-      return
-    }
-
+  function handleLogin(loginData) {
     storeUser(loginData)
-    try {
-      const profile = await fetchCurrentUser()
-      storeUser(profile)
-      setUser({
-        username: profile.username || loginData.username,
-        role: profile.role || null,
-        is_staff: !!profile.is_staff,
-      })
-    } catch {
-      setUser({
-        username: loginData.username || null,
-        role: loginData.role || null,
-        is_staff: !!loginData.is_staff,
-      })
-    }
+    setUser({
+      username: loginData.username,
+      role: loginData.role,
+      is_staff: !!loginData.is_staff,
+      email: loginData.email,
+    })
   }
 
   async function handleLogout() {
