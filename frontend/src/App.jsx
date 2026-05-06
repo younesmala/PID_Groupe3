@@ -8,6 +8,7 @@ import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import { getStoredUser, storeUser, logout, fetchCurrentUser } from './services/authService'
 import Checkout from './pages/Checkout'
@@ -165,6 +166,7 @@ function App() {
           element={<ProtectedRoute user={user}><PlaceholderPage title="Nos lieux" /></ProtectedRoute>}
         />
       </Routes>
+      <Footer />
       <CookieBanner />
     </BrowserRouter>
   )
