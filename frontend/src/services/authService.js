@@ -22,7 +22,14 @@ function formatValidationErrors(data) {
 
   return entries
     .map(([field, value]) => {
-      const messages = Array.isArray(value) ? value.join(', ') : String(value)
+      let messages
+      if (Array.isArray(value)) {
+        messages = value.join(', ')
+      } else if (typeof value === 'object' && value !== null) {
+        messages = Object.values(value).flat().join(', ')
+      } else {
+        messages = String(value)
+      }
       return `${field}: ${messages}`
     })
     .join(' | ')
@@ -38,7 +45,6 @@ export async function login(username, password) {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken'),
     },
     body: JSON.stringify({ username, password }),
   })
@@ -54,6 +60,11 @@ export async function login(username, password) {
   }
 
   localStorage.setItem('username', data.username || username)
+
+  if (data.csrf_token) {
+    localStorage.setItem('csrf_token', data.csrf_token)
+  }
+
   return data
 }
 
@@ -69,7 +80,7 @@ export async function signup(userData) {
       username: userData.username,
       email: userData.email,
       password: userData.password,
-      password_confirm: userData.password_confirm,
+      confirm_password: userData.password_confirm,
       first_name: userData.first_name,
       last_name: userData.last_name,
       language: userData.language,
@@ -112,12 +123,50 @@ export async function logout() {
     method: 'POST',
     credentials: 'include',
     headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
+      'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '',
     },
   })
+
   localStorage.removeItem('username')
+  localStorage.removeItem('csrf_token')
+  localStorage.removeItem('user_role')
+  localStorage.removeItem('user_is_staff')
 }
 
 export function getStoredUsername() {
   return localStorage.getItem('username')
+}
+
+export function getStoredUser() {
+  const username = localStorage.getItem('username')
+  if (!username) return null
+  return {
+    username,
+    role: localStorage.getItem('user_role') || null,
+    is_staff: localStorage.getItem('user_is_staff') === 'true',
+  }
+}
+
+export function storeUser(data) {
+  if (data?.username) localStorage.setItem('username', data.username)
+  if (data?.role !== undefined) localStorage.setItem('user_role', data.role || '')
+  if (data?.is_staff !== undefined) localStorage.setItem('user_is_staff', String(data.is_staff))
+}
+
+export async function checkUsername(username) {
+  const res = await fetch(`${BASE}/auth/check-username/?username=${encodeURIComponent(username)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return res.json().catch(() => ({}))
+}
+
+export async function checkEmail(email) {
+  const res = await fetch(`${BASE}/auth/check-email/?email=${encodeURIComponent(email)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return res.json().catch(() => ({}))
 }
