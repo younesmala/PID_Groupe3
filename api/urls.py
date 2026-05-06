@@ -150,6 +150,9 @@ urlpatterns = [
 
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
+    path('admin/stats/', admin_api.AdminStatsView.as_view(), name='admin-stats'),
+    path('admin/reservations/', reservations.ReservationsView.as_view(), name='admin-reservations'),
+    path('admin/reservations/<int:id>/', reservations.ReservationsDetailView.as_view(), name='admin-reservations-detail'),
     path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
     path(
         'admin/comments/<int:id>/moderate/',

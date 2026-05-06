@@ -164,6 +164,10 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
             )}
           </div>
 
+          <Link to="/locations" className="btn-admin">
+            📍 Nos lieux
+          </Link>
+
           {/* Panier */}
           <Link to="/cart" className="btn-cart">
             🛒 {t('panier')}

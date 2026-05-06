@@ -7,6 +7,10 @@ import Home from './pages/Home'
 import ShowsList from './pages/ShowsList'
 import ShowDetail from './pages/ShowDetail'
 import Cart from './pages/Cart'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminUsers from './pages/AdminUsers'
+import AdminReservations from './pages/AdminReservations'
+import Locations from './pages/Locations'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
@@ -114,6 +118,10 @@ function App() {
         <Route path="/shows/:slug" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/locations" element={<Locations />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/reservations" element={<AdminReservations />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} username={username} />} />
         <Route path="/search" element={<Search />} />
