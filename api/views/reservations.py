@@ -155,7 +155,7 @@ class MyReservationsView(APIView):
                 'quantity': r.quantity,
                 'representation': {
                     'id': rep.id,
-                    'when': rep.when,
+                    'when': rep.schedule,
                     'location': str(rep.location) if rep.location else None,
                     'show': {
                         'id': show.id,

@@ -11,6 +11,7 @@ class UsersMeView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         roles = list(user.groups.values_list('name', flat=True))
+        role = user.profile.role if hasattr(user, 'profile') else 'USER'
         return Response({
             'id': user.id,
             'username': user.username,
@@ -18,6 +19,8 @@ class UsersMeView(APIView):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'roles': roles,
+            'is_staff': user.is_staff,
+            'role': role,
         })
 
     def put(self, request, *args, **kwargs):
@@ -28,6 +31,7 @@ class UsersMeView(APIView):
         user.email = data.get('email', user.email)
         user.save()
         roles = list(user.groups.values_list('name', flat=True))
+        role = user.profile.role if hasattr(user, 'profile') else 'USER'
         return Response({
             'id': user.id,
             'username': user.username,
@@ -35,6 +39,8 @@ class UsersMeView(APIView):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'roles': roles,
+            'is_staff': user.is_staff,
+            'role': role,
         })
 
     def post(self, request, *args, **kwargs):

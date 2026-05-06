@@ -1,5 +1,12 @@
 const BASE = '/api'
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+  return ''
+}
+
 function getErrorMessage(data, fallbackMessage) {
   return data.detail || data.error || fallbackMessage
 }
@@ -51,6 +58,26 @@ export async function getCurrentUser() {
 
   if (!res.ok) {
     throw new Error(getErrorMessage(data, 'Impossible de charger le profil utilisateur'))
+  }
+
+  return data
+}
+
+export async function updateProfile(profileData) {
+  const res = await fetch(`${BASE}/profile/update/`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken'),
+    },
+    body: JSON.stringify(profileData),
+  })
+
+  const data = await parseJsonResponse(res)
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, 'Impossible de mettre a jour le profil'))
   }
 
   return data
