@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { signup, checkUsername, checkEmail } from '../services/authService'
 import './AccountPages.css'
 
@@ -14,50 +15,13 @@ const initialForm = {
 }
 
 const languageOptions = [
-  { value: 'fr', label: 'Francais' },
-  { value: 'en', label: 'Anglais' },
-  { value: 'nl', label: 'Neerlandais' },
+  { value: 'fr', label: 'Français' },
+  { value: 'en', label: 'English' },
+  { value: 'nl', label: 'Nederlands' },
 ]
 
-function validateForm(form) {
-  const errors = {}
-
-  if (!form.username.trim()) {
-    errors.username = 'Le login est obligatoire.'
-  }
-
-  if (!form.email.trim()) {
-    errors.email = 'L\'email est obligatoire.'
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-    errors.email = 'Veuillez saisir une adresse email valide.'
-  }
-
-  if (!form.password) {
-    errors.password = 'Le mot de passe est obligatoire.'
-  } else {
-    if (form.password.length < 6) {
-      errors.password = 'Le mot de passe doit contenir au moins 6 caracteres.'
-    } else if (!/[A-Z]/.test(form.password)) {
-      errors.password = 'Le mot de passe doit contenir au moins une majuscule.'
-    } else if (!/[^A-Za-z0-9]/.test(form.password)) {
-      errors.password = 'Le mot de passe doit contenir au moins un caractere special.'
-    }
-  }
-
-  if (!form.passwordConfirm) {
-    errors.passwordConfirm = 'La confirmation du mot de passe est obligatoire.'
-  } else if (form.passwordConfirm !== form.password) {
-    errors.passwordConfirm = 'La confirmation doit etre identique au mot de passe.'
-  }
-
-  if (!form.language) {
-    errors.language = 'La langue est obligatoire.'
-  }
-
-  return errors
-}
-
 function Signup() {
+  const { t } = useTranslation()
   const [form, setForm] = useState(initialForm)
   const [touched, setTouched] = useState({})
   const [submitted, setSubmitted] = useState(false)
@@ -66,20 +30,40 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const [asyncErrors, setAsyncErrors] = useState({})
   const [asyncChecking, setAsyncChecking] = useState({})
-  const errors = useMemo(() => validateForm(form), [form])
+
+  function validateForm(form) {
+    const errors = {}
+    if (!form.username.trim()) errors.username = t('signup.err_username_required')
+    if (!form.email.trim()) {
+      errors.email = t('signup.err_email_required')
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      errors.email = t('signup.err_email_invalid')
+    }
+    if (!form.password) {
+      errors.password = t('signup.err_password_required')
+    } else if (form.password.length < 6) {
+      errors.password = t('signup.err_password_length')
+    } else if (!/[A-Z]/.test(form.password)) {
+      errors.password = t('signup.err_password_upper')
+    } else if (!/[^A-Za-z0-9]/.test(form.password)) {
+      errors.password = t('signup.err_password_special')
+    }
+    if (!form.passwordConfirm) {
+      errors.passwordConfirm = t('signup.err_confirm_required')
+    } else if (form.passwordConfirm !== form.password) {
+      errors.passwordConfirm = t('signup.err_confirm_mismatch')
+    }
+    if (!form.language) errors.language = t('signup.err_language_required')
+    return errors
+  }
+
+  const errors = useMemo(() => validateForm(form), [form, t])
   const isFormValid = Object.keys(errors).length === 0 && Object.keys(asyncErrors).length === 0
 
   function updateField(event) {
     const { name, value } = event.target
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-    }))
-
-    setTouched((current) => ({
-      ...current,
-      [name]: true,
-    }))
+    setForm((current) => ({ ...current, [name]: value }))
+    setTouched((current) => ({ ...current, [name]: true }))
   }
 
   async function handleBlur(event) {
@@ -92,9 +76,9 @@ function Signup() {
       try {
         const data = await checkUsername(value.trim())
         if (data.available === false) {
-          setAsyncErrors((c) => ({ ...c, username: 'Ce login est deja utilise.' }))
+          setAsyncErrors((c) => ({ ...c, username: t('signup.err_username_taken') }))
         }
-      } catch (_) { /* réseau indisponible, on ignore */ }
+      } catch (_) { }
       setAsyncChecking((c) => ({ ...c, username: false }))
     }
 
@@ -104,18 +88,15 @@ function Signup() {
       try {
         const data = await checkEmail(value.trim())
         if (data.available === false) {
-          setAsyncErrors((c) => ({ ...c, email: 'Cette adresse email est deja utilisee.' }))
+          setAsyncErrors((c) => ({ ...c, email: t('signup.err_email_taken') }))
         }
-      } catch (_) { /* réseau indisponible, on ignore */ }
+      } catch (_) { }
       setAsyncChecking((c) => ({ ...c, email: false }))
     }
   }
 
   function getFieldError(name) {
-    if (!submitted && !touched[name]) {
-      return ''
-    }
-
+    if (!submitted && !touched[name]) return ''
     return errors[name] || asyncErrors[name] || ''
   }
 
@@ -124,13 +105,8 @@ function Signup() {
     setSubmitted(true)
     setServerError('')
     setSuccess('')
-
-    if (!isFormValid) {
-      return
-    }
-
+    if (!isFormValid) return
     setLoading(true)
-
     try {
       await signup({
         email: form.email,
@@ -141,7 +117,7 @@ function Signup() {
         password_confirm: form.passwordConfirm,
         language: form.language,
       })
-      setSuccess('Inscription terminee. Vous pouvez maintenant vous connecter des que la page de connexion est disponible.')
+      setSuccess(t('signup.success'))
       setForm(initialForm)
       setTouched({})
       setSubmitted(false)
@@ -154,28 +130,19 @@ function Signup() {
 
   return (
     <main className="account-shell">
-      <section className="account-hero">
+      <section className="account-hero account-hero--compact">
         <div className="account-hero__content">
-          <p className="account-kicker">Compte client</p>
-          <h1>Creer votre acces Brussels Show.</h1>
-          <p>
-            Inscrivez-vous pour retrouver votre profil, vos reservations et vos tickets au meme endroit.
-          </p>
-        </div>
-        <div className="account-hero__panel">
-          <span>Frontend React/Vite</span>
-          <strong>POST /api/auth/signup/</strong>
-          <p>
-            Cette page envoie les donnees au backend existant et affiche proprement les reponses d&apos;erreur ou d&apos;indisponibilite.
-          </p>
+          <p className="account-kicker">{t('signup.kicker')}</p>
+          <h1>{t('signup.title')}</h1>
+          <p>{t('signup.subtitle')}</p>
         </div>
       </section>
 
       <section className="account-card-grid">
         <article className="account-card account-card--form">
           <div className="account-card__header">
-            <h2>Inscription</h2>
-            <p>Creation de compte avec validation immediate cote client.</p>
+            <h2>{t('signup.card_title')}</h2>
+            <p>{t('signup.card_subtitle')}</p>
           </div>
 
           {serverError && <p className="account-feedback account-feedback--error">{serverError}</p>}
@@ -183,124 +150,66 @@ function Signup() {
 
           <form className="account-form" onSubmit={handleSubmit}>
             <label>
-              <span>Email</span>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={updateField}
-                onBlur={handleBlur}
-                required
-              />
-              {asyncChecking.email && <span className="account-field-checking">Verification...</span>}
+              <span>{t('signup.email')}</span>
+              <input type="email" name="email" value={form.email} onChange={updateField} onBlur={handleBlur} required />
+              {asyncChecking.email && <span className="account-field-checking">{t('signup.checking')}</span>}
               {getFieldError('email') && <span className="account-field-error">{getFieldError('email')}</span>}
             </label>
 
             <label>
-              <span>Prenom</span>
-              <input
-                type="text"
-                name="first_name"
-                value={form.first_name}
-                onChange={updateField}
-                onBlur={handleBlur}
-              />
+              <span>{t('signup.first_name')}</span>
+              <input type="text" name="first_name" value={form.first_name} onChange={updateField} onBlur={handleBlur} />
             </label>
 
             <label>
-              <span>Nom</span>
-              <input
-                type="text"
-                name="last_name"
-                value={form.last_name}
-                onChange={updateField}
-                onBlur={handleBlur}
-              />
+              <span>{t('signup.last_name')}</span>
+              <input type="text" name="last_name" value={form.last_name} onChange={updateField} onBlur={handleBlur} />
             </label>
 
             <label>
-              <span>Login</span>
-              <input
-                type="text"
-                name="username"
-                value={form.username}
-                onChange={updateField}
-                onBlur={handleBlur}
-                required
-              />
-              {asyncChecking.username && <span className="account-field-checking">Verification...</span>}
+              <span>{t('signup.username')}</span>
+              <input type="text" name="username" value={form.username} onChange={updateField} onBlur={handleBlur} required />
+              {asyncChecking.username && <span className="account-field-checking">{t('signup.checking')}</span>}
               {getFieldError('username') && <span className="account-field-error">{getFieldError('username')}</span>}
             </label>
 
             <label>
-              <span>Mot de passe</span>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={updateField}
-                onBlur={handleBlur}
-                required
-              />
+              <span>{t('signup.password')}</span>
+              <input type="password" name="password" value={form.password} onChange={updateField} onBlur={handleBlur} required />
               {getFieldError('password') && <span className="account-field-error">{getFieldError('password')}</span>}
             </label>
 
             <label>
-              <span>Confirmation du mot de passe</span>
-              <input
-                type="password"
-                name="passwordConfirm"
-                value={form.passwordConfirm}
-                onChange={updateField}
-                onBlur={handleBlur}
-                required
-              />
+              <span>{t('signup.password_confirm')}</span>
+              <input type="password" name="passwordConfirm" value={form.passwordConfirm} onChange={updateField} onBlur={handleBlur} required />
               {getFieldError('passwordConfirm') && <span className="account-field-error">{getFieldError('passwordConfirm')}</span>}
             </label>
 
             <label>
-              <span>Langue</span>
-              <select
-                name="language"
-                value={form.language}
-                onChange={updateField}
-                onBlur={handleBlur}
-                required
-              >
-                <option value="">Choisir une langue</option>
+              <span>{t('signup.language')}</span>
+              <select name="language" value={form.language} onChange={updateField} onBlur={handleBlur} required>
+                <option value="">{t('signup.choose_language')}</option>
                 {languageOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                  <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
               {getFieldError('language') && <span className="account-field-error">{getFieldError('language')}</span>}
             </label>
 
-            <div className="account-password-hint">
-              Le mot de passe doit contenir au minimum 6 caracteres, une majuscule et un caractere special.
-            </div>
+            <div className="account-password-hint">{t('signup.password_hint')}</div>
 
             <button className="account-submit" type="submit" disabled={loading || !isFormValid}>
-              {loading ? 'Envoi en cours...' : 'S\'inscrire'}
+              {loading ? t('signup.loading') : t('signup.submit')}
             </button>
           </form>
         </article>
 
-        <aside className="account-card account-card--info">
+        <aside className="account-card">
           <div className="account-card__header">
-            <h2>Suite du parcours</h2>
-            <p>Une fois connecte, l&apos;espace profil centralise les informations utilisateur.</p>
+            <h2>{t('signup.card_title')}</h2>
           </div>
-
-          <ul className="account-feature-list">
-            <li>Profil utilisateur branche sur GET /api/users/me/</li>
-            <li>Section Mes reservations branchee sur GET /api/my/reservations/</li>
-            <li>Section Mes tickets derivee des reservations chargees</li>
-          </ul>
-
           <Link className="account-secondary-link" to="/">
-            Retour a l&apos;accueil
+            {t('signup.back_home')}
           </Link>
         </aside>
       </section>
