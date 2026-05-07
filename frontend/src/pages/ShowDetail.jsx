@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { tField } from "../utils/locale";
 import { getShowByIdentifier } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
@@ -149,7 +150,8 @@ function RepresentationCard({ rep, prices, isLoggedIn, onLoginRequired }) {
 }
 
 function ShowDetail() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split('-')[0] || 'fr'
   const { id, slug } = useParams();
   const navigate = useNavigate();
   const isLoggedIn = !!getStoredUsername();
@@ -257,7 +259,7 @@ function ShowDetail() {
             }}
           />
         )}
-        <h1 style={{ marginBottom: 10 }}>{show.title}</h1>
+        <h1 style={{ marginBottom: 10 }}>{tField(show, 'title', lang)}</h1>
         <p style={{ ...subtleText, margin: 0 }}>{show.slug}</p>
         {show.artist_name && (
           <p style={{ marginTop: 8, color: "#fda4af", fontWeight: 700 }}>
@@ -277,7 +279,7 @@ function ShowDetail() {
             boxShadow: "0 12px 28px rgba(0, 0, 0, 0.22)",
           }}
         >
-          {show.description || "Description a venir."}
+          {tField(show, 'description', lang) || "Description a venir."}
         </p>
 
         <h2 id="representations" style={{ marginTop: 32 }}>{t("show.representations")}</h2>
