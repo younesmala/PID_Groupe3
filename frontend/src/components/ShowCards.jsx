@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { tField } from '../utils/locale'
 
 const CARD_THEMES = [
   'show-card__poster--green',
@@ -23,11 +25,13 @@ function getPosterSrc(posterUrl) {
 }
 
 function ShowCards({ shows = [], loading = false, error = null }) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language?.split('-')[0] || 'fr'
   if (loading) {
     return (
       <section className="show-cards-section">
-        <p className="section-kicker">Evenements speciaux</p>
-        <h2>Chargement des spectacles...</h2>
+        <p className="section-kicker">{t('shows.special_events')}</p>
+        <h2>{t('shows.loading')}</h2>
       </section>
     )
   }
@@ -35,8 +39,8 @@ function ShowCards({ shows = [], loading = false, error = null }) {
   if (error) {
     return (
       <section className="show-cards-section">
-        <p className="section-kicker">Evenements speciaux</p>
-        <h2>Impossible de charger les spectacles</h2>
+        <p className="section-kicker">{t('shows.special_events')}</p>
+        <h2>{t('shows.error_load')}</h2>
         <p className="show-cards-section__message">{error}</p>
       </section>
     )
@@ -45,9 +49,9 @@ function ShowCards({ shows = [], loading = false, error = null }) {
   return (
     <section className="show-cards-section" id="shows">
       <div className="show-cards-section__header">
-        <p className="section-kicker">Evenements speciaux</p>
-        <h2>Sur scene cette saison</h2>
-        <p>BrusselsShow, un defile de spectacles a decouvrir au coeur de Bruxelles.</p>
+        <p className="section-kicker">{t('shows.special_events')}</p>
+        <h2>{t('shows.on_stage')}</h2>
+        <p>{t('shows.tagline')}</p>
       </div>
 
       <div className="show-cards-grid">
@@ -66,14 +70,14 @@ function ShowCards({ shows = [], loading = false, error = null }) {
             </div>
 
             <div className="show-card__body">
-              <h3>{show.title}</h3>
-              <p className="show-card__artist">Artiste : {show.artist_name || 'Artiste a confirmer'}</p>
+              <h3>{tField(show, 'title', lang)}</h3>
+              <p className="show-card__artist">{t('shows.artist')} : {show.artist_name || t('shows.artist_tbc')}</p>
               <p className="show-card__description">
-                {show.description || 'Description a venir.'}
+                {tField(show, 'description', lang) || t('shows.desc_tbc')}
               </p>
               <div className="show-card__actions">
                 <Link to={`/shows/${show.slug}`} className="show-card__book">
-                  Reserve ta place !
+                  {t('shows.book_place')}
                 </Link>
               </div>
             </div>
