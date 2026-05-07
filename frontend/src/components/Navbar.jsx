@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LoginModal from './LoginModal'
+import { clearPublicShowsCache } from '../services/publicShowService'
 import './Navbar.css'
 
 const LANGUAGES = [
@@ -10,18 +11,6 @@ const LANGUAGES = [
   { code: 'EN', label: 'English', flag: '🇬🇧' },
 ]
 
-const PRODUCER_LINKS = [
-  { to: '/producer/dashboard', label: 'Tableau de bord' },
-  { to: '/producer/shows',     label: 'Mes spectacles'  },
-  { to: '/producer/sessions',  label: 'Mes séances'     },
-  { to: '/producer/stats',     label: 'Mes statistiques'},
-]
-
-const ADMIN_LINKS = [
-  { to: '/admin/users',        label: 'Gestion utilisateurs'  },
-  { to: '/admin/reservations', label: 'Gestion réservations'  },
-  { to: '/admin/locations',    label: 'Nos lieux'              },
-]
 
 function NavDropdown({ label, links, accentClass, menuRef, open, onToggle }) {
   return (
@@ -68,6 +57,19 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
 
   const currentLang = LANGUAGES.find((l) => l.code === selectedLang) || LANGUAGES[0]
 
+  const producerLinks = [
+    { to: '/producer/dashboard', label: t('navbar.producer_dashboard') },
+    { to: '/producer/shows',     label: t('navbar.producer_shows')     },
+    { to: '/producer/sessions',  label: t('navbar.producer_sessions')  },
+    { to: '/producer/stats',     label: t('navbar.producer_stats')     },
+  ]
+
+  const adminLinks = [
+    { to: '/admin/users',        label: t('navbar.admin_users')        },
+    { to: '/admin/reservations', label: t('navbar.admin_reservations') },
+    { to: '/admin/locations',    label: t('navbar.admin_locations')    },
+  ]
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (langRef.current     && !langRef.current.contains(e.target))     setLangOpen(false)
@@ -92,6 +94,7 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
     setSelectedLang(code)
     localStorage.setItem('language', code)
     i18n.changeLanguage(code.toLowerCase())
+    clearPublicShowsCache()
     setLangOpen(false)
   }
 
@@ -114,8 +117,8 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
           {/* Espace Producteur */}
           {isLoggedIn && isProducer && (
             <NavDropdown
-              label="Espace Producteur"
-              links={PRODUCER_LINKS}
+              label={t('navbar.producer_space')}
+              links={producerLinks}
               accentClass="nav-dropdown--producer"
               menuRef={producerRef}
               open={producerOpen}
@@ -126,8 +129,8 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
           {/* Administration */}
           {isLoggedIn && isAdmin && (
             <NavDropdown
-              label="Administration"
-              links={ADMIN_LINKS}
+              label={t('navbar.admin')}
+              links={adminLinks}
               accentClass="nav-dropdown--admin"
               menuRef={adminRef}
               open={adminOpen}
@@ -173,7 +176,7 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
           {/* Auth */}
           {isLoggedIn ? (
             <>
-              <Link to="/profile" className="btn-outline">Mon profil</Link>
+              <Link to="/profile" className="btn-outline">{t('navbar.profile')}</Link>
               {user?.username && (
                 <span className="navbar-username">{user.username}</span>
               )}
