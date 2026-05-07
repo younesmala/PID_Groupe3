@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import './Footer.css'
 
 function NewsletterForm() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -34,25 +36,25 @@ function NewsletterForm() {
 
   return (
     <div className="footer-newsletter">
-      <h3>Newsletter</h3>
-      <p>Recevez nos actualites et evenements en avant-premiere.</p>
+      <h3>{t('footer.newsletter')}</h3>
+      <p>{t('footer.newsletter_desc')}</p>
       {status === 'success' && (
-        <p className="footer-newsletter__success">Merci ! Vous etes inscrit.</p>
+        <p className="footer-newsletter__success">{t('footer.success')}</p>
       )}
       {status === 'error' && (
-        <p className="footer-newsletter__error">Une erreur est survenue. Reessayez plus tard.</p>
+        <p className="footer-newsletter__error">{t('footer.error')}</p>
       )}
       {status !== 'success' && (
         <form className="footer-newsletter__form" onSubmit={handleSubmit}>
           <input
             type="email"
-            placeholder="Votre adresse email"
+            placeholder={t('footer.email_placeholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <button type="submit" disabled={loading}>
-            {loading ? '...' : "S'inscrire"}
+            {loading ? '...' : t('footer.subscribe')}
           </button>
         </form>
       )}
@@ -61,21 +63,23 @@ function NewsletterForm() {
 }
 
 function Footer() {
+  const { t } = useTranslation()
+
   return (
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-brand">
           <span className="footer-logo">Brussels<span>Show</span></span>
-          <p>La reference des spectacles a Bruxelles.</p>
+          <p>{t('footer.tagline')}</p>
         </div>
 
         <div className="footer-links">
-          <h3>Navigation</h3>
+          <h3>{t('footer.navigation')}</h3>
           <ul>
-            <li><Link to="/">Accueil</Link></li>
-            <li><Link to="/shows">Spectacles</Link></li>
-            <li><Link to="/cart">Panier</Link></li>
-            <li><Link to="/profile">Mon profil</Link></li>
+            <li><Link to="/">{t('accueil')}</Link></li>
+            <li><Link to="/shows">{t('spectacles')}</Link></li>
+            <li><Link to="/cart">{t('panier')}</Link></li>
+            <li><Link to="/profile">{t('footer.profile')}</Link></li>
           </ul>
         </div>
 
