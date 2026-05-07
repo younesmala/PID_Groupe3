@@ -166,16 +166,27 @@ function ShowDetail() {
   useEffect(() => {
     const identifier = slug || id;
 
+    if (!identifier) {
+      setError("Show introuvable");
+      setLoading(false);
+      return;
+    }
+
     Promise.all([
       getShowByIdentifier(identifier),
       fetch("/api/prices/").then((r) => r.json()),
     ])
       .then(async ([showData, pricesData]) => {
         const repsData = await getRepresentationsByShow(showData.id);
+
         setShow(showData);
         setRepresentations(repsData);
         setPrices(pricesData);
-        const firstAvailableRep = repsData.find((rep) => (rep.available_seats ?? 0) > 0);
+
+        const firstAvailableRep = repsData.find(
+          (rep) => (rep.available_seats ?? 0) > 0
+        );
+
         setSelectedRepId(firstAvailableRep?.id ? String(firstAvailableRep.id) : "");
         setSelectedPriceId(pricesData[0]?.id ? String(pricesData[0].id) : "");
       })
