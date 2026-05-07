@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
@@ -49,6 +50,7 @@ function CustomTooltip({ active, payload, label }) {
 }
 
 export default function ProducerDashboard({ user }) {
+  const { t } = useTranslation()
   const [stats,   setStats]   = useState(null)
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState(null)
@@ -87,7 +89,7 @@ export default function ProducerDashboard({ user }) {
 
   function exportCSV() {
     if (!chartData.length) return
-    const header = 'Spectacle,Places disponibles,Billets vendus'
+    const header = `${t('producer.col_title')},${t('producer.chart_available')},${t('producer.chart_sold')}`
     const rows   = chartData.map((r) => `"${r.name}",${r.available_seats},${r.tickets_sold}`)
     const blob   = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' })
     const url    = URL.createObjectURL(blob)
@@ -102,38 +104,38 @@ export default function ProducerDashboard({ user }) {
     <div className="pd-page">
       <header className="pd-header">
         <div>
-          <h1 className="pd-title">Espace Producteur</h1>
+          <h1 className="pd-title">{t('producer.title')}</h1>
           <p className="pd-subtitle">
-            Bonjour{user?.username ? ` ${user.username}` : ''} — voici vos statistiques
+            {t('producer.greeting', { username: user?.username || '' })}
           </p>
         </div>
         <div className="pd-actions">
           <a href="/producer/shows/new" className="pd-btn pd-btn--primary">
-            + Ajouter un spectacle
+            {t('producer.add_show')}
           </a>
           <button className="pd-btn pd-btn--outline" onClick={exportCSV} disabled={!chartData.length}>
-            Exporter CSV
+            {t('producer.export_csv')}
           </button>
           <button className="pd-btn pd-btn--outline" onClick={exportJSON} disabled={!stats}>
-            Exporter JSON
+            {t('producer.export_json')}
           </button>
         </div>
       </header>
 
-      {loading && <p className="pd-state">Chargement…</p>}
+      {loading && <p className="pd-state">{t('producer.loading')}</p>}
       {error   && <p className="pd-state pd-state--error">{error}</p>}
 
       {!loading && !error && (
         <>
           <section className="pd-cards">
-            <StatCard label="Spectacles au total" value={totalShows}                              icon="🎭" />
-            <StatCard label="Revenu total"         value={`${Number(totalRevenue).toFixed(2)} €`} icon="💶" />
-            <StatCard label="Billets vendus"       value={ticketsSold}                             icon="🎟️" />
-            <StatCard label="Événements à venir"   value={upcomingShows}                           icon="📅" />
+            <StatCard label={t('producer.stats.total_shows')}  value={totalShows}                              icon="🎭" />
+            <StatCard label={t('producer.stats.total_revenue')} value={`${Number(totalRevenue).toFixed(2)} €`} icon="💶" />
+            <StatCard label={t('producer.stats.tickets_sold')}  value={ticketsSold}                             icon="🎟️" />
+            <StatCard label={t('producer.stats.upcoming')}      value={upcomingShows}                           icon="📅" />
           </section>
 
           <section className="pd-chart-section">
-            <h2 className="pd-section-title">Capacité &amp; performance par spectacle</h2>
+            <h2 className="pd-section-title">{t('producer.chart_title')}</h2>
             {chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={350}>
                 <ComposedChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 5 }}>
@@ -150,7 +152,7 @@ export default function ProducerDashboard({ user }) {
                   <Legend wrapperStyle={{ color: '#aaa', fontSize: 13, paddingTop: 16 }} />
                   <Bar
                     dataKey="available_seats"
-                    name="Places disponibles"
+                    name={t('producer.chart_available')}
                     fill="url(#orangeGradient)"
                     radius={[6, 6, 0, 0]}
                     isAnimationActive={true}
@@ -158,7 +160,7 @@ export default function ProducerDashboard({ user }) {
                   <Line
                     type="monotone"
                     dataKey="tickets_sold"
-                    name="Billets vendus"
+                    name={t('producer.chart_sold')}
                     stroke="#4a9eff"
                     strokeWidth={2}
                     dot={{ fill: '#4a9eff', r: 5 }}
@@ -167,7 +169,7 @@ export default function ProducerDashboard({ user }) {
                 </ComposedChart>
               </ResponsiveContainer>
             ) : (
-              <p className="pd-state">Aucune donnée disponible.</p>
+              <p className="pd-state">{t('producer.no_data')}</p>
             )}
           </section>
         </>

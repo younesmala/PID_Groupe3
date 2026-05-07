@@ -37,6 +37,11 @@ function persistShows(shows) {
   }
 }
 
+export function clearPublicShowsCache() {
+  inMemoryShows = null
+  try { sessionStorage.removeItem(CACHE_KEY) } catch { /* ignore */ }
+}
+
 export async function getPublicShows() {
   const cachedShows = readCachedShows()
   if (cachedShows) {
