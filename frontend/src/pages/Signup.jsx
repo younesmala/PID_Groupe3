@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { signup } from '../services/authService'
+import { signup, checkUsername, checkEmail } from '../services/authService'
 import './AccountPages.css'
 
 const initialForm = {
@@ -59,13 +59,17 @@ function validateForm(form) {
 
 function Signup() {
   const [form, setForm] = useState(initialForm)
+  const [isProducer, setIsProducer] = useState(false)
+  const role = isProducer ? 'PRODUCER' : 'USER'
   const [touched, setTouched] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [asyncErrors, setAsyncErrors] = useState({})
+  const [asyncChecking, setAsyncChecking] = useState({})
   const errors = useMemo(() => validateForm(form), [form])
-  const isFormValid = Object.keys(errors).length === 0
+  const isFormValid = Object.keys(errors).length === 0 && Object.keys(asyncErrors).length === 0
 
   function updateField(event) {
     const { name, value } = event.target
@@ -80,12 +84,33 @@ function Signup() {
     }))
   }
 
-  function handleBlur(event) {
-    const { name } = event.target
-    setTouched((current) => ({
-      ...current,
-      [name]: true,
-    }))
+  async function handleBlur(event) {
+    const { name, value } = event.target
+    setTouched((current) => ({ ...current, [name]: true }))
+
+    if (name === 'username' && value.trim() && !errors.username) {
+      setAsyncChecking((c) => ({ ...c, username: true }))
+      setAsyncErrors((c) => { const n = { ...c }; delete n.username; return n })
+      try {
+        const data = await checkUsername(value.trim())
+        if (data.available === false) {
+          setAsyncErrors((c) => ({ ...c, username: 'Ce login est deja utilise.' }))
+        }
+      } catch (_) { /* réseau indisponible, on ignore */ }
+      setAsyncChecking((c) => ({ ...c, username: false }))
+    }
+
+    if (name === 'email' && value.trim() && !errors.email) {
+      setAsyncChecking((c) => ({ ...c, email: true }))
+      setAsyncErrors((c) => { const n = { ...c }; delete n.email; return n })
+      try {
+        const data = await checkEmail(value.trim())
+        if (data.available === false) {
+          setAsyncErrors((c) => ({ ...c, email: 'Cette adresse email est deja utilisee.' }))
+        }
+      } catch (_) { /* réseau indisponible, on ignore */ }
+      setAsyncChecking((c) => ({ ...c, email: false }))
+    }
   }
 
   function getFieldError(name) {
@@ -93,7 +118,7 @@ function Signup() {
       return ''
     }
 
-    return errors[name] || ''
+    return errors[name] || asyncErrors[name] || ''
   }
 
   async function handleSubmit(event) {
@@ -102,7 +127,14 @@ function Signup() {
     setServerError('')
     setSuccess('')
 
-    if (!isFormValid) {
+    const password = form.password
+    const confirmPassword = form.passwordConfirm
+    console.log('password:', password, 'confirm:', confirmPassword)
+    console.log('errors:', errors)
+    console.log('asyncErrors:', asyncErrors)
+    console.log('isFormValid:', isFormValid)
+
+    if (password !== confirmPassword || !isFormValid) {
       return
     }
 
@@ -115,8 +147,9 @@ function Signup() {
         last_name: form.last_name,
         username: form.username,
         password: form.password,
-        password_confirm: form.passwordConfirm,
+        confirm_password: form.passwordConfirm,
         language: form.language,
+        role,
       })
       setSuccess('Inscription terminee. Vous pouvez maintenant vous connecter des que la page de connexion est disponible.')
       setForm(initialForm)
@@ -169,6 +202,7 @@ function Signup() {
                 onBlur={handleBlur}
                 required
               />
+              {asyncChecking.email && <span className="account-field-checking">Verification...</span>}
               {getFieldError('email') && <span className="account-field-error">{getFieldError('email')}</span>}
             </label>
 
@@ -204,6 +238,7 @@ function Signup() {
                 onBlur={handleBlur}
                 required
               />
+              {asyncChecking.username && <span className="account-field-checking">Verification...</span>}
               {getFieldError('username') && <span className="account-field-error">{getFieldError('username')}</span>}
             </label>
 
@@ -254,6 +289,15 @@ function Signup() {
 
             <div className="account-password-hint">
               Le mot de passe doit contenir au minimum 6 caracteres, une majuscule et un caractere special.
+            </div>
+
+            <div className={`producer-card${isProducer ? ' producer-card--active' : ''}`} onClick={() => setIsProducer(!isProducer)}>
+              <span className="producer-card-icon">🎭</span>
+              <div>
+                <strong>S&apos;inscrire en tant que Producteur</strong>
+                <p>Gérez vos spectacles, séances et statistiques</p>
+              </div>
+              <span className="producer-card-check">{isProducer ? '✓' : ''}</span>
             </div>
 
             <button className="account-submit" type="submit" disabled={loading || !isFormValid}>

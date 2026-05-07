@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react"
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import ArtistsList from "./pages/ArtistsList"
 import ArtistDetail from "./pages/ArtistDetail"
@@ -19,13 +14,18 @@ import Reviews from "./pages/Reviews"
 import Signup from "./pages/Signup"
 import Profile from "./pages/Profile"
 import Confirmation from "./pages/Confirmation"
+import MyTickets from "./pages/MyTickets"
 
 import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 import CookieBanner from "./components/CookieBanner"
 
 import ProducerDashboard from "./pages/ProducerDashboard"
 import ProducerShows from "./pages/ProducerShows"
 import ProducerSessions from "./pages/ProducerSessions"
+import ProducerAllSessions from "./pages/ProducerAllSessions"
+import ProducerStats from "./pages/ProducerStats"
+import ProducerShowForm from "./pages/ProducerShowForm"
 
 import {
   getStoredUser,
@@ -70,14 +70,16 @@ function App() {
 
       setUser({
         username: profile.username || loginData.username,
-        role: profile.role || null,
-        is_staff: !!profile.is_staff,
+        role: profile.role || loginData.role || null,
+        is_staff: !!profile.is_staff || !!loginData.is_staff,
+        email: profile.email || loginData.email || null,
       })
     } catch {
       setUser({
         username: loginData.username || null,
         role: loginData.role || null,
         is_staff: !!loginData.is_staff,
+        email: loginData.email || null,
       })
     }
   }
@@ -166,6 +168,10 @@ function App() {
         />
         <Route path="/search" element={<Search />} />
         <Route path="/reviews" element={<Reviews />} />
+        <Route
+          path="/tickets"
+          element={<MyTickets isLoggedIn={isLoggedIn} />}
+        />
 
         {/* ── Espace Producteur ── */}
         <Route
@@ -187,6 +193,24 @@ function App() {
         />
 
         <Route
+          path="/producer/shows/new"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/producer/shows/:slug/edit"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/producer/shows/:slug/sessions"
           element={
             <ProtectedRoute user={user}>
@@ -199,7 +223,7 @@ function App() {
           path="/producer/sessions"
           element={
             <ProtectedRoute user={user}>
-              <PlaceholderPage title="Mes séances" />
+              <ProducerAllSessions />
             </ProtectedRoute>
           }
         />
@@ -208,7 +232,7 @@ function App() {
           path="/producer/stats"
           element={
             <ProtectedRoute user={user}>
-              <PlaceholderPage title="Mes statistiques" />
+              <ProducerStats />
             </ProtectedRoute>
           }
         />
@@ -242,6 +266,7 @@ function App() {
         />
       </Routes>
 
+      <Footer />
       <CookieBanner />
     </BrowserRouter>
   )

@@ -22,7 +22,14 @@ function formatValidationErrors(data) {
 
   return entries
     .map(([field, value]) => {
-      const messages = Array.isArray(value) ? value.join(', ') : String(value)
+      let messages
+      if (Array.isArray(value)) {
+        messages = value.join(', ')
+      } else if (typeof value === 'object' && value !== null) {
+        messages = Object.values(value).flat().join(', ')
+      } else {
+        messages = String(value)
+      }
       return `${field}: ${messages}`
     })
     .join(' | ')
@@ -69,15 +76,7 @@ export async function signup(userData) {
       'Content-Type': 'application/json',
       'X-CSRFToken': getCookie('csrftoken'),
     },
-    body: JSON.stringify({
-      username: userData.username,
-      email: userData.email,
-      password: userData.password,
-      password_confirm: userData.password_confirm,
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-      language: userData.language,
-    }),
+    body: JSON.stringify(userData),
   })
 
   const data = await parseJsonResponse(res)
@@ -124,6 +123,7 @@ export async function logout() {
   localStorage.removeItem('csrf_token')
   localStorage.removeItem('user_role')
   localStorage.removeItem('user_is_staff')
+  localStorage.removeItem('user_email')
 }
 
 export function getStoredUsername() {
@@ -137,6 +137,7 @@ export function getStoredUser() {
     username,
     role: localStorage.getItem('user_role') || null,
     is_staff: localStorage.getItem('user_is_staff') === 'true',
+    email: localStorage.getItem('user_email') || null,
   }
 }
 
@@ -144,4 +145,23 @@ export function storeUser(data) {
   if (data?.username) localStorage.setItem('username', data.username)
   if (data?.role !== undefined) localStorage.setItem('user_role', data.role || '')
   if (data?.is_staff !== undefined) localStorage.setItem('user_is_staff', String(data.is_staff))
+  if (data?.email !== undefined) localStorage.setItem('user_email', data.email || '')
+}
+
+export async function checkUsername(username) {
+  const res = await fetch(`${BASE}/auth/check-username/?username=${encodeURIComponent(username)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return res.json().catch(() => ({}))
+}
+
+export async function checkEmail(email) {
+  const res = await fetch(`${BASE}/auth/check-email/?email=${encodeURIComponent(email)}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  return res.json().catch(() => ({}))
 }
