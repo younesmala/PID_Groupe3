@@ -1,0 +1,221 @@
+.pst-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  color: #e0e0e0;
+}
+
+/* Breadcrumb */
+.pst-breadcrumb {
+  background: none;
+  border: none;
+  color: #FF4500;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+
+.pst-breadcrumb:hover {
+  opacity: 0.75;
+}
+
+/* Header */
+.pst-header {
+  margin-bottom: 32px;
+}
+
+.pst-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* Stat cards */
+.pst-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.pst-card {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pst-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.pst-card-label {
+  font-size: 0.78rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pst-card-sub {
+  font-size: 0.72rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+/* Chart */
+.pst-chart-section {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 28px 24px;
+  margin-bottom: 32px;
+}
+
+.pst-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 24px;
+}
+
+/* Table */
+.pst-table-section {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 28px 24px;
+}
+
+.pst-table-wrapper {
+  overflow-x: auto;
+}
+
+.pst-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.pst-table thead th {
+  text-align: left;
+  padding: 10px 14px;
+  color: #888;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.pst-th--num {
+  text-align: right !important;
+}
+
+.pst-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s;
+}
+
+.pst-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.pst-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pst-row--inactive {
+  opacity: 0.55;
+}
+
+.pst-table td {
+  padding: 12px 14px;
+  color: #e0e0e0;
+  vertical-align: middle;
+}
+
+.pst-td--title {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pst-td--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+.pst-td--muted {
+  color: #555 !important;
+}
+
+.pst-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #888;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+/* Tooltip */
+.pst-tooltip {
+  background: #1a1a1a;
+  border: 1px solid #FF4500;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.pst-tooltip-label {
+  color: #FF4500;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.pst-tooltip p {
+  margin: 3px 0;
+}
+
+/* State messages */
+.pst-state {
+  color: #888;
+  font-size: 0.95rem;
+  padding: 8px 0;
+  margin: 0;
+}
+
+.pst-state--error {
+  color: #ff6b6b;
+}
+
+@media (max-width: 700px) {
+  .pst-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .pst-cards {
+    grid-template-columns: 1fr;
+  }
+}

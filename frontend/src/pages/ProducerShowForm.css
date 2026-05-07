@@ -1,0 +1,273 @@
+.psf-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  color: #e0e0e0;
+}
+
+/* Breadcrumb */
+.psf-breadcrumb {
+  background: none;
+  border: none;
+  color: #FF4500;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+
+.psf-breadcrumb:hover {
+  opacity: 0.75;
+}
+
+/* Header */
+.psf-header {
+  margin-bottom: 32px;
+}
+
+.psf-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* Form */
+.psf-form {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Global error */
+.psf-error-global {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.35);
+  border-radius: 8px;
+  color: #ff6b6b;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Field */
+.psf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.psf-label {
+  font-size: 0.85rem;
+  color: #aaa;
+  font-weight: 500;
+}
+
+.psf-required {
+  color: #FF4500;
+}
+
+.psf-hint {
+  color: #555;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+/* Inputs */
+.psf-input {
+  background: #252525;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  padding: 10px 13px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.psf-input:focus {
+  outline: none;
+  border-color: #FF4500;
+}
+
+.psf-input::placeholder {
+  color: #555;
+}
+
+.psf-input option {
+  background: #252525;
+}
+
+.psf-input--error {
+  border-color: #ff6b6b;
+}
+
+.psf-input--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.psf-textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+/* Two-column row */
+.psf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 540px) {
+  .psf-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Field-level error */
+.psf-field-error {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+}
+
+/* File upload zone */
+.psf-file-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.psf-file-zone:hover {
+  border-color: #FF4500;
+  background: rgba(255, 69, 0, 0.04);
+}
+
+.psf-file-zone--error {
+  border-color: #ff6b6b;
+}
+
+.psf-file-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 0.875rem;
+  padding: 28px;
+  text-align: center;
+}
+
+.psf-file-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.psf-file-hint {
+  font-size: 0.75rem;
+  color: #444;
+}
+
+.psf-preview {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.psf-file-hidden {
+  display: none;
+}
+
+.psf-file-remove {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+}
+
+.psf-file-remove:hover {
+  opacity: 0.75;
+}
+
+/* Buttons */
+.psf-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.psf-btn {
+  padding: 10px 24px;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, opacity 0.2s;
+  border: none;
+}
+
+.psf-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.psf-btn--primary {
+  background: #FF4500;
+  color: #fff;
+  min-width: 140px;
+}
+
+.psf-btn--primary:hover:not(:disabled) {
+  background: #e03d00;
+}
+
+.psf-btn--outline {
+  background: transparent;
+  color: #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.psf-btn--outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+@media (max-width: 480px) {
+  .psf-form {
+    padding: 24px 16px;
+  }
+
+  .psf-actions {
+    flex-direction: column-reverse;
+  }
+
+  .psf-btn {
+    width: 100%;
+  }
+}

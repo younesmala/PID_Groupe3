@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.middleware.csrf import get_token
+from api.models import UserProfile
 import re
 
 
@@ -57,6 +58,10 @@ class AuthSignupView(APIView):
         if errors:
             return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
+        role = data.get('role', 'USER')
+        if role not in ('USER', 'PRODUCER'):
+            role = 'USER'
+
         user = User.objects.create_user(
             username=username,
             password=password,
@@ -64,6 +69,9 @@ class AuthSignupView(APIView):
             first_name=first_name,
             last_name=last_name,
         )
+
+        user.profile.role = role
+        user.profile.save()
 
         try:
             send_mail(

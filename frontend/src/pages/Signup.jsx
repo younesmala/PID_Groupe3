@@ -23,6 +23,8 @@ const languageOptions = [
 function Signup() {
   const { t } = useTranslation()
   const [form, setForm] = useState(initialForm)
+  const [isProducer, setIsProducer] = useState(false)
+  const role = isProducer ? 'PRODUCER' : 'USER'
   const [touched, setTouched] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState('')
@@ -114,8 +116,9 @@ function Signup() {
         last_name: form.last_name,
         username: form.username,
         password: form.password,
-        password_confirm: form.passwordConfirm,
+        confirm_password: form.passwordConfirm,
         language: form.language,
+        role,
       })
       setSuccess(t('signup.success'))
       setForm(initialForm)
@@ -197,6 +200,15 @@ function Signup() {
             </label>
 
             <div className="account-password-hint">{t('signup.password_hint')}</div>
+
+            <div className={`producer-card${isProducer ? ' producer-card--active' : ''}`} onClick={() => setIsProducer(!isProducer)}>
+              <span className="producer-card-icon">🎭</span>
+              <div>
+                <strong>S&apos;inscrire en tant que Producteur</strong>
+                <p>Gérez vos spectacles, séances et statistiques</p>
+              </div>
+              <span className="producer-card-check">{isProducer ? '✓' : ''}</span>
+            </div>
 
             <button className="account-submit" type="submit" disabled={loading || !isFormValid}>
               {loading ? t('signup.loading') : t('signup.submit')}

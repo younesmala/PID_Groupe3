@@ -1,29 +1,46 @@
-import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import ArtistsList from './pages/ArtistsList'
-import ArtistDetail from './pages/ArtistDetail'
-import ArtistEdit from './pages/ArtistEdit'
-import Home from './pages/Home'
-import ShowsList from './pages/ShowsList'
-import ShowDetail from './pages/ShowDetail'
-import Cart from './pages/Cart'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import CookieBanner from './components/CookieBanner'
-import { getStoredUser, storeUser, logout, fetchCurrentUser } from './services/authService'
-import Checkout from './pages/Checkout'
-import Search from './pages/Search'
-import Reviews from './pages/Reviews'
-import Signup from './pages/Signup'
-import Profile from './pages/Profile'
-import { getCart } from './services/cartService'
-import MyTickets from './pages/MyTickets'
-import ProducerDashboard from './pages/ProducerDashboard'
-import ProducerShows from './pages/ProducerShows'
-import ProducerSessions from './pages/ProducerSessions'
+import { useEffect, useState } from "react"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+
+import ArtistsList from "./pages/ArtistsList"
+import ArtistDetail from "./pages/ArtistDetail"
+import ArtistEdit from "./pages/ArtistEdit"
+import Home from "./pages/Home"
+import ShowsList from "./pages/ShowsList"
+import ShowDetail from "./pages/ShowDetail"
+import Cart from "./pages/Cart"
+import Checkout from "./pages/Checkout"
+import Search from "./pages/Search"
+import Reviews from "./pages/Reviews"
+import Signup from "./pages/Signup"
+import Profile from "./pages/Profile"
+import Confirmation from "./pages/Confirmation"
+import MyTickets from "./pages/MyTickets"
+
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
+import CookieBanner from "./components/CookieBanner"
+
+import ProducerDashboard from "./pages/ProducerDashboard"
+import ProducerShows from "./pages/ProducerShows"
+import ProducerSessions from "./pages/ProducerSessions"
+import ProducerAllSessions from "./pages/ProducerAllSessions"
+import ProducerStats from "./pages/ProducerStats"
+import ProducerShowForm from "./pages/ProducerShowForm"
+
+import {
+  getStoredUser,
+  storeUser,
+  logout,
+  fetchCurrentUser,
+} from "./services/authService"
+
+import { getCart } from "./services/cartService"
 
 function ProtectedRoute({ user, children }) {
-  if (!user?.username) return <Navigate to="/" replace />
+  if (!user?.username) {
+    return <Navigate to="/" replace />
+  }
+
   return children
 }
 
@@ -31,30 +48,38 @@ function App() {
   const [user, setUser] = useState(getStoredUser)
   const [cartCount, setCartCount] = useState(0)
 
-  // Derived for backward-compat (Profile prop, useEffect dep)
   const username = user?.username || null
   const isLoggedIn = !!username
 
   async function handleLogin(loginData) {
-    if (typeof loginData === 'string') {
-      setUser((prev) => ({ ...prev, username: loginData }))
+    if (typeof loginData === "string") {
+      setUser((prev) => ({
+        ...prev,
+        username: loginData,
+      }))
+
       return
     }
 
     storeUser(loginData)
+
     try {
       const profile = await fetchCurrentUser()
+
       storeUser(profile)
+
       setUser({
         username: profile.username || loginData.username,
-        role: profile.role || null,
-        is_staff: !!profile.is_staff,
+        role: profile.role || loginData.role || null,
+        is_staff: !!profile.is_staff || !!loginData.is_staff,
+        email: profile.email || loginData.email || null,
       })
     } catch {
       setUser({
         username: loginData.username || null,
         role: loginData.role || null,
         is_staff: !!loginData.is_staff,
+        email: loginData.email || null,
       })
     }
   }
@@ -65,6 +90,7 @@ function App() {
     } catch {
       // Keep logout resilient if the backend session already expired.
     }
+
     setUser(null)
     setCartCount(0)
   }
@@ -74,24 +100,35 @@ function App() {
 
     function handleCartUpdated(event) {
       if (!active) return
+
       const nextCount = event.detail?.cartCount
-      if (typeof nextCount === 'number') setCartCount(nextCount)
+
+      if (typeof nextCount === "number") {
+        setCartCount(nextCount)
+      }
     }
 
     async function loadCartCount() {
       try {
         const cart = await getCart()
-        if (active) setCartCount(cart.count ?? 0)
+
+        if (active) {
+          setCartCount(cart.count ?? 0)
+        }
       } catch {
-        if (active) setCartCount(0)
+        if (active) {
+          setCartCount(0)
+        }
       }
     }
 
     loadCartCount()
-    window.addEventListener('cart-updated', handleCartUpdated)
+
+    window.addEventListener("cart-updated", handleCartUpdated)
+
     return () => {
       active = false
-      window.removeEventListener('cart-updated', handleCartUpdated)
+      window.removeEventListener("cart-updated", handleCartUpdated)
     }
   }, [username])
 
@@ -103,6 +140,7 @@ function App() {
         onLogout={handleLogout}
         cartCount={cartCount}
       />
+
       <Routes>
         {/* ── Public ── */}
         <Route path="/" element={<Home />} />
@@ -114,11 +152,26 @@ function App() {
         <Route path="/shows/:slug" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route
+          path="/confirmation/:reservationId"
+          element={<Confirmation />}
+        />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} username={username} />} />
+        <Route
+          path="/profile"
+          element={
+            <Profile
+              isLoggedIn={isLoggedIn}
+              username={username}
+            />
+          }
+        />
         <Route path="/search" element={<Search />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/tickets" element={<MyTickets isLoggedIn={isLoggedIn} />} />
+        <Route
+          path="/tickets"
+          element={<MyTickets isLoggedIn={isLoggedIn} />}
+        />
 
         {/* ── Espace Producteur ── */}
         <Route
@@ -129,6 +182,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/producer/shows"
           element={
@@ -137,6 +191,25 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/producer/shows/new"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/producer/shows/:slug/edit"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerShowForm />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/producer/shows/:slug/sessions"
           element={
@@ -145,29 +218,54 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/producer/sessions"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Mes séances" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerAllSessions />
+            </ProtectedRoute>
+          }
         />
+
         <Route
           path="/producer/stats"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Mes statistiques" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerStats />
+            </ProtectedRoute>
+          }
         />
 
         {/* ── Administration ── */}
         <Route
           path="/admin/users"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Gestion utilisateurs" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion utilisateurs" />
+            </ProtectedRoute>
+          }
         />
+
         <Route
           path="/admin/reservations"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Gestion réservations" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion réservations" />
+            </ProtectedRoute>
+          }
         />
+
         <Route
           path="/admin/locations"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Nos lieux" /></ProtectedRoute>}
+          element={
+            <ProtectedRoute user={user}>
+              <PlaceholderPage title="Nos lieux" />
+            </ProtectedRoute>
+          }
         />
       </Routes>
+
       <Footer />
       <CookieBanner />
     </BrowserRouter>
@@ -176,9 +274,24 @@ function App() {
 
 function PlaceholderPage({ title }) {
   return (
-    <div style={{ padding: '60px 40px', color: '#e0e0e0' }}>
-      <h1 style={{ fontSize: '1.6rem', marginBottom: '8px' }}>{title}</h1>
-      <p style={{ color: '#888' }}>Page en cours de développement.</p>
+    <div
+      style={{
+        padding: "60px 40px",
+        color: "#e0e0e0",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: "1.6rem",
+          marginBottom: "8px",
+        }}
+      >
+        {title}
+      </h1>
+
+      <p style={{ color: "#888" }}>
+        Page en cours de développement.
+      </p>
     </div>
   )
 }

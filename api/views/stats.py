@@ -1,5 +1,6 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
 from catalogue.models.show import Show
@@ -7,7 +8,8 @@ from catalogue.models.representation import Representation
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def show_stats(request):
     shows = Show.objects.all()
     stats = []
@@ -34,7 +36,8 @@ def show_stats(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def show_stat_detail(request, show_id):
     try:
         show = Show.objects.get(id=show_id)
