@@ -15,11 +15,20 @@ const POSTER_OVERRIDES = {
   'cible.jpg': 'cible-mouvante.png',
 }
 
-function getPosterSrc(posterUrl) {
-  if (!posterUrl) return null
-  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
+function getPosterSrc(show) {
+  const posterUrl = show?.poster_url
+  const fallbackSlug = show?.slug
+
+  if (posterUrl && (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/'))) {
     return posterUrl
   }
+
+  if (!posterUrl && fallbackSlug) {
+    return `/show-posters/${fallbackSlug}.png`
+  }
+
+  if (!posterUrl) return null
+
   const resolved = POSTER_OVERRIDES[posterUrl] ?? posterUrl.replace(/\.[^.]+$/, '.png')
   return `/show-posters/${resolved}`
 }
@@ -58,10 +67,10 @@ function ShowCards({ shows = [], loading = false, error = null }) {
         {shows.map((show, index) => (
           <article className="show-card" key={show.id}>
             <div className={`show-card__poster ${CARD_THEMES[index % CARD_THEMES.length]}`}>
-              {getPosterSrc(show.poster_url) ? (
+              {getPosterSrc(show) ? (
                 <img
                   className="show-card__poster-image"
-                  src={getPosterSrc(show.poster_url)}
+                  src={getPosterSrc(show)}
                   alt={show.title}
                 />
               ) : null}

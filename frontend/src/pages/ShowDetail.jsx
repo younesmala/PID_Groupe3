@@ -7,12 +7,21 @@ import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
 import { getStoredUsername } from "../services/authService";
 
-function getPosterSrc(posterUrl) {
-  if (!posterUrl) return null;
-  if (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/")) {
+function getPosterSrc(show) {
+  const posterUrl = show?.poster_url;
+  const fallbackSlug = show?.slug;
+
+  if (posterUrl && (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/"))) {
     return posterUrl;
   }
-  return `/show-posters/${posterUrl}`;
+
+  if (!posterUrl && fallbackSlug) {
+    return `/show-posters/${fallbackSlug}.png`;
+  }
+
+  if (!posterUrl) return null;
+
+  return `/show-posters/${posterUrl.replace(/\.[^.]+$/, ".png")}`;
 }
 
 function RepresentationForm({ rep, prices, isLoggedIn, onLoginRequired }) {
@@ -255,9 +264,9 @@ function ShowDetail() {
   return (
     <div style={pageBackground}>
       <div style={contentWrap}>
-        {getPosterSrc(show.poster_url) && (
+        {getPosterSrc(show) && (
           <img
-            src={getPosterSrc(show.poster_url)}
+            src={getPosterSrc(show)}
             alt={show.title}
             style={{
               width: "100%",
