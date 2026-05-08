@@ -277,6 +277,11 @@ function ShowDetail() {
             Artiste : {show.artist_name}
           </p>
         )}
+        {show.spoken_language && (
+          <p style={{ marginTop: 6, color: "#94a3b8", fontSize: 14 }}>
+            🎭 {t("show.spoken_language_label")} : <strong style={{ color: "#f8fafc" }}>{t(`show.spoken_language_${show.spoken_language}`)}</strong>
+          </p>
+        )}
         <p
           style={{
             marginTop: 18,

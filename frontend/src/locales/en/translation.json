@@ -73,7 +73,11 @@
     "cart_error": "Unable to add to cart at the moment.",
     "loading": "Loading...",
     "error_label": "Error",
-    "view_reviews": "View reviews"
+    "view_reviews": "View reviews",
+    "spoken_language_label": "Show performed in",
+    "spoken_language_fr": "French",
+    "spoken_language_nl": "Dutch",
+    "spoken_language_en": "English"
   },
   "cart": {
     "title": "My cart",

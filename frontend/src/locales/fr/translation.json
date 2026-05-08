@@ -73,7 +73,11 @@
     "cart_error": "Impossible d'ajouter au panier pour le moment.",
     "loading": "Chargement...",
     "error_label": "Erreur",
-    "view_reviews": "Voir les avis"
+    "view_reviews": "Voir les avis",
+    "spoken_language_label": "Spectacle joué en",
+    "spoken_language_fr": "Français",
+    "spoken_language_nl": "Néerlandais",
+    "spoken_language_en": "Anglais"
   },
   "cart": {
     "title": "Mon panier",
