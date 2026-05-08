@@ -29,6 +29,12 @@ class Show(models.Model):
     producer = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name='produced_shows'
     )
+    SPOKEN_LANGUAGE_CHOICES = [
+        ('fr', 'Français'),
+        ('nl', 'Nederlands'),
+        ('en', 'English'),
+    ]
+    spoken_language = models.CharField(max_length=10, choices=SPOKEN_LANGUAGE_CHOICES, default='fr')
     bookable = models.BooleanField(default=True)
     publication_status = models.CharField(
         max_length=20,

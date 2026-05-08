@@ -19,7 +19,7 @@ class ShowSerializer(serializers.ModelSerializer):
             "id", "slug",
             "title", "title_fr", "title_nl", "title_en",
             "description", "description_fr", "description_nl", "description_en",
-            "poster_url", "duration",
+            "poster_url", "duration", "spoken_language",
             "created_in", "artist", "artist_name", "location", "location_name", "bookable",
             "publication_status", "created_at", "updated_at", "artist_types",
             "rating", "next_schedule", "next_location_name", "prices",

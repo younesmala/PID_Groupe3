@@ -73,7 +73,11 @@
     "cart_error": "Kan momenteel niet aan de winkelwagen toevoegen.",
     "loading": "Laden...",
     "error_label": "Fout",
-    "view_reviews": "Bekijk beoordelingen"
+    "view_reviews": "Bekijk beoordelingen",
+    "spoken_language_label": "Voorstelling gespeeld in",
+    "spoken_language_fr": "Frans",
+    "spoken_language_nl": "Nederlands",
+    "spoken_language_en": "Engels"
   },
   "cart": {
     "title": "Mijn winkelwagen",
