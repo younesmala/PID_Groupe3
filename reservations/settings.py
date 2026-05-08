@@ -211,6 +211,7 @@ CACHES = {
 # Rate limiting DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_THROTTLE_CLASSES': [] if TESTING else [
