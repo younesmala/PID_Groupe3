@@ -31,7 +31,7 @@ jobs:
           flake8 . \
             --count \
             --max-line-length=120 \
-            --exclude=env,node_modules,migrations,__pycache__ \
+            --exclude=env,venv,node_modules,migrations,__pycache__ \
             --show-source \
             --statistics
 
