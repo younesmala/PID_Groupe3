@@ -164,14 +164,6 @@ function App() {
 
         {/* ── Administration ── */}
         <Route
-          path="/admin/users"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Gestion utilisateurs" /></ProtectedRoute>}
-        />
-        <Route
-          path="/admin/reservations"
-          element={<ProtectedRoute user={user}><PlaceholderPage title="Gestion réservations" /></ProtectedRoute>}
-        />
-        <Route
           path="/admin/locations"
           element={<ProtectedRoute user={user}><PlaceholderPage title="Nos lieux" /></ProtectedRoute>}
         />
