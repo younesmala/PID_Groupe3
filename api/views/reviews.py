@@ -39,7 +39,11 @@ class ShowReviewsView(APIView):
 class ReviewsView(APIView):
     def get(self, request, *args, **kwargs):
         # Récupère tous les avis approuvés pour tous les spectacles
-        reviews = Review.objects.filter(status=Review.STATUS_APPROVED).select_related('user', 'show').order_by('-created_at')
+        reviews = (
+            Review.objects.filter(status=Review.STATUS_APPROVED)
+            .select_related('user', 'show')
+            .order_by('-created_at')
+        )
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 
