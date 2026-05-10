@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from catalogue.models.review import Review
-from api.serializers.review import ReviewSerializer
+from api.serializers.review import ReviewSerializer, ReviewModerationSerializer
 from rest_framework.response import Response
 
 
@@ -37,11 +37,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
 class ReviewAdminUpdateView(generics.UpdateAPIView):
     """Vue pour permettre aux admins/producteurs d'approuver un avis"""
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+    serializer_class = ReviewModerationSerializer
     permission_classes = [permissions.IsAdminUser]
 
     def patch(self, request, *args, **kwargs):
-        review = self.get_object()
-        review.status = request.data.get('status', 'pending')
-        review.save()
-        return Response({'status': 'updated'})
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)

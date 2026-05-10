@@ -21,9 +21,8 @@ from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 from rest_framework import status
-from django.contrib.auth.models import User
-from django.middleware.csrf import get_token
-import re
+from rest_framework.throttling import AnonRateThrottle as PasswordResetThrottle
+logger = logging.getLogger(__name__)
 
 
 class AuthSignupView(APIView):
@@ -82,7 +81,6 @@ class AuthSignupView(APIView):
             user.profile.role = role
             user.profile.save()
         else:
-            from api.models import UserProfile
             UserProfile.objects.update_or_create(user=user, defaults={'role': role})
 
         try:
