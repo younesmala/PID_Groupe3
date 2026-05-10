@@ -5,7 +5,7 @@ import ArtistDetail from './pages/ArtistDetail'
 import ArtistEdit from './pages/ArtistEdit'
 import Home from './pages/Home'
 import ShowsList from './pages/ShowsList'
-import ShowDetail from './pages/ShowDetail'
+import ShowDetails from './pages/ShowDetail'
 import Cart from './pages/Cart'
 import AdminDashboard from './pages/AdminDashboard'
 import Navbar from './components/Navbar'
@@ -14,6 +14,9 @@ import { getStoredUsername, logout } from './services/authService'
 import Checkout from './pages/Checkout'
 import Search from './pages/Search'
 import Reviews from './pages/Reviews'
+import Signup from './pages/Signup';
+import Profile from './pages/Profile';
+
 
 function App() {
   const [username, setUsername] = useState(getStoredUsername)
@@ -61,6 +64,8 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/show/:id" element={<ShowDetails />} />
+        <Route path="/artists" element={<ArtistsList />} />
       </Routes>
       <CookieBanner />
     </BrowserRouter>
