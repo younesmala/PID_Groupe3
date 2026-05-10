@@ -1,28 +1,30 @@
+import logging
+import re
+
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import EmailMultiAlternatives, send_mail
+from django.middleware.csrf import get_token
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
+from api.models import UserProfile
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.throttling import AnonRateThrottle
+from rest_framework.views import APIView
+
 
 class PasswordResetThrottle(AnonRateThrottle):
     rate = '5/hour'
-from django.contrib.auth.models import User
-from django.middleware.csrf import get_token
-from api.models import UserProfile
-import re
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -289,57 +291,78 @@ class PasswordResetView(APIView):
         # ── Traductions de l'email ─────────────────────────────────────────────
         _I18N = {
             'fr': {
-                'subject':       'Réinitialisation de votre mot de passe — Brussels Show',
-                'greeting':      f'Bonjour {user.first_name or user.username},',
-                'intro':         'Vous avez demandé la réinitialisation de votre mot de passe Brussels Show. '
-                                 'Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.',
-                'btn_label':     'Réinitialiser le mot de passe',
-                'fallback_intro':'Si le bouton ne fonctionne pas, copiez et collez le lien ci-dessous dans votre navigateur :',
-                'fallback_label':'Lien de secours :',
-                'expiry':        'Ce lien est valable 24 heures.',
-                'no_request':    "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email.",
-                'footer_note':   'Vous recevez cet email car vous avez demandé la réinitialisation de votre mot de passe.',
+                'subject': 'Réinitialisation de votre mot de passe — Brussels Show',
+                'greeting': f'Bonjour {user.first_name or user.username},',
+                'intro': (
+                    'Vous avez demandé la réinitialisation de votre mot de passe Brussels Show. '
+                    'Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.'
+                ),
+                'btn_label': 'Réinitialiser le mot de passe',
+                'fallback_intro': (
+                    'Si le bouton ne fonctionne pas, copiez et collez le lien '
+                    'ci-dessous dans votre navigateur :'
+                ),
+                'fallback_label': 'Lien de secours :',
+                'expiry': 'Ce lien est valable 24 heures.',
+                'no_request': "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email.",
+                'footer_note': (
+                    'Vous recevez cet email car vous avez demandé la '
+                    'réinitialisation de votre mot de passe.'
+                ),
             },
             'nl': {
-                'subject':       'Wachtwoord opnieuw instellen — Brussels Show',
-                'greeting':      f'Hallo {user.first_name or user.username},',
-                'intro':         'U heeft een verzoek ingediend om uw Brussels Show-wachtwoord opnieuw in te stellen. '
-                                 'Klik op de onderstaande knop om een nieuw wachtwoord te kiezen.',
-                'btn_label':     'Wachtwoord opnieuw instellen',
-                'fallback_intro':'Als de knop niet werkt, kopieer dan de onderstaande link en plak deze in uw browser:',
-                'fallback_label':'Reservelink:',
-                'expiry':        'Deze link is 24 uur geldig.',
-                'no_request':    'Als u dit verzoek niet heeft ingediend, kunt u deze e-mail gerust negeren.',
-                'footer_note':   'U ontvangt deze e-mail omdat u een wachtwoordreset heeft aangevraagd.',
+                'subject': 'Wachtwoord opnieuw instellen — Brussels Show',
+                'greeting': f'Hallo {user.first_name or user.username},',
+                'intro': (
+                    'U heeft een verzoek ingediend om uw Brussels Show-wachtwoord opnieuw in te stellen. '
+                    'Klik op de onderstaande knop om een nieuw wachtwoord te kiezen.'
+                ),
+                'btn_label': 'Wachtwoord opnieuw instellen',
+                'fallback_intro': (
+                    'Als de knop niet werkt, kopieer dan de onderstaande link '
+                    'en plak deze in uw browser:'
+                ),
+                'fallback_label': 'Reservelink:',
+                'expiry': 'Deze link is 24 uur geldig.',
+                'no_request': 'Als u dit verzoek niet heeft ingediend, kunt u deze e-mail gerust negeren.',
+                'footer_note': 'U ontvangt deze e-mail omdat u een wachtwoordreset heeft aangevraagd.',
             },
             'en': {
-                'subject':       'Reset your password — Brussels Show',
-                'greeting':      f'Hello {user.first_name or user.username},',
-                'intro':         'You requested a password reset for your Brussels Show account. '
-                                 'Click the button below to choose a new password.',
-                'btn_label':     'Reset my password',
-                'fallback_intro':'If the button does not work, copy and paste the link below into your browser:',
-                'fallback_label':'Fallback link:',
-                'expiry':        'This link expires in 24 hours.',
-                'no_request':    "If you did not request this, you can safely ignore this email.",
-                'footer_note':   'You are receiving this email because a password reset was requested for your account.',
+                'subject': 'Reset your password — Brussels Show',
+                'greeting': f'Hello {user.first_name or user.username},',
+                'intro': (
+                    'You requested a password reset for your Brussels Show account. '
+                    'Click the button below to choose a new password.'
+                ),
+                'btn_label': 'Reset my password',
+                'fallback_intro': (
+                    'If the button does not work, copy and paste the link '
+                    'below into your browser:'
+                ),
+                'fallback_label': 'Fallback link:',
+                'expiry': 'This link expires in 24 hours.',
+                'no_request': "If you did not request this, you can safely ignore this email.",
+                'footer_note': (
+                    'You are receiving this email because a password reset was '
+                    'requested for your account.'
+                ),
             },
         }
         strings = _I18N[lang]
 
         # ── Rendu HTML ─────────────────────────────────────────────────────────
         html_body = render_to_string('emails/password_reset.html', {
-            'lang':          lang,
-            'subject':       strings['subject'],
-            'greeting':      strings['greeting'],
-            'intro':         strings['intro'],
-            'btn_label':     strings['btn_label'],
-            'fallback_intro':strings['fallback_intro'],
-            'fallback_label':strings['fallback_label'],
-            'reset_url':     reset_url,
-            'expiry':        strings['expiry'],
-            'no_request':    strings['no_request'],
-            'footer_note':   strings['footer_note'],
+            'lang': lang,
+            'subject': strings['subject'],
+            'greeting': strings['greeting'],
+            'intro': strings['intro'],
+            'btn_label': strings['btn_label'],
+            'fallback_intro': strings['fallback_intro'],
+            'fallback_label': strings['fallback_label'],
+            'reset_url': reset_url,
+            'expiry': strings['expiry'],
+            'no_request': strings['no_request'],
+            'footer_note': strings['footer_note'],
         })
 
         # ── Texte brut de secours ──────────────────────────────────────────────

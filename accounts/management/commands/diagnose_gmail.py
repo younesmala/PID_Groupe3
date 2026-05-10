@@ -20,7 +20,7 @@ class Command(BaseCommand):
             'mot_de_passe_application_google_16_caracteres',
             'xxxx xxxx xxxx xxxx',
         }
-        
+
         # 1. Vérifier les paramètres
         self.stdout.write('1️⃣  Paramètres configurés:')
         self.stdout.write(f'   EMAIL_BACKEND: {settings.EMAIL_BACKEND}')
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         self.stdout.write(f'   EMAIL_PORT: {settings.EMAIL_PORT}')
         self.stdout.write(f'   EMAIL_USE_TLS: {settings.EMAIL_USE_TLS}')
         self.stdout.write(f'   EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}')
-        
+
         # Masquer le mot de passe pour la sécurité
         password = settings.EMAIL_HOST_PASSWORD
         if password:
@@ -36,12 +36,12 @@ class Command(BaseCommand):
             self.stdout.write(f'   EMAIL_HOST_PASSWORD: {masked}')
         else:
             self.stdout.write(self.style.ERROR('   EMAIL_HOST_PASSWORD: ❌ VIDE!'))
-        
+
         self.stdout.write(f'   DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}\n')
-        
+
         # 2. Vérifier les valeurs par défaut (placeholders)
         self.stdout.write('2️⃣  Vérification des placeholders:')
-        
+
         if settings.EMAIL_HOST_USER in placeholder_users:
             self.stdout.write(
                 self.style.ERROR(
@@ -51,7 +51,7 @@ class Command(BaseCommand):
             )
         else:
             self.stdout.write(self.style.SUCCESS(f'   ✓ EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}'))
-        
+
         raw_password = (settings.EMAIL_HOST_PASSWORD or '').strip()
         normalized_password = raw_password.replace(' ', '')
 
@@ -65,12 +65,14 @@ class Command(BaseCommand):
         elif len(normalized_password) != 16:
             self.stdout.write(
                 self.style.ERROR(
-                    f'   ❌ EMAIL_HOST_PASSWORD invalide: longueur={len(normalized_password)} (attendu: 16 sans espaces).'
+                    '   ❌ EMAIL_HOST_PASSWORD invalide: '
+                    f'longueur={len(normalized_password)} '
+                    '(attendu: 16 sans espaces).'
                 )
             )
         else:
             self.stdout.write(self.style.SUCCESS('   ✓ EMAIL_HOST_PASSWORD: format 16 caractères OK'))
-        
+
         if settings.DEFAULT_FROM_EMAIL in placeholder_users:
             self.stdout.write(
                 self.style.ERROR(
@@ -87,9 +89,9 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR('   ❌ FRONTEND_URL est vide.'))
         else:
             self.stdout.write(self.style.SUCCESS(f'   ✓ FRONTEND_URL: {frontend_url}'))
-        
+
         self.stdout.write('\n3️⃣  Test de connexion SMTP:')
-        
+
         try:
             connection = get_connection()
             connection.open()
@@ -106,7 +108,7 @@ class Command(BaseCommand):
                     '   - Pare-feu bloquant la connexion SMTP\n'
                 )
             )
-        
+
         self.stdout.write('\n4️⃣  Checklist:')
         self.stdout.write('   ☐ Avez-vous activé la 2FA sur votre compte Gmail?')
         self.stdout.write('   ☐ Avez-vous généré un mot de passe application?')

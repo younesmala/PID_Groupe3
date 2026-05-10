@@ -15,12 +15,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         recipient_email = options['recipient_email']
-        
+
         try:
             self.stdout.write(
                 self.style.WARNING(f'Sending test email to {recipient_email}...')
             )
-            
+
             send_mail(
                 subject='Email de test - PID Groupe 3',
                 message=(
@@ -36,13 +36,13 @@ class Command(BaseCommand):
                 recipient_list=[recipient_email],
                 fail_silently=False,
             )
-            
+
             self.stdout.write(
                 self.style.SUCCESS(
                     f'✓ Email sent successfully to {recipient_email}!'
                 )
             )
-            
+
         except Exception as e:
             raise CommandError(
                 f'✗ Failed to send email: {str(e)}\n'
