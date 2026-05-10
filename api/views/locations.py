@@ -16,7 +16,7 @@ class LocationsView(APIView):
     def get(self, request, *args, **kwargs):
         include_shows = request.query_params.get('include_shows', 'false').lower() == 'true'
         locations = Location.objects.prefetch_related('shows').all()
-        
+
         if include_shows:
             # Include upcoming shows for each location
             data = []
@@ -25,13 +25,13 @@ class LocationsView(APIView):
                     publication_status='approved',
                     bookable=True
                 ).order_by('-created_at')
-                
+
                 shows_data = []
                 for show in shows:
                     representations = show.representations.filter(
                         when__gte=timezone.now()
                     ).order_by('when')
-                    
+
                     shows_data.append({
                         'id': show.id,
                         'title': show.title,
@@ -50,7 +50,7 @@ class LocationsView(APIView):
                             for r in representations[:3]  # Limit to 3 upcoming
                         ]
                     })
-                
+
                 location_data = LocationSerializer(location).data
                 location_data['shows'] = shows_data
                 data.append(location_data)
@@ -84,19 +84,19 @@ class LocationsDetailView(APIView):
             )
 
         include_shows = request.query_params.get('include_shows', 'false').lower() == 'true'
-        
+
         if include_shows:
             shows = location.shows.filter(
                 publication_status='approved',
                 bookable=True
             ).order_by('-created_at')
-            
+
             shows_data = []
             for show in shows:
                 representations = show.representations.filter(
                     when__gte=timezone.now()
                 ).order_by('when')
-                
+
                 shows_data.append({
                     'id': show.id,
                     'title': show.title,
@@ -115,7 +115,7 @@ class LocationsDetailView(APIView):
                         for r in representations[:3]
                     ]
                 })
-            
+
             location_data = LocationSerializer(location).data
             location_data['shows'] = shows_data
             return Response(location_data, status=status.HTTP_200_OK)
