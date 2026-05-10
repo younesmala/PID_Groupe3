@@ -139,6 +139,7 @@ class AdminUsersRolesView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
 class UsersSubscriptionView(APIView):
     def get(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
