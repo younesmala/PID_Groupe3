@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { login } from '../services/authService'
 import './LoginModal.css'
 
 function LoginModal({ onClose, onLogin }) {
+  const { t } = useTranslation()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -12,25 +14,25 @@ function LoginModal({ onClose, onLogin }) {
     e.preventDefault()
     setError('')
     setLoading(true)
-   try {
-  const data = await login(username, password)
-  onLogin(data)
-  onClose()
-  } catch (err) {
-  setError(err.message)
-  } finally {
-  setLoading(false)
+    try {
+      const data = await login(username, password)
+      onLogin(data)
+      onClose()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>×</button>
-        <h2>Connexion</h2>
+        <h2>{t('login.title')}</h2>
         <form onSubmit={handleSubmit}>
           <div className="modal-field">
-            <label>Username</label>
+            <label>{t('login.username')}</label>
             <input
               type="text"
               value={username}
@@ -40,7 +42,7 @@ function LoginModal({ onClose, onLogin }) {
             />
           </div>
           <div className="modal-field">
-            <label>Password</label>
+            <label>{t('login.password')}</label>
             <input
               type="password"
               value={password}
@@ -50,7 +52,7 @@ function LoginModal({ onClose, onLogin }) {
           </div>
           {error && <p className="modal-error">{error}</p>}
           <button type="submit" className="modal-submit" disabled={loading}>
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? t('login.loading') : t('login.submit')}
           </button>
         </form>
       </div>

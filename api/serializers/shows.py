@@ -16,7 +16,10 @@ class ShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Show
         fields = [
-            "id", "slug", "title", "description", "poster_url", "duration",
+            "id", "slug",
+            "title", "title_fr", "title_nl", "title_en",
+            "description", "description_fr", "description_nl", "description_en",
+            "poster_url", "duration", "spoken_language",
             "created_in", "artist", "artist_name", "location", "location_name", "bookable",
             "publication_status", "created_at", "updated_at", "artist_types",
             "rating", "next_schedule", "next_location_name", "prices",

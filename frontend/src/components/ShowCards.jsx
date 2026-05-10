@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { tField } from '../utils/locale'
 
 const CARD_THEMES = [
   'show-card__poster--green',
@@ -13,21 +15,32 @@ const POSTER_OVERRIDES = {
   'cible.jpg': 'cible-mouvante.png',
 }
 
-function getPosterSrc(posterUrl) {
-  if (!posterUrl) return null
-  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
+function getPosterSrc(show) {
+  const posterUrl = show?.poster_url
+  const fallbackSlug = show?.slug
+
+  if (posterUrl && (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/'))) {
     return posterUrl
   }
+
+  if (!posterUrl && fallbackSlug) {
+    return `/show-posters/${fallbackSlug}.png`
+  }
+
+  if (!posterUrl) return null
+
   const resolved = POSTER_OVERRIDES[posterUrl] ?? posterUrl.replace(/\.[^.]+$/, '.png')
   return `/show-posters/${resolved}`
 }
 
 function ShowCards({ shows = [], loading = false, error = null }) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language?.split('-')[0] || 'fr'
   if (loading) {
     return (
       <section className="show-cards-section">
-        <p className="section-kicker">Evenements speciaux</p>
-        <h2>Chargement des spectacles...</h2>
+        <p className="section-kicker">{t('shows.special_events')}</p>
+        <h2>{t('shows.loading')}</h2>
       </section>
     )
   }
@@ -35,8 +48,8 @@ function ShowCards({ shows = [], loading = false, error = null }) {
   if (error) {
     return (
       <section className="show-cards-section">
-        <p className="section-kicker">Evenements speciaux</p>
-        <h2>Impossible de charger les spectacles</h2>
+        <p className="section-kicker">{t('shows.special_events')}</p>
+        <h2>{t('shows.error_load')}</h2>
         <p className="show-cards-section__message">{error}</p>
       </section>
     )
@@ -45,19 +58,19 @@ function ShowCards({ shows = [], loading = false, error = null }) {
   return (
     <section className="show-cards-section" id="shows">
       <div className="show-cards-section__header">
-        <p className="section-kicker">Evenements speciaux</p>
-        <h2>Sur scene cette saison</h2>
-        <p>BrusselsShow, un defile de spectacles a decouvrir au coeur de Bruxelles.</p>
+        <p className="section-kicker">{t('shows.special_events')}</p>
+        <h2>{t('shows.on_stage')}</h2>
+        <p>{t('shows.tagline')}</p>
       </div>
 
       <div className="show-cards-grid">
         {shows.map((show, index) => (
           <article className="show-card" key={show.id}>
             <div className={`show-card__poster ${CARD_THEMES[index % CARD_THEMES.length]}`}>
-              {getPosterSrc(show.poster_url) ? (
+              {getPosterSrc(show) ? (
                 <img
                   className="show-card__poster-image"
-                  src={getPosterSrc(show.poster_url)}
+                  src={getPosterSrc(show)}
                   alt={show.title}
                 />
               ) : null}
@@ -66,14 +79,14 @@ function ShowCards({ shows = [], loading = false, error = null }) {
             </div>
 
             <div className="show-card__body">
-              <h3>{show.title}</h3>
-              <p className="show-card__artist">Artiste : {show.artist_name || 'Artiste a confirmer'}</p>
+              <h3>{tField(show, 'title', lang)}</h3>
+              <p className="show-card__artist">{t('shows.artist')} : {show.artist_name || t('shows.artist_tbc')}</p>
               <p className="show-card__description">
-                {show.description || 'Description a venir.'}
+                {tField(show, 'description', lang) || t('shows.desc_tbc')}
               </p>
               <div className="show-card__actions">
                 <Link to={`/shows/${show.slug}`} className="show-card__book">
-                  Reserve ta place !
+                  {t('shows.book_place')}
                 </Link>
               </div>
             </div>

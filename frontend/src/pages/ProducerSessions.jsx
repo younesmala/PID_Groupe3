@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import './ProducerSessions.css'
 
 const BASE = '/api'
@@ -26,6 +27,7 @@ function toLocalDatetime(isoString) {
 }
 
 export default function ProducerSessions() {
+  const { t } = useTranslation()
   const { slug }       = useParams()
   const navigate       = useNavigate()
 
@@ -50,19 +52,16 @@ export default function ProducerSessions() {
   useEffect(() => {
     async function load() {
       try {
-        // Resolve slug → show id + title
         const showRes = await apiFetch(`/shows/${slug}/`)
         if (!showRes.ok) throw new Error(`Spectacle introuvable (${showRes.status})`)
         const showData = await showRes.json()
         setShow(showData)
 
-        // Fetch sessions filtered by show id
         const sessRes = await apiFetch(`/representations/?show=${showData.id}`)
-        if (!sessRes.ok) throw new Error(`Erreur chargement séances (${sessRes.status})`)
+        if (!sessRes.ok) throw new Error(`Erreur chargement seances (${sessRes.status})`)
         const sessData = await sessRes.json()
         setSessions(Array.isArray(sessData) ? sessData : (sessData.results ?? []))
 
-        // Fetch locations for dropdown
         const locRes = await apiFetch('/locations/')
         if (!locRes.ok) throw new Error(`Erreur chargement lieux (${locRes.status})`)
         const locData = await locRes.json()
@@ -92,7 +91,6 @@ export default function ProducerSessions() {
     }
     setSubmitting(true)
     try {
-      // schedule = ISO 8601 UTC datetime, format attendu par Django
       const schedule = `${form.date}T${form.time}:00Z`
       const payload = {
         show:            show.id,
@@ -103,9 +101,7 @@ export default function ProducerSessions() {
       const res = await fetch(`${BASE}/representations/`, {
         method:      'POST',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
       if (!res.ok) {
@@ -143,31 +139,29 @@ export default function ProducerSessions() {
 
   return (
     <div className="pss-page">
-      {/* Breadcrumb */}
       <button className="pss-breadcrumb" onClick={() => navigate('/producer/shows')}>
-        ← Mes spectacles
+        {t('producer.back_shows')}
       </button>
 
       <header className="pss-header">
         <div>
-          <h1 className="pss-title">Séances</h1>
+          <h1 className="pss-title">{t('producer.sessions_title')}</h1>
           {show && <p className="pss-subtitle">{show.title}</p>}
         </div>
       </header>
 
-      {loading && <p className="pss-state">Chargement…</p>}
+      {loading && <p className="pss-state">{t('producer.loading')}</p>}
       {error   && <p className="pss-state pss-state--error">{error}</p>}
 
       {!loading && !error && (
         <div className="pss-layout">
-          {/* ── Liste des séances ── */}
           <section className="pss-list-section">
             <h2 className="pss-section-title">
-              {sessions.length} séance{sessions.length !== 1 ? 's' : ''}
+              {sessions.length} {t('producer.sessions_title').toLowerCase()}
             </h2>
 
             {sessions.length === 0 ? (
-              <p className="pss-state">Aucune séance programmée.</p>
+              <p className="pss-state">{t('producer.no_sessions')}</p>
             ) : (
               <ul className="pss-list">
                 {sessions
@@ -180,20 +174,20 @@ export default function ProducerSessions() {
                       <li key={s.id} className="pss-item">
                         <div className="pss-item-info">
                           <span className="pss-item-date">
-                            {date} à {time}
+                            {date} {t('producer.at')} {time}
                           </span>
                           <span className="pss-item-loc">
                             {loc?.designation ?? '—'}
                           </span>
                           <span className="pss-item-seats">
-                            {s.available_seats} place{s.available_seats !== 1 ? 's' : ''}
+                            {s.available_seats} {t('show.seats_remaining')}
                           </span>
                         </div>
                         <button
                           className="pss-btn pss-btn--sm pss-btn--danger"
                           onClick={() => setConfirm(s)}
                         >
-                          Supprimer
+                          {t('producer.delete_btn')}
                         </button>
                       </li>
                     )
@@ -202,19 +196,18 @@ export default function ProducerSessions() {
             )}
           </section>
 
-          {/* ── Formulaire ajout ── */}
           <section className="pss-form-section">
-            <h2 className="pss-section-title">Ajouter une séance</h2>
+            <h2 className="pss-section-title">{t('producer.add_session')}</h2>
             <form className="pss-form" onSubmit={handleSubmit}>
               <label className="pss-label">
-                Lieu
+                {t('producer.location_label')}
                 <select
                   name="location"
                   value={form.location}
                   onChange={handleFormChange}
                   className="pss-input"
                 >
-                  <option value="">— Sans lieu —</option>
+                  <option value="">{t('producer.no_location')}</option>
                   {locations.map((l) => (
                     <option key={l.id} value={l.id}>{l.designation}</option>
                   ))}
@@ -222,7 +215,7 @@ export default function ProducerSessions() {
               </label>
 
               <label className="pss-label">
-                Date <span className="pss-required">*</span>
+                {t('producer.date_label')} <span className="pss-required">*</span>
                 <input
                   type="date"
                   name="date"
@@ -234,7 +227,7 @@ export default function ProducerSessions() {
               </label>
 
               <label className="pss-label">
-                Heure <span className="pss-required">*</span>
+                {t('producer.time_label')} <span className="pss-required">*</span>
                 <input
                   type="time"
                   name="time"
@@ -246,7 +239,7 @@ export default function ProducerSessions() {
               </label>
 
               <label className="pss-label">
-                Places disponibles
+                {t('producer.seats_label')}
                 <input
                   type="number"
                   name="available_seats"
@@ -267,23 +260,22 @@ export default function ProducerSessions() {
                 className="pss-btn pss-btn--primary"
                 disabled={submitting}
               >
-                {submitting ? 'Enregistrement…' : '+ Ajouter'}
+                {submitting ? t('producer.saving') : t('producer.add_btn')}
               </button>
             </form>
           </section>
         </div>
       )}
 
-      {/* Modal de confirmation */}
       {confirm && (
         <div className="pss-modal-backdrop" onClick={() => !deleting && setConfirm(null)}>
           <div className="pss-modal" onClick={(e) => e.stopPropagation()}>
-            <h2 className="pss-modal-title">Confirmer la suppression</h2>
+            <h2 className="pss-modal-title">{t('producer.confirm_delete_title')}</h2>
             <p className="pss-modal-body">
-              Voulez-vous supprimer la séance du{' '}
-              <strong>{toLocalDatetime(confirm.schedule).date}</strong> à{' '}
-              <strong>{toLocalDatetime(confirm.schedule).time}</strong> ?
-              Cette action est irréversible.
+              {t('producer.confirm_session_msg', {
+                date: toLocalDatetime(confirm.schedule).date,
+                time: toLocalDatetime(confirm.schedule).time,
+              })}
             </p>
             <div className="pss-modal-actions">
               <button
@@ -291,14 +283,14 @@ export default function ProducerSessions() {
                 onClick={() => setConfirm(null)}
                 disabled={deleting}
               >
-                Annuler
+                {t('producer.cancel')}
               </button>
               <button
                 className="pss-btn pss-btn--danger"
                 onClick={handleDelete}
                 disabled={deleting}
               >
-                {deleting ? 'Suppression…' : 'Supprimer'}
+                {deleting ? t('producer.deleting') : t('producer.delete_btn')}
               </button>
             </div>
           </div>

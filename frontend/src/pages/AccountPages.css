@@ -365,6 +365,48 @@
   margin: 0;
 }
 
+.producer-card {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #1e1e1e;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.producer-card--active {
+  border-color: #FF4500;
+  background: rgba(255, 69, 0, 0.08);
+}
+
+.producer-card-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.producer-card strong {
+  color: #f8fafc;
+  display: block;
+}
+
+.producer-card p {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: #94a3b8;
+}
+
+.producer-card-check {
+  margin-left: auto;
+  color: #FF4500;
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
 @media (max-width: 900px) {
   .account-hero,
   .account-card-grid,

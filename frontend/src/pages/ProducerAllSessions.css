@@ -1,0 +1,233 @@
+.pas-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  color: #e0e0e0;
+}
+
+/* Breadcrumb */
+.pas-breadcrumb {
+  background: none;
+  border: none;
+  color: #FF4500;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+
+.pas-breadcrumb:hover {
+  opacity: 0.75;
+}
+
+/* Header */
+.pas-header {
+  margin-bottom: 32px;
+}
+
+.pas-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.pas-subtitle {
+  color: #aaa;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Session list */
+.pas-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pas-card {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.pas-card-show {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #FF4500;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pas-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pas-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pas-card-datetime {
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.pas-card-loc {
+  color: #aaa;
+  font-size: 0.82rem;
+}
+
+.pas-card-seats {
+  color: #4a9eff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Empty state */
+.pas-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 24px;
+  color: #888;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* Buttons */
+.pas-btn {
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.pas-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.pas-btn--primary {
+  background: #FF4500;
+  color: #fff;
+}
+
+.pas-btn--primary:hover:not(:disabled) {
+  background: #e03d00;
+}
+
+.pas-btn--outline {
+  background: transparent;
+  color: #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pas-btn--outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.pas-btn--danger {
+  background: #c0392b;
+  color: #fff;
+}
+
+.pas-btn--danger:hover:not(:disabled) {
+  background: #a93226;
+}
+
+.pas-btn--sm {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* State messages */
+.pas-state {
+  color: #888;
+  font-size: 0.95rem;
+  padding: 8px 0;
+  margin: 0;
+}
+
+.pas-state--error {
+  color: #ff6b6b;
+}
+
+/* Confirmation modal */
+.pas-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pas-modal {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 32px 28px;
+  max-width: 440px;
+  width: 90%;
+}
+
+.pas-modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 12px;
+}
+
+.pas-modal-body {
+  color: #bbb;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.pas-modal-body strong {
+  color: #fff;
+}
+
+.pas-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .pas-card-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pas-btn--sm {
+    width: 100%;
+    justify-content: center;
+  }
+}
