@@ -5,10 +5,11 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Force loading the project .env and override inherited shell variables.
+load_dotenv(BASE_DIR / ".env", override=True)
 
 
 # Quick-start development settings - unsuitable for production
@@ -166,9 +167,64 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5173',
 ]
 
-# Email config (console pour le dev)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@pidbooking.com'
+# ============================================
+# EMAIL CONFIGURATION
+# ============================================
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@pidbooking.com')
+EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', 20))
+SMTP_DEBUG = os.getenv('SMTP_DEBUG', 'False').lower() in {'1', 'true', 'yes', 'on'}
+
+# Fallback automatique vers console si les credentials SMTP ne sont pas configurés.
+_PLACEHOLDER_HOSTS = {'', 'votre.adresse@gmail.com', 'ton_gmail'}
+_smtp_ready = (
+    EMAIL_HOST_USER not in _PLACEHOLDER_HOSTS
+    and EMAIL_HOST_PASSWORD not in {'', 'xxxx xxxx xxxx xxxx', 'mot_de_passe_application_google_16_caracteres'}
+)
+EMAIL_BACKEND = os.getenv(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend' if _smtp_ready
+    else 'django.core.mail.backends.console.EmailBackend',
+)
+if not _smtp_ready and os.getenv('EMAIL_BACKEND', '').endswith('smtp.EmailBackend'):
+    # L'utilisateur a explicitement demandé SMTP mais les credentials manquent :
+    # on respecte son choix et laisse Django échouer avec un message clair.
+    pass
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s %(levelname)s %(name)s - %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django.core.mail': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if SMTP_DEBUG else 'WARNING',
+            'propagate': False,
+        },
+        'api.views.auth': {
+            'handlers': ['console'],
+            'level': 'INFO' if SMTP_DEBUG else 'WARNING',
+            'propagate': False,
+        },
+    },
+}
 
 # ============================================
 # SÉCURITÉ — Headers de protection

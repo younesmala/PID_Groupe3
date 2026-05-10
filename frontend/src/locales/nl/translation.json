@@ -138,7 +138,32 @@
     "username": "Gebruikersnaam",
     "password": "Wachtwoord",
     "loading": "Inloggen...",
-    "submit": "Inloggen"
+    "submit": "Inloggen",
+    "forgot_password": "Wachtwoord vergeten?",
+    "show_password": "Wachtwoord tonen",
+    "hide_password": "Wachtwoord verbergen"
+  },
+  "forgot_password": {
+    "kicker": "Beveiligde toegang",
+    "title": "Uw wachtwoord opnieuw instellen",
+    "subtitle": "Voer uw e-mailadres in om een resetlink te ontvangen.",
+    "email": "E-mailadres",
+    "submit": "Link verzenden",
+    "loading": "Bezig met verzenden...",
+    "success": "Als er een account met dit e-mailadres bestaat, is er een resetbericht verzonden.",
+    "back_login": "Terug naar inloggen"
+  },
+  "reset_password": {
+    "kicker": "Wachtwoord",
+    "title": "Kies een nieuw wachtwoord",
+    "subtitle": "Stel uw nieuwe wachtwoord in om het resetten te voltooien.",
+    "password": "Nieuw wachtwoord",
+    "confirm_password": "Wachtwoord bevestigen",
+    "submit": "Wachtwoord resetten",
+    "loading": "Bezig met resetten...",
+    "success": "Uw wachtwoord is opnieuw ingesteld.",
+    "back_login": "Terug naar inloggen",
+    "invalid_link": "De resetlink is ongeldig of verlopen."
   },
   "signup": {
     "kicker": "Klantaccount",
