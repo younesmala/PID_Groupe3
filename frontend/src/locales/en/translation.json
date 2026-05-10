@@ -138,7 +138,32 @@
     "username": "Username",
     "password": "Password",
     "loading": "Logging in...",
-    "submit": "Log in"
+    "submit": "Log in",
+    "forgot_password": "Forgot password?",
+    "show_password": "Show password",
+    "hide_password": "Hide password"
+  },
+  "forgot_password": {
+    "kicker": "Secure access",
+    "title": "Reset your password",
+    "subtitle": "Enter your email address to receive a reset link.",
+    "email": "Email address",
+    "submit": "Send link",
+    "loading": "Sending...",
+    "success": "If an account matches this email, a reset message has been sent.",
+    "back_login": "Back to login"
+  },
+  "reset_password": {
+    "kicker": "Password",
+    "title": "Choose a new password",
+    "subtitle": "Set your new password to complete the reset.",
+    "password": "New password",
+    "confirm_password": "Confirm password",
+    "submit": "Reset password",
+    "loading": "Resetting...",
+    "success": "Your password has been reset.",
+    "back_login": "Back to login",
+    "invalid_link": "The reset link is invalid or has expired."
   },
   "signup": {
     "kicker": "Customer account",

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './Footer.css'
 
@@ -63,7 +63,22 @@ function NewsletterForm() {
 }
 
 function Footer() {
-  const { t } = useTranslation()
+  const location = useLocation()
+  const { t, i18n } = useTranslation()
+  const urlFirstSegment = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase()
+  const isSupportedLanguage = ['fr', 'nl', 'en'].includes(urlFirstSegment)
+  const currentLanguage = isSupportedLanguage
+    ? urlFirstSegment
+    : (i18n.language || 'fr').slice(0, 2).toLowerCase()
+
+  function localizedPath(path) {
+    if (path === '/') {
+      return `/${currentLanguage}`
+    }
+
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`
+    return `/${currentLanguage}${normalizedPath}`
+  }
 
   return (
     <footer className="footer">
@@ -76,10 +91,10 @@ function Footer() {
         <div className="footer-links">
           <h3>{t('footer.navigation')}</h3>
           <ul>
-            <li><Link to="/">{t('accueil')}</Link></li>
-            <li><Link to="/shows">{t('spectacles')}</Link></li>
-            <li><Link to="/cart">{t('panier')}</Link></li>
-            <li><Link to="/profile">{t('footer.profile')}</Link></li>
+            <li><Link to={localizedPath('/')}>{t('accueil')}</Link></li>
+            <li><Link to={localizedPath('/shows')}>{t('spectacles')}</Link></li>
+            <li><Link to={localizedPath('/cart')}>{t('panier')}</Link></li>
+            <li><Link to={localizedPath('/profile')}>{t('footer.profile')}</Link></li>
           </ul>
         </div>
 
