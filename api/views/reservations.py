@@ -14,18 +14,18 @@ class ReservationsView(APIView):
         payment_status = request.query_params.get('payment_status')
         status_filter = request.query_params.get('status')
         user_id = request.query_params.get('user_id')
-        
+
         reservations = Reservation.objects.select_related(
             'user', 'representation', 'representation__show'
         ).all()
-        
+
         if payment_status:
             reservations = reservations.filter(payment_status=payment_status)
         if status_filter:
             reservations = reservations.filter(status=status_filter)
         if user_id:
             reservations = reservations.filter(user_id=user_id)
-        
+
         data = []
         for r in reservations:
             data.append({
@@ -74,7 +74,7 @@ class ReservationsDetailView(APIView):
                 {'detail': 'Reservation not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+
         data = {
             'id': r.id,
             'booking_date': r.booking_date,
@@ -106,12 +106,12 @@ class ReservationsDetailView(APIView):
                 {'detail': 'Reservation not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+
         if 'status' in request.data:
             r.status = request.data['status']
         if 'payment_status' in request.data:
             r.payment_status = request.data['payment_status']
-        
+
         r.save()
         return Response(
             {'detail': 'Reservation updated'},
@@ -127,7 +127,7 @@ class ReservationsDetailView(APIView):
                 {'detail': 'Reservation not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+
         r.delete()
         return Response(
             {'detail': 'Reservation deleted'},
