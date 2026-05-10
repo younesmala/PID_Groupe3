@@ -2,7 +2,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives, send_mail
+from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes, force_str
@@ -13,10 +14,18 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.throttling import AnonRateThrottle
+
+class PasswordResetThrottle(AnonRateThrottle):
+    rate = '5/hour'
 from django.contrib.auth.models import User
 from django.middleware.csrf import get_token
 from api.models import UserProfile
 import re
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class AuthSignupView(APIView):
@@ -228,44 +237,141 @@ def check_email(request):
 
 class PasswordResetView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [PasswordResetThrottle]
 
     def post(self, request):
         email = request.data.get('email', '').strip()
+        lang = request.data.get('lang', 'fr').strip().lower()
+        logger.info(
+            "PasswordResetView called: email_present=%s lang=%s backend=%s host=%s port=%s tls=%s from_email=%s",
+            bool(email),
+            lang,
+            getattr(settings, 'EMAIL_BACKEND', ''),
+            getattr(settings, 'EMAIL_HOST', ''),
+            getattr(settings, 'EMAIL_PORT', ''),
+            getattr(settings, 'EMAIL_USE_TLS', ''),
+            getattr(settings, 'DEFAULT_FROM_EMAIL', ''),
+        )
+        if lang not in ('fr', 'nl', 'en'):
+            lang = 'fr'
+
         if not email:
+            logger.warning('Password reset rejected: missing email in request payload')
             return Response(
                 {'error': "L'email est requis."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        _GENERIC = Response({
+            'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'
+        })
+
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response({
-                'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'
-            })
+            logger.info('Password reset requested for unknown email. Returning generic response.')
+            return _GENERIC
+
+        logger.info('Password reset user resolved: user_id=%s username=%s', user.id, user.username)
 
         token = PasswordResetTokenGenerator().make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_url = f'http://localhost:5173/reset-password?token={token}&uid={uid}'
-
-        send_mail(
-            subject='Réinitialisation de votre mot de passe — Brussels Show',
-            message=(
-                f'Bonjour {user.first_name or user.username},\n\n'
-                'Vous avez demandé la réinitialisation de votre mot de passe.\n\n'
-                f'Cliquez sur ce lien pour choisir un nouveau mot de passe :\n{reset_url}\n\n'
-                'Ce lien est valable 24 heures.\n\n'
-                "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.\n\n"
-                "L'équipe Brussels Show"
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:5173').rstrip('/')
+        reset_url = f'{frontend_url}/{lang}/reset-password?token={token}&uid={uid}'
+        logger.info(
+            'Password reset token and URL generated: user_id=%s uid=%s token_prefix=%s frontend_url=%s',
+            user.id,
+            uid,
+            token[:12],
+            frontend_url,
         )
 
-        return Response({
-            'message': 'Si cet email existe, un lien de réinitialisation a été envoyé.'
+        # ── Traductions de l'email ─────────────────────────────────────────────
+        _I18N = {
+            'fr': {
+                'subject':       'Réinitialisation de votre mot de passe — Brussels Show',
+                'greeting':      f'Bonjour {user.first_name or user.username},',
+                'intro':         'Vous avez demandé la réinitialisation de votre mot de passe Brussels Show. '
+                                 'Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.',
+                'btn_label':     'Réinitialiser le mot de passe',
+                'fallback_intro':'Si le bouton ne fonctionne pas, copiez et collez le lien ci-dessous dans votre navigateur :',
+                'fallback_label':'Lien de secours :',
+                'expiry':        'Ce lien est valable 24 heures.',
+                'no_request':    "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email.",
+                'footer_note':   'Vous recevez cet email car vous avez demandé la réinitialisation de votre mot de passe.',
+            },
+            'nl': {
+                'subject':       'Wachtwoord opnieuw instellen — Brussels Show',
+                'greeting':      f'Hallo {user.first_name or user.username},',
+                'intro':         'U heeft een verzoek ingediend om uw Brussels Show-wachtwoord opnieuw in te stellen. '
+                                 'Klik op de onderstaande knop om een nieuw wachtwoord te kiezen.',
+                'btn_label':     'Wachtwoord opnieuw instellen',
+                'fallback_intro':'Als de knop niet werkt, kopieer dan de onderstaande link en plak deze in uw browser:',
+                'fallback_label':'Reservelink:',
+                'expiry':        'Deze link is 24 uur geldig.',
+                'no_request':    'Als u dit verzoek niet heeft ingediend, kunt u deze e-mail gerust negeren.',
+                'footer_note':   'U ontvangt deze e-mail omdat u een wachtwoordreset heeft aangevraagd.',
+            },
+            'en': {
+                'subject':       'Reset your password — Brussels Show',
+                'greeting':      f'Hello {user.first_name or user.username},',
+                'intro':         'You requested a password reset for your Brussels Show account. '
+                                 'Click the button below to choose a new password.',
+                'btn_label':     'Reset my password',
+                'fallback_intro':'If the button does not work, copy and paste the link below into your browser:',
+                'fallback_label':'Fallback link:',
+                'expiry':        'This link expires in 24 hours.',
+                'no_request':    "If you did not request this, you can safely ignore this email.",
+                'footer_note':   'You are receiving this email because a password reset was requested for your account.',
+            },
+        }
+        strings = _I18N[lang]
+
+        # ── Rendu HTML ─────────────────────────────────────────────────────────
+        html_body = render_to_string('emails/password_reset.html', {
+            'lang':          lang,
+            'subject':       strings['subject'],
+            'greeting':      strings['greeting'],
+            'intro':         strings['intro'],
+            'btn_label':     strings['btn_label'],
+            'fallback_intro':strings['fallback_intro'],
+            'fallback_label':strings['fallback_label'],
+            'reset_url':     reset_url,
+            'expiry':        strings['expiry'],
+            'no_request':    strings['no_request'],
+            'footer_note':   strings['footer_note'],
         })
+
+        # ── Texte brut de secours ──────────────────────────────────────────────
+        text_body = (
+            f"{strings['greeting']}\n\n"
+            f"{strings['intro']}\n\n"
+            f"{reset_url}\n\n"
+            f"{strings['expiry']}\n\n"
+            f"{strings['no_request']}\n\n"
+            "Brussels Show"
+        )
+
+        try:
+            logger.info('Attempting password reset email send: user_id=%s recipient=%s', user.id, email)
+            msg = EmailMultiAlternatives(
+                subject=strings['subject'],
+                body=text_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[email],
+            )
+            msg.attach_alternative(html_body, 'text/html')
+            msg.send(fail_silently=False)
+            logger.info('Password reset email sent successfully: user_id=%s recipient=%s', user.id, email)
+        except Exception:
+            logger.exception('Password reset email send failed: user_id=%s recipient=%s', user.id, email)
+            if getattr(settings, 'SMTP_DEBUG', False):
+                return Response(
+                    {'error': 'SMTP send failed. Check server logs for details.'},
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                )
+
+        return _GENERIC
 
 
 class PasswordResetConfirmView(APIView):

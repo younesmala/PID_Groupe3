@@ -20,6 +20,26 @@ const languageOptions = [
   { value: 'nl', label: 'Nederlands' },
 ]
 
+function PasswordToggleIcon({ visible }) {
+  if (visible) {
+    return (
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C7 20 2.73 16.89 1 12c.74-2.08 1.96-3.88 3.46-5.31" />
+        <path d="M10.58 10.58a2 2 0 1 0 2.83 2.83" />
+        <path d="M1 1l22 22" />
+        <path d="M9.88 5.09A10.94 10.94 0 0 1 12 4c5 0 9.27 3.11 11 8a10.94 10.94 0 0 1-1.67 2.95" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  )
+}
+
 function Signup() {
   const { t } = useTranslation()
   const [form, setForm] = useState(initialForm)
@@ -32,6 +52,8 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const [asyncErrors, setAsyncErrors] = useState({})
   const [asyncChecking, setAsyncChecking] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
 
   function validateForm(form) {
     const errors = {}
@@ -176,15 +198,51 @@ function Signup() {
               {getFieldError('username') && <span className="account-field-error">{getFieldError('username')}</span>}
             </label>
 
-            <label>
+            <label className="account-form-field--full">
               <span>{t('signup.password')}</span>
-              <input type="password" name="password" value={form.password} onChange={updateField} onBlur={handleBlur} required />
+              <div className="account-password-field">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={form.password}
+                  onChange={updateField}
+                  onBlur={handleBlur}
+                  required
+                />
+                <button
+                  type="button"
+                  className="account-password-toggle"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  title={showPassword ? 'Masquer' : 'Afficher'}
+                >
+                  <PasswordToggleIcon visible={showPassword} />
+                </button>
+              </div>
               {getFieldError('password') && <span className="account-field-error">{getFieldError('password')}</span>}
             </label>
 
-            <label>
+            <label className="account-form-field--full">
               <span>{t('signup.password_confirm')}</span>
-              <input type="password" name="passwordConfirm" value={form.passwordConfirm} onChange={updateField} onBlur={handleBlur} required />
+              <div className="account-password-field">
+                <input
+                  type={showPasswordConfirm ? 'text' : 'password'}
+                  name="passwordConfirm"
+                  value={form.passwordConfirm}
+                  onChange={updateField}
+                  onBlur={handleBlur}
+                  required
+                />
+                <button
+                  type="button"
+                  className="account-password-toggle"
+                  onClick={() => setShowPasswordConfirm((current) => !current)}
+                  aria-label={showPasswordConfirm ? 'Masquer la confirmation du mot de passe' : 'Afficher la confirmation du mot de passe'}
+                  title={showPasswordConfirm ? 'Masquer' : 'Afficher'}
+                >
+                  <PasswordToggleIcon visible={showPasswordConfirm} />
+                </button>
+              </div>
               {getFieldError('passwordConfirm') && <span className="account-field-error">{getFieldError('passwordConfirm')}</span>}
             </label>
 

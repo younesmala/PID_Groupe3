@@ -138,7 +138,32 @@
     "username": "Nom d'utilisateur",
     "password": "Mot de passe",
     "loading": "Connexion...",
-    "submit": "Se connecter"
+    "submit": "Se connecter",
+    "forgot_password": "Mot de passe oublié ?",
+    "show_password": "Afficher le mot de passe",
+    "hide_password": "Masquer le mot de passe"
+  },
+  "forgot_password": {
+    "kicker": "Accès sécurisé",
+    "title": "Réinitialiser votre mot de passe",
+    "subtitle": "Entrez votre adresse email pour recevoir un lien de réinitialisation.",
+    "email": "Adresse email",
+    "submit": "Envoyer le lien",
+    "loading": "Envoi en cours...",
+    "success": "Si un compte correspond à cet email, un message de réinitialisation a été envoyé.",
+    "back_login": "Retour à la connexion"
+  },
+  "reset_password": {
+    "kicker": "Mot de passe",
+    "title": "Choisir un nouveau mot de passe",
+    "subtitle": "Saisissez votre nouveau mot de passe pour terminer la réinitialisation.",
+    "password": "Nouveau mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "submit": "Réinitialiser",
+    "loading": "Réinitialisation...",
+    "success": "Votre mot de passe a été réinitialisé.",
+    "back_login": "Retour à la connexion",
+    "invalid_link": "Le lien de réinitialisation est invalide ou expiré."
   },
   "signup": {
     "kicker": "Compte client",

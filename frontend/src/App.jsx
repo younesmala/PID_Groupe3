@@ -20,6 +20,8 @@ import Checkout from "./pages/Checkout"
 import Search from "./pages/Search"
 import Reviews from "./pages/Reviews"
 import Signup from "./pages/Signup"
+import ForgotPassword from "./pages/ForgotPassword"
+import ResetPassword from "./pages/ResetPassword"
 import Profile from "./pages/Profile"
 import Confirmation from "./pages/Confirmation"
 import MyTickets from "./pages/MyTickets"
@@ -265,6 +267,8 @@ function App() {
         />
         <Route path="/signup" element={<Signup />} />
         <Route path="/:lang/signup" element={<Signup />} />
+        <Route path="/login" element={<Home />} />
+        <Route path="/:lang/login" element={<Home />} />
         <Route
           path="/profile"
           element={
@@ -295,6 +299,10 @@ function App() {
           path="/:lang/tickets"
           element={<MyTickets isLoggedIn={isLoggedIn} />}
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/:lang/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/:lang/reset-password" element={<ResetPassword />} />
 
         {/* ── Espace Producteur ── */}
         <Route
