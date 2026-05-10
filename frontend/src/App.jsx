@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import ArtistsList from './pages/ArtistsList'
 import ArtistDetail from './pages/ArtistDetail'
 import ArtistEdit from './pages/ArtistEdit'
@@ -20,57 +28,16 @@ import Search from './pages/Search'
 import Reviews from './pages/Reviews'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
+import Confirmation from './pages/Confirmation'
 import { getCart } from './services/cartService'
 import MyTickets from './pages/MyTickets'
 import ProducerDashboard from './pages/ProducerDashboard'
 import ProducerShows from './pages/ProducerShows'
 import ProducerSessions from './pages/ProducerSessions'
-import { useEffect, useState } from "react"
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom"
-
-import ArtistsList from "./pages/ArtistsList"
-import ArtistDetail from "./pages/ArtistDetail"
-import ArtistEdit from "./pages/ArtistEdit"
-import Home from "./pages/Home"
-import ShowsList from "./pages/ShowsList"
-import ShowDetail from "./pages/ShowDetail"
-import Cart from "./pages/Cart"
-import Checkout from "./pages/Checkout"
-import Search from "./pages/Search"
-import Reviews from "./pages/Reviews"
-import Signup from "./pages/Signup"
-import Profile from "./pages/Profile"
-import Confirmation from "./pages/Confirmation"
-import MyTickets from "./pages/MyTickets"
-
-import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
-import CookieBanner from "./components/CookieBanner"
-
-import ProducerDashboard from "./pages/ProducerDashboard"
-import ProducerShows from "./pages/ProducerShows"
-import ProducerSessions from "./pages/ProducerSessions"
-import ProducerAllSessions from "./pages/ProducerAllSessions"
-import ProducerStats from "./pages/ProducerStats"
-import ProducerShowForm from "./pages/ProducerShowForm"
-
-import {
-  getStoredUser,
-  storeUser,
-  logout,
-  fetchCurrentUser,
-} from "./services/authService"
-
-import { getCart } from "./services/cartService"
-import i18n from "./i18n"
+import ProducerAllSessions from './pages/ProducerAllSessions'
+import ProducerStats from './pages/ProducerStats'
+import ProducerShowForm from './pages/ProducerShowForm'
+import i18n from './i18n'
 
 const SUPPORTED_LANGUAGES = ["fr", "nl", "en"]
 
