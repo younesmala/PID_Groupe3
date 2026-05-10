@@ -1,0 +1,135 @@
+.pd-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  color: #e0e0e0;
+}
+
+/* Header */
+.pd-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.pd-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+}
+
+.pd-subtitle {
+  color: #aaa;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.pd-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pd-btn {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.pd-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.pd-btn--primary {
+  background: #FF4500;
+  color: #fff;
+  border: none;
+}
+
+.pd-btn--primary:hover {
+  background: #e03d00;
+}
+
+.pd-btn--outline {
+  background: transparent;
+  color: #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pd-btn--outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* Stat cards */
+.pd-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.pd-card {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pd-card-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.pd-card-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.pd-card-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Chart section */
+.pd-chart-section {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 28px 24px;
+}
+
+.pd-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 24px;
+}
+
+/* State messages */
+.pd-state {
+  color: #888;
+  font-size: 0.95rem;
+  padding: 16px 0;
+}
+
+.pd-state--error {
+  color: #ff6b6b;
+}

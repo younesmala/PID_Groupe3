@@ -6,9 +6,17 @@ from catalogue.models.representation import Representation
 from django.contrib.auth.models import User
 from django.db import transaction
 from cart.cart import Cart
+from rest_framework.authentication import SessionAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return
 
 
 class CheckoutView(APIView):
+    authentication_classes = [CsrfExemptSessionAuthentication]
+
     def post(self, request, *args, **kwargs):
         user = request.user
         if not user.is_authenticated:

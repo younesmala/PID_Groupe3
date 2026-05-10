@@ -128,7 +128,7 @@ function Cart() {
               {t("cart.empty", "Votre panier est vide.")}
             </p>
             <Link
-              to="/shows"
+              to="/#shows"
               style={{
                 display: "inline-block",
                 backgroundColor: "#e05a2b",
