@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from catalogue.models import Review, Show
-from api.serializers.reviews import ReviewProducerSerializer, ReviewModerationSerializer
+from api.serializers.review import ReviewProducerSerializer, ReviewModerationSerializer
 from api.serializers.shows import ShowSerializer
 
 

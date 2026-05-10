@@ -288,7 +288,15 @@ function App() {
           }
         />
         <Route path="/search" element={<Search />} />
-        <Route path="/:lang/search" element={<Search />} />
+        {/* Redirection si l'utilisateur tente d'aller sur /login manuellement */}
+        <Route 
+          path="/login" 
+          element={
+            <Navigate to="/" replace onRender={() => {
+              window.dispatchEvent(new Event("open-login-modal"));
+            }} />
+          } 
+        />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/:lang/reviews" element={<Reviews />} />
         <Route

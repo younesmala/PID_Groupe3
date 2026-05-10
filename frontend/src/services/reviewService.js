@@ -2,8 +2,9 @@
  * Service pour gérer les avis (Reviews) via l'API Django
  */
 
-export async function getReviews() {
-  const response = await fetch('/api/reviews/');
+export async function getReviews(showId) {
+  const url = showId ? `/api/reviews/?show_id=${showId}` : '/api/reviews/';
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Erreur lors du chargement des avis');
   }
@@ -13,25 +14,19 @@ export async function getReviews() {
 export async function createReview(reviewData) {
   // Fonction utilitaire pour récupérer le token CSRF requis par Django
   const getCookie = (name) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
   };
+
+  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
 
   const response = await fetch('/api/reviews/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken'),
+      'X-CSRFToken': csrfToken,
     },
     body: JSON.stringify(reviewData),
     credentials: 'include',

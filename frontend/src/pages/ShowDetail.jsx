@@ -6,6 +6,8 @@ import { getShowByIdentifier } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
 import { getStoredUsername } from "../services/authService";
+import ReviewSection from '../components/ReviewSection';
+
 
 function getPosterSrc(show) {
   const posterUrl = show?.poster_url;
@@ -327,7 +329,12 @@ function ShowDetail() {
         <div style={{ display: "flex", gap: 16, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
           <Link to="/#shows" style={linkStyle}>{t("show.back")}</Link>
           <Link to="/cart" style={linkStyle}>{t("show.view_cart")}</Link>
-          <Link to="/reviews" style={linkStyle}>{t("show.view_reviews")}</Link>
+          <button 
+            onClick={() => document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{ ...linkStyle, background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}
+          >
+            {t("show.view_reviews")}
+          </button>
         </div>
 
         {representations.length > 0 && (
@@ -451,6 +458,9 @@ function ShowDetail() {
             )}
           </form>
         )}
+
+        {/* Intégration de la section des avis en bas de page */}
+        <ReviewSection showSlug={slug || id} />
       </div>
     </div>
   );
