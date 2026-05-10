@@ -8,14 +8,13 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.middleware.csrf import get_token
-from api.models import UserProfile
 import re
 
 
@@ -70,16 +69,21 @@ class AuthSignupView(APIView):
             last_name=last_name,
         )
 
-        user.profile.role = role
-        user.profile.save()
+        # Mise à jour du rôle sur le profil (créé automatiquement par signal ou manuellement)
+        if hasattr(user, 'profile'):
+            user.profile.role = role
+            user.profile.save()
+        else:
+            from api.models import UserProfile
+            UserProfile.objects.update_or_create(user=user, defaults={'role': role})
 
         try:
             send_mail(
-                subject='Bienvenue sur Brussels Show !',
+                subject='Bienvenue sur PIDBooking !',
                 message=(
                     f'Bonjour {first_name or username},\n\n'
-                    'Votre compte a été créé avec succès.\n\n'
-                    'L\'équipe Brussels Show'
+                    'Votre compte a été créé avec succès sur PIDBooking.\n\n'
+                    'L\'équipe PIDBooking'
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
@@ -130,74 +134,6 @@ class AuthLogoutView(APIView):
     def post(self, request, *args, **kwargs):
         auth_logout(request)
         return Response({"success": True, "message": "Déconnecté"})
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def register(request):
-    data = request.data
-    username = data.get('username', '').strip()
-    password = data.get('password', '')
-    confirm_password = data.get('confirm_password', '')
-    email = data.get('email', '').strip()
-    first_name = data.get('first_name', '').strip()
-    last_name = data.get('last_name', '').strip()
-
-    errors = {}
-
-    if not username:
-        errors['username'] = 'Le nom d\'utilisateur est requis.'
-    elif User.objects.filter(username=username).exists():
-        errors['username'] = 'Ce nom d\'utilisateur est déjà pris.'
-
-    if not email:
-        errors['email'] = 'L\'email est requis.'
-    elif User.objects.filter(email=email).exists():
-        errors['email'] = 'Cet email est déjà utilisé.'
-
-    if not password:
-        errors['password'] = 'Le mot de passe est requis.'
-    elif len(password) < 6:
-        errors['password'] = 'Le mot de passe doit contenir au moins 6 caractères.'
-    elif not re.search(r'[A-Z]', password):
-        errors['password'] = 'Le mot de passe doit contenir au moins une majuscule.'
-    elif not re.search(r'[^a-zA-Z0-9]', password):
-        errors['password'] = 'Le mot de passe doit contenir au moins un caractère spécial.'
-
-    if password != confirm_password:
-        errors['confirm_password'] = 'Les mots de passe ne correspondent pas.'
-
-    if errors:
-        return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
-
-    user = User.objects.create_user(
-        username=username,
-        password=password,
-        email=email,
-        first_name=first_name,
-        last_name=last_name,
-    )
-
-    try:
-        send_mail(
-            subject='Bienvenue sur PIDBooking !',
-            message=(
-                f'Bonjour {first_name or username},\n\n'
-                'Votre compte a été créé avec succès.\n\n'
-                'L\'équipe PIDBooking'
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=True,
-        )
-    except Exception:
-        pass
-
-    return Response({
-        'message': 'Compte créé avec succès.',
-        'username': user.username,
-        'email': user.email,
-    }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])

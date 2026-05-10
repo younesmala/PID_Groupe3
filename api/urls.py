@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     auth, users, artists, types, artist_types, localities, locations,
     shows, representations, prices, cart, checkout, reservations,
-    tickets, reviews, producer, admin_api, affiliate, rss, public_api,
+    tickets, reviews, review, producer, admin_api, affiliate, rss, public_api,
     comments, show_prices,
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
@@ -117,14 +117,8 @@ urlpatterns = [
          tickets.TicketsView.as_view(), name='reservations-ticket'),
 
     # REVIEWS
-    path('reviews/', reviews.ReviewsView.as_view(), name='reviews-list-create'),
-    path('reviews/', reviews.ReviewsView.as_view(), name='reviews-update'),
-    path('reviews/<int:id>/', reviews.ReviewsDetailView.as_view(),
-         name='reviews-detail'),
-    path('reviews/<int:id>/validate/',
-         reviews.ReviewsValidateView.as_view(), name='reviews-validate'),
-    path('reviews/<int:id>/reject/',
-         reviews.ReviewsRejectView.as_view(), name='reviews-reject'),
+    path('reviews/', review.ReviewListCreateView.as_view(), name='reviews-list-create'),
+    path('reviews/<int:pk>/', review.ReviewAdminUpdateView.as_view(), name='reviews-admin-update'),
 
     # PRODUCER
     path('producer/shows/', producer.ProducerShowsView.as_view(),

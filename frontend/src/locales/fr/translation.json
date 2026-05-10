@@ -94,5 +94,27 @@
     "title": "Commande Confirmée",
     "thank_you": "Merci pour votre achat !",
     "back_home": "Retour à l'accueil"
+  },
+  "profile": {
+    "nav": "Mon profil",
+    "title": "Mon Profil",
+    "username": "Nom d'utilisateur",
+    "email": "Adresse Email",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "role": "Rôle",
+    "save": "Enregistrer les modifications",
+    "success": "Profil mis à jour avec succès"
+  },
+  "signup": {
+    "title": "Créer un compte",
+    "username": "Nom d'utilisateur",
+    "email": "Adresse Email",
+    "password": "Mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "submit": "S'inscrire",
+    "already_have_account": "Déjà un compte ? Connectez-vous"
   }
 }
