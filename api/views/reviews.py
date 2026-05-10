@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from catalogue.models import Review, Show
-from api.serializers.reviews import ReviewSerializer, ReviewCreateSerializer
+from api.serializers.review import ReviewSerializer, ReviewCreateSerializer
 
 
 class ShowReviewsView(APIView):
@@ -31,7 +31,6 @@ class ShowReviewsView(APIView):
                 show=show,
                 user=request.user,
                 status=Review.STATUS_PENDING,
-                validated=False,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -39,30 +38,17 @@ class ShowReviewsView(APIView):
 
 class ReviewsView(APIView):
     def get(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def put(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def delete(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+        # Récupère tous les avis approuvés pour tous les spectacles
+        reviews = Review.objects.filter(status=Review.STATUS_APPROVED).select_related('user', 'show').order_by('-created_at')
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
 
 
 class ReviewsDetailView(APIView):
-    def get(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def put(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
-
-    def delete(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+    def get(self, request, id):
+        review = get_object_or_404(Review, pk=id)
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)
 
 
 class ReviewsValidateView(APIView):

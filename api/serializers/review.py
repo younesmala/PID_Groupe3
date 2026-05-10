@@ -11,7 +11,25 @@ class ReviewSerializer(serializers.ModelSerializer):
         # Ces champs ne sont pas remplis par l'utilisateur via le formulaire
         read_only_fields = ['id', 'status', 'username', 'created_at']
 
-    def validate_stars(self, value):
-        if value < 1 or value > 5:
-            raise serializers.ValidationError("La note doit être comprise entre 1 et 5.")
+class ReviewCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['stars', 'review']
+
+class ReviewProducerSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source='user.username')
+    show_title = serializers.ReadOnlyField(source='show.title')
+
+    class Meta:
+        model = Review
+        fields = ['id', 'show_title', 'username', 'review', 'stars', 'status', 'created_at']
+
+class ReviewModerationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['status']
+
+    def validate_status(self, value):
+        if value not in [Review.STATUS_APPROVED, Review.STATUS_REJECTED]:
+            raise serializers.ValidationError("Statut invalide.")
         return value

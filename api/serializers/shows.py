@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Avg
 from django.utils import timezone
-from catalogue.models import Show
+from catalogue.models import Show, Review
 from api.serializers.show_prices import ShowPriceSerializer
 
 
@@ -31,7 +31,7 @@ class ShowSerializer(serializers.ModelSerializer):
         return None
 
     def get_rating(self, obj):
-        avg = obj.show.filter(validated=True).aggregate(Avg('stars'))['stars__avg']
+        avg = obj.reviews.filter(status=Review.STATUS_APPROVED).aggregate(Avg('stars'))['stars__avg']
         return round(avg, 1) if avg else None
 
     def get_location_name(self, obj):
