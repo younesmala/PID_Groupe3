@@ -145,18 +145,18 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
               onClick={() => setLangOpen((o) => !o)}
               aria-expanded={langOpen}
             >
-              <span>{currentLang.label}</span>
+              <span>{currentLang.code}</span>
               <span className="btn-lang-arrow">▼</span>
             </button>
             {langOpen && (
               <ul className="lang-menu">
-                {LANGUAGES.map(({ code, label }) => (
+                {LANGUAGES.map(({ code }) => (
                   <li key={code}>
                     <button
                       className={`lang-option ${selectedLang === code ? 'lang-option--active' : ''}`}
                       onClick={() => selectLang(code)}
                     >
-                      <span className="lang-label">{label}</span>
+                      <span className="lang-code">{code}</span>
                     </button>
                   </li>
                 ))}
