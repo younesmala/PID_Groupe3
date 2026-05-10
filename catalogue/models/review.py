@@ -1,6 +1,7 @@
 from django.db import models
 from .show import *
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class ReviewManager(models.Manager):
@@ -20,11 +21,13 @@ class Review(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.RESTRICT,
-                             null=False, related_name='user')
+                             null=False, related_name='reviews')
     show = models.ForeignKey(Show, on_delete=models.RESTRICT,
-                             null=False, related_name='show')
+                             null=False, related_name='reviews')
     review = models.TextField()
-    stars = models.PositiveSmallIntegerField()
+    stars = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
