@@ -40,6 +40,7 @@ import AdminDashboard from "./pages/AdminDashboard"
 import AdminProducers from "./pages/AdminProducers"
 import AdminUsers from "./pages/AdminUsers"
 import AdminShows from "./pages/AdminShows"
+import AdminReservations from "./pages/AdminReservations"
 
 import {
   getStoredUser,
@@ -513,7 +514,7 @@ function AppContent() {
           path="/admin/reservations"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion réservations" />
+              <AdminReservations />
             </AdminProtectedRoute>
           }
         />
@@ -521,7 +522,7 @@ function AppContent() {
           path="/:lang/admin/reservations"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion réservations" />
+              <AdminReservations />
             </AdminProtectedRoute>
           }
         />

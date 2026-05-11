@@ -157,6 +157,16 @@ urlpatterns = [
         name='admin-pending-producers',
     ),
     path(
+        'admin/reservations/',
+        reservations.AdminReservationsView.as_view(),
+        name='admin-reservations',
+    ),
+    path(
+        'admin/reservations/<int:id>/',
+        reservations.AdminReservationsDetailView.as_view(),
+        name='admin-reservations-detail',
+    ),
+    path(
         'admin/producers/<int:id>/',
         admin_api.AdminPendingProducerDetailView.as_view(),
         name='admin-pending-producer-detail',

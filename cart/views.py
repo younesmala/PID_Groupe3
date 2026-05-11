@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from decimal import Decimal
 
 from .cart import Cart
 from catalogue.models import Price, Representation, Reservation
@@ -90,9 +91,16 @@ def payment_simulation(request, reservation_id):
         action = request.POST.get('action')
 
         if action == 'success':
-            reservations.update(status='confirmed', payment_status='paid')
             # Décrémenter les places disponibles
             for reservation in reservations:
+                total_paid = sum(
+                    (item.subtotal for item in reservation.representation_reservations.select_related('price').all()),
+                    Decimal('0.00'),
+                )
+                reservation.status = 'confirmed'
+                reservation.payment_status = 'paid'
+                reservation.total_paid = total_paid
+                reservation.save(update_fields=['status', 'payment_status', 'total_paid'])
                 rep = reservation.representation
                 rep.available_seats = max(
                     0, rep.available_seats - reservation.quantity)
