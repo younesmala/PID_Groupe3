@@ -39,6 +39,7 @@ import ProducerShowForm from "./pages/ProducerShowForm"
 import AdminDashboard from "./pages/AdminDashboard"
 import AdminProducers from "./pages/AdminProducers"
 import AdminUsers from "./pages/AdminUsers"
+import AdminShows from "./pages/AdminShows"
 
 import {
   getStoredUser,
@@ -563,7 +564,7 @@ function AppContent() {
           path="/admin/shows"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion des spectacles" />
+              <AdminShows />
             </AdminProtectedRoute>
           }
         />
@@ -571,7 +572,7 @@ function AppContent() {
           path="/:lang/admin/shows"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion des spectacles" />
+              <AdminShows />
             </AdminProtectedRoute>
           }
         />

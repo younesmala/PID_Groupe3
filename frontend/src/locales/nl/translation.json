@@ -60,6 +60,26 @@
     "yes": "Ja",
     "no": "Nee"
   },
+  "admin_shows_page": {
+    "title": "Alle voorstellingen",
+    "loading": "Voorstellingen laden...",
+    "error_label": "Fout",
+    "load_error": "Voorstellingen kunnen niet worden geladen.",
+    "accept_error": "Deze voorstelling kan niet worden goedgekeurd.",
+    "delete_error": "Deze voorstelling kan niet worden verwijderd.",
+    "processing": "Bezig met verwerken...",
+    "accept": "Goedkeuren",
+    "delete": "Verwijderen",
+    "empty": "Er zijn nog geen voorstellingen.",
+    "col_id": "ID",
+    "col_title": "Titel",
+    "col_artist": "Artiest",
+    "col_status": "Status",
+    "col_actions": "Acties",
+    "pending": "In afwachting",
+    "approved": "Goedgekeurd",
+    "rejected": "Geweigerd"
+  },
   "footer": {
     "tagline": "De referentie voor voorstellingen in Brussel.",
     "navigation": "Navigatie",

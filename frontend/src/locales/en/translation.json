@@ -60,6 +60,26 @@
     "yes": "Yes",
     "no": "No"
   },
+  "admin_shows_page": {
+    "title": "All shows",
+    "loading": "Loading shows...",
+    "error_label": "Error",
+    "load_error": "Unable to load shows.",
+    "accept_error": "Unable to approve this show.",
+    "delete_error": "Unable to delete this show.",
+    "processing": "Processing...",
+    "accept": "Approve",
+    "delete": "Delete",
+    "empty": "No shows available yet.",
+    "col_id": "ID",
+    "col_title": "Title",
+    "col_artist": "Artist",
+    "col_status": "Status",
+    "col_actions": "Actions",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
   "footer": {
     "tagline": "The reference for shows in Brussels.",
     "navigation": "Navigation",

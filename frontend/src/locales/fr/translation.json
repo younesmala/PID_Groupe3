@@ -60,6 +60,26 @@
     "yes": "Oui",
     "no": "Non"
   },
+  "admin_shows_page": {
+    "title": "Tous les spectacles",
+    "loading": "Chargement des spectacles...",
+    "error_label": "Erreur",
+    "load_error": "Impossible de charger les spectacles.",
+    "accept_error": "Impossible d'accepter ce spectacle.",
+    "delete_error": "Impossible de supprimer ce spectacle.",
+    "processing": "Traitement...",
+    "accept": "Accepter",
+    "delete": "Supprimer",
+    "empty": "Aucun spectacle pour le moment.",
+    "col_id": "ID",
+    "col_title": "Titre",
+    "col_artist": "Artiste",
+    "col_status": "Statut",
+    "col_actions": "Actions",
+    "pending": "En attente",
+    "approved": "Approuvé",
+    "rejected": "Refusé"
+  },
   "footer": {
     "tagline": "La référence pour les spectacles à Bruxelles.",
     "navigation": "Navigation",
