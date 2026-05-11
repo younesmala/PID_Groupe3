@@ -12,7 +12,7 @@ from api.serializers.admin_api import UserListAdminSerializer
 
 class AdminApiUsersView(APIView):
     permission_classes = [IsAdminUser]
-    
+
     def get(self, request, *args, **kwargs):
         """Get list of all users with admin info"""
         users = User.objects.select_related('profile').all().order_by('id')
