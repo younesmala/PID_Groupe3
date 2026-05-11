@@ -1,12 +1,44 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import './AdminUsers.css'
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+  return ''
+}
+
+async function apiFetch(path, options = {}) {
+  const method = (options.method || 'GET').toUpperCase()
+  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
+
+  const response = await fetch(`/api${path}`, {
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      ...(method !== 'GET' ? { 'X-CSRFToken': csrfToken } : {}),
+      ...(options.headers || {}),
+    },
+    ...options,
+  })
+
+  return response
+}
+
 export default function AdminUsers() {
+  const { t } = useTranslation()
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [selectedUser, setSelectedUser] = useState(null)
-  const [newRole, setNewRole] = useState('')
+  const [updatingUserId, setUpdatingUserId] = useState(null)
+
+  const getRoleLabel = (role) => {
+    if (role === 'USER') return t('admin_users_page.role_user')
+    if (role === 'PRODUCER') return t('admin_users_page.role_producer')
+    if (role === 'ADMIN') return t('admin_users_page.role_admin')
+    return role
+  }
 
   useEffect(() => {
     fetchUsers()
@@ -15,12 +47,11 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/admin/users/', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
-      })
-      if (!response.ok) throw new Error('Erreur lors du chargement des utilisateurs')
+      const response = await apiFetch('/admin/users/')
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data?.detail || t('admin_users_page.load_error'))
+      }
       const data = await response.json()
       setUsers(data)
       setError(null)
@@ -32,145 +63,85 @@ export default function AdminUsers() {
     }
   }
 
-  const handleAddRole = async (userId, role) => {
+  const handleToggleStatus = async (userId) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/roles/`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ role })
+      setUpdatingUserId(userId)
+      const response = await apiFetch(`/admin/users/${userId}/status/`, {
+        method: 'PATCH',
       })
-      if (!response.ok) throw new Error('Erreur lors de l\'ajout du rôle')
-      setNewRole('')
-      fetchUsers()
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data?.detail || t('admin_users_page.status_update_error'))
+      }
+      const updatedUser = await response.json()
+      setUsers((currentUsers) =>
+        currentUsers.map((user) => (user.id === updatedUser.id ? { ...user, ...updatedUser } : user))
+      )
     } catch (err) {
       setError(err.message)
+    } finally {
+      setUpdatingUserId(null)
     }
   }
 
-  const handleRemoveRole = async (userId, role) => {
-    try {
-      const response = await fetch(`/api/admin/users/${userId}/roles/`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ role })
-      })
-      if (!response.ok) throw new Error('Erreur lors de la suppression du rôle')
-      fetchUsers()
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  if (loading) return <div className="admin-users"><p>Chargement...</p></div>
-  if (error) return <div className="admin-users error-message"><p>Erreur: {error}</p></div>
+  if (loading) return <div className="admin-users"><p>{t('admin_users_page.loading')}</p></div>
+  if (error) return <div className="admin-users error-message"><p>{t('admin_users_page.error_label')}: {error}</p></div>
 
   return (
     <div className="admin-users">
-      <h1>Gestion des utilisateurs</h1>
+      <h1>{t('admin_users_page.title')}</h1>
       
       <div className="users-table-wrapper">
         <table className="users-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Nom d'utilisateur</th>
-              <th>Email</th>
-              <th>Nom</th>
-              <th>Rôles</th>
-              <th>Actif</th>
-              <th>Inscription</th>
-              <th>Actions</th>
+              <th>{t('admin_users_page.col_id')}</th>
+              <th>{t('admin_users_page.col_full_name')}</th>
+              <th>{t('admin_users_page.col_username')}</th>
+              <th>{t('admin_users_page.col_email')}</th>
+              <th>{t('admin_users_page.col_role')}</th>
+              <th>{t('admin_users_page.col_status')}</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className={selectedUser?.id === user.id ? 'selected' : ''}>
+              <tr key={user.id}>
                 <td>{user.id}</td>
+                <td>{user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : '-'}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
-                <td>{user.first_name} {user.last_name}</td>
                 <td>
-                  <div className="roles-list">
-                    {user.roles.length > 0 ? (
-                      user.roles.map((role) => (
-                        <span key={role} className="role-tag">
-                          {role}
-                          <button
-                            onClick={() => handleRemoveRole(user.id, role)}
-                            className="remove-role-btn"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))
-                    ) : (
-                      <span className="no-roles">Aucun rôle</span>
-                    )}
-                  </div>
+                  <span className={`role-badge role-${user.role.toLowerCase()}`}>
+                    {getRoleLabel(user.role)}
+                  </span>
                 </td>
-                <td>{user.is_active ? '✓' : '✗'}</td>
-                <td>{new Date(user.date_joined).toLocaleDateString()}</td>
                 <td>
-                  <button
-                    onClick={() => setSelectedUser(user)}
-                    className="btn-details"
-                  >
-                    Détails
-                  </button>
+                  <div className="status-cell">
+                    <span className={`status-badge ${user.is_active ? 'active' : 'inactive'}`}>
+                      {user.is_active ? `✓ ${t('admin_users_page.status_active')}` : `✗ ${t('admin_users_page.status_inactive')}`}
+                    </span>
+                    {user.role !== 'ADMIN' && (
+                      <button
+                        type="button"
+                        className="status-toggle-btn"
+                        onClick={() => handleToggleStatus(user.id)}
+                        disabled={updatingUserId === user.id}
+                      >
+                        {updatingUserId === user.id
+                          ? t('admin_users_page.updating')
+                          : user.is_active
+                            ? t('admin_users_page.deactivate')
+                            : t('admin_users_page.activate')}
+                      </button>
+                    )}
+                    {user.role === 'ADMIN' && <span className="status-toggle-placeholder" aria-hidden="true" />}
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      {selectedUser && (
-        <div className="user-detail-panel">
-          <h2>Détails utilisateur: {selectedUser.username}</h2>
-          <div className="user-info">
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Nom:</strong> {selectedUser.first_name} {selectedUser.last_name}</p>
-            <p><strong>Staff:</strong> {selectedUser.is_staff ? 'Oui' : 'Non'}</p>
-            <p><strong>Actif:</strong> {selectedUser.is_active ? 'Oui' : 'Non'}</p>
-          </div>
-
-          <div className="add-role-section">
-            <h3>Ajouter un rôle</h3>
-            <div className="role-input-group">
-              <select
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-              >
-                <option value="">Sélectionner un rôle</option>
-                <option value="ADMIN">ADMIN</option>
-                <option value="MEMBER">MEMBER</option>
-                <option value="PRODUCER">PRODUCER</option>
-              </select>
-              <button
-                onClick={() => {
-                  if (newRole) handleAddRole(selectedUser.id, newRole)
-                }}
-                className="btn btn-primary"
-              >
-                Ajouter
-              </button>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setSelectedUser(null)}
-            className="btn btn-secondary"
-          >
-            Fermer
-          </button>
-        </div>
-      )}
     </div>
   )
 }

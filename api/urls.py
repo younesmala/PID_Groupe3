@@ -144,6 +144,7 @@ urlpatterns = [
 
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
+     path('admin/users/<int:id>/status/', admin_api.AdminApiUserStatusView.as_view(), name='admin-users-status'),
     path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
     path(
         'admin/comments/<int:id>/moderate/',

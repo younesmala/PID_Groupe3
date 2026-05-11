@@ -7,11 +7,17 @@ from rest_framework import status
 from catalogue.models import Comment
 from api.models import UserProfile
 from api.serializers.comments import CommentAdminSerializer, CommentModerationSerializer
+from api.serializers.admin_api import UserListAdminSerializer
 
 
 class AdminApiUsersView(APIView):
+    permission_classes = [IsAdminUser]
+    
     def get(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+        """Get list of all users with admin info"""
+        users = User.objects.select_related('profile').all().order_by('id')
+        serializer = UserListAdminSerializer(users, many=True)
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
@@ -21,6 +27,35 @@ class AdminApiUsersView(APIView):
 
     def delete(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)
+
+
+class AdminApiUserStatusView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, id):
+        user = get_object_or_404(User.objects.select_related('profile'), pk=id)
+        if user.is_staff or user.is_superuser:
+            return Response(
+                {'detail': 'Admin users cannot be deactivated.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.is_active = not user.is_active
+        user.save(update_fields=['is_active'])
+
+        profile = getattr(user, 'profile', None)
+        return Response(
+            {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_active': user.is_active,
+                'role': profile.role if profile else 'USER',
+                'is_deleted': profile.is_deleted if profile else False,
+            }
+        )
 
 
 class AdminCatalogImportView(APIView):

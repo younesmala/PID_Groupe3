@@ -1,8 +1,10 @@
 from django.urls import reverse
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from catalogue.models import Artist, Show, Representation
+from api.models import UserProfile
 
 
 class ArtistsApiTests(APITestCase):
@@ -111,6 +113,50 @@ class ArtistsApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Not found")
+
+
+class AdminUsersApiTests(APITestCase):
+    def setUp(self):
+        self.admin = User.objects.create_user(
+            username="admin",
+            email="admin@example.com",
+            password="adminpass",
+            is_staff=True,
+        )
+        self.user = User.objects.create_user(
+            username="visitor",
+            email="visitor@example.com",
+            password="visitorpass",
+        )
+        UserProfile.objects.get_or_create(user=self.user)
+        self.client.force_authenticate(user=self.admin)
+
+    def test_get_admin_users_returns_200(self):
+        url = reverse("api:admin-users")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    def test_patch_admin_user_status_toggles_is_active(self):
+        self.assertTrue(self.user.is_active)
+
+        url = reverse("api:admin-users-status", args=[self.user.id])
+        response = self.client.patch(url, {}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_active)
+        self.assertFalse(response.data["is_active"])
+
+    def test_patch_admin_user_status_rejects_admin_target(self):
+        url = reverse("api:admin-users-status", args=[self.admin.id])
+        response = self.client.patch(url, {}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.admin.refresh_from_db()
+        self.assertTrue(self.admin.is_active)
+        self.assertEqual(response.data["detail"], "Admin users cannot be deactivated.")
 
 
 class ShowsApiTests(APITestCase):
