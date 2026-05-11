@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { ChevronDown, LogOut, User, ShoppingCart } from 'lucide-react'
 import { clearPublicShowsCache } from '../../services/publicShowService'
 import NavbarLanguageSelector from './NavbarLanguageSelector'
@@ -121,23 +120,16 @@ function NavDropdown({ label, links, menuRef, open, onToggle }) {
 
 function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setSelectedLang, normalizedLang, location, navigate, cartCount, t, i18n }) {
   const [producerOpen, setProducerOpen] = useState(false)
-  const [adminOpen, setAdminOpen] = useState(false)
-  const [roleHovered, setRoleHovered] = useState(false)
+  const [adminHovered, setAdminHovered] = useState(false)
   const [cartHovered, setCartHovered] = useState(false)
   const [profileHovered, setProfileHovered] = useState(false)
   const [logoutHovered, setLogoutHovered] = useState(false)
   
   const producerRef = useRef(null)
-  const adminRef = useRef(null)
 
   const normalizedRole = String(user?.role || '').toUpperCase()
   const isProducer = normalizedRole === 'PRODUCER' || normalizedRole === 'PRODUCTEUR'
   const isAdmin = !!user?.is_staff
-  const userRoleLabel = isAdmin
-    ? t('navbar.role_admin')
-    : isProducer
-      ? t('navbar.role_producer')
-      : t('navbar.role_client')
 
   const producerLinks = [
     { to: localizedPath('/producer/dashboard'), label: t('navbar.producer_dashboard') },
@@ -146,16 +138,9 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
     { to: localizedPath('/producer/stats'), label: t('navbar.producer_stats') },
   ]
 
-  const adminLinks = [
-    { to: localizedPath('/admin/users'), label: t('navbar.admin_users') },
-    { to: localizedPath('/admin/reservations'), label: t('navbar.admin_reservations') },
-    { to: localizedPath('/admin/locations'), label: t('navbar.admin_locations') },
-  ]
-
   useEffect(() => {
     function handleClickOutside(e) {
       if (producerRef.current && !producerRef.current.contains(e.target)) setProducerOpen(false)
-      if (adminRef.current && !adminRef.current.contains(e.target)) setAdminOpen(false)
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -177,41 +162,6 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
   return (
     <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', paddingRight: '16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {/* Role indicator hidden for producer session */}
-        {!isProducer && (
-          <Link
-            to={localizedPath('/profile')}
-            onMouseEnter={() => setRoleHovered(true)}
-            onMouseLeave={() => setRoleHovered(false)}
-            style={{
-              boxSizing: 'border-box',
-              flex: `0 0 ${UNIFORM_BUTTON_WIDTH}`,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: UNIFORM_BUTTON_WIDTH,
-              minWidth: UNIFORM_BUTTON_WIDTH,
-              minHeight: '44px',
-              padding: '12px 20px',
-              borderRadius: '18px',
-              border: '1px solid rgba(217, 119, 6, 0.26)',
-              color: '#f8fafc',
-              textDecoration: 'none',
-              fontSize: '0.95rem',
-              fontWeight: 800,
-              letterSpacing: '0.04em',
-              background: roleHovered ? 'rgba(217, 145, 29, 0.32)' : 'rgba(217, 145, 29, 0.18)',
-              transform: roleHovered ? 'translateY(-2px)' : 'translateY(0)',
-              boxShadow: roleHovered ? '0 10px 20px rgba(217, 145, 29, 0.22)' : 'none',
-              transition: 'transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
-              whiteSpace: 'nowrap',
-            }}
-            title={t('navbar.role_indicator_title')}
-          >
-            {userRoleLabel.toUpperCase()}
-          </Link>
-        )}
-
         {/* Producer Space */}
         {isProducer && (
           <NavDropdown
@@ -225,13 +175,22 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
 
         {/* Admin Space */}
         {isAdmin && (
-          <NavDropdown
-            label={t('navbar.admin')}
-            links={adminLinks}
-            menuRef={adminRef}
-            open={adminOpen}
-            onToggle={() => setAdminOpen((o) => !o)}
-          />
+          <Link
+            to={localizedPath('/admin/dashboard')}
+            onMouseEnter={() => setAdminHovered(true)}
+            onMouseLeave={() => setAdminHovered(false)}
+            style={{
+              ...actionStyle,
+              transform: adminHovered ? 'translateY(-2px)' : 'translateY(0)',
+              background: adminHovered ? '#f1b53f' : actionStyle.background,
+              boxShadow: adminHovered
+                ? '0 12px 24px rgba(217, 145, 29, 0.32)'
+                : actionStyle.boxShadow,
+              transition: 'transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease',
+            }}
+          >
+            <span>{t('navbar.admin')}</span>
+          </Link>
         )}
 
         {/* Language Selector */}

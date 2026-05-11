@@ -1,3 +1,36 @@
+.admin-link {
+  cursor: pointer;
+  text-align: left;
+  border: 1px solid #d9911d;
+  background: #1e1e1e;
+  width: 100%;
+  opacity: 0.92;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.admin-link:hover {
+  background: #252525;
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.admin-link .pd-card-label {
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #d9911d;
+}
+
+.admin-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 .admin-dashboard {
   max-width: 1400px;
   margin: 0 auto;

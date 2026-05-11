@@ -36,6 +36,7 @@ import ProducerSessions from "./pages/ProducerSessions"
 import ProducerAllSessions from "./pages/ProducerAllSessions"
 import ProducerStats from "./pages/ProducerStats"
 import ProducerShowForm from "./pages/ProducerShowForm"
+import AdminDashboard from "./pages/AdminDashboard"
 
 import {
   getStoredUser,
@@ -128,6 +129,21 @@ function ProtectedRoute({ user, children }) {
   return children
 }
 
+function AdminProtectedRoute({ user, children }) {
+  if (!user?.username) {
+    return <Navigate to="/" replace />
+  }
+
+  const normalizedRole = String(user?.role || "").toUpperCase()
+  const isAdmin = !!user?.is_staff || normalizedRole === "ADMIN"
+
+  if (!isAdmin) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
+}
+
 function LocalizedNotFoundRedirect() {
   const { lang } = useParams()
   const normalizedLanguage = (lang || "").toLowerCase()
@@ -138,7 +154,8 @@ function LocalizedNotFoundRedirect() {
   return <Navigate to={`/${fallbackLanguage}`} replace />
 }
 
-function App() {
+function AppContent() {
+  const navigate = useNavigate()
   const [user, setUser] = useState(getStoredUser)
   const [cartCount, setCartCount] = useState(0)
 
@@ -162,19 +179,43 @@ function App() {
 
       storeUser(profile)
 
-      setUser({
+      const newUser = {
         username: profile.username || loginData.username,
         role: profile.role || loginData.role || null,
         is_staff: !!profile.is_staff || !!loginData.is_staff,
         email: profile.email || loginData.email || null,
-      })
+      }
+
+      setUser(newUser)
+
+      // Redirection intelligente selon le rôle
+      const language = getPreferredLanguage()
+      const normalizedRole = String(newUser.role || '').toUpperCase()
+      const isAdmin = !!newUser.is_staff || normalizedRole === 'ADMIN'
+      if (isAdmin) {
+        navigate(`/${language}/admin/dashboard`)
+      } else if (normalizedRole === 'PRODUCER' || normalizedRole === 'PRODUCTEUR') {
+        navigate(`/${language}/producer/dashboard`)
+      }
     } catch {
-      setUser({
+      const newUser = {
         username: loginData.username || null,
         role: loginData.role || null,
         is_staff: !!loginData.is_staff,
         email: loginData.email || null,
-      })
+      }
+
+      setUser(newUser)
+
+      // Redirection même si le fetch du profil échoue
+      const language = getPreferredLanguage()
+      const normalizedRole = String(newUser.role || '').toUpperCase()
+      const isAdmin = !!newUser.is_staff || normalizedRole === 'ADMIN'
+      if (isAdmin) {
+        navigate(`/${language}/admin/dashboard`)
+      } else if (normalizedRole === 'PRODUCER' || normalizedRole === 'PRODUCTEUR') {
+        navigate(`/${language}/producer/dashboard`)
+      }
     }
   }
 
@@ -227,9 +268,7 @@ function App() {
   }, [username])
 
   return (
-    <BrowserRouter>
-      <LanguageUrlManager />
-
+    <>
       <Navbar
         user={user}
         onLogin={handleLogin}
@@ -434,53 +473,138 @@ function App() {
 
         {/* ── Administration ── */}
         <Route
+          path="/admin/dashboard"
+          element={
+            <AdminProtectedRoute user={user}>
+              <AdminDashboard user={user} />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/admin/dashboard"
+          element={
+            <AdminProtectedRoute user={user}>
+              <AdminDashboard user={user} />
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin/users"
           element={
-            <ProtectedRoute user={user}>
+            <AdminProtectedRoute user={user}>
               <PlaceholderPage title="Gestion utilisateurs" />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
         <Route
           path="/:lang/admin/users"
           element={
-            <ProtectedRoute user={user}>
+            <AdminProtectedRoute user={user}>
               <PlaceholderPage title="Gestion utilisateurs" />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
 
         <Route
           path="/admin/reservations"
           element={
-            <ProtectedRoute user={user}>
+            <AdminProtectedRoute user={user}>
               <PlaceholderPage title="Gestion réservations" />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
         <Route
           path="/:lang/admin/reservations"
           element={
-            <ProtectedRoute user={user}>
+            <AdminProtectedRoute user={user}>
               <PlaceholderPage title="Gestion réservations" />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
 
         <Route
           path="/admin/locations"
           element={
-            <ProtectedRoute user={user}>
+            <AdminProtectedRoute user={user}>
               <PlaceholderPage title="Nos lieux" />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
         <Route
           path="/:lang/admin/locations"
           element={
-            <ProtectedRoute user={user}>
+            <AdminProtectedRoute user={user}>
               <PlaceholderPage title="Nos lieux" />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/producers"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des producteurs" />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/admin/producers"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des producteurs" />
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/shows"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des spectacles" />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/admin/shows"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des spectacles" />
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/reviews"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des avis" />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/admin/reviews"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des avis" />
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/artists"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des artistes" />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/admin/artists"
+          element={
+            <AdminProtectedRoute user={user}>
+              <PlaceholderPage title="Gestion des artistes" />
+            </AdminProtectedRoute>
           }
         />
 
@@ -490,6 +614,15 @@ function App() {
 
       <Footer />
       <CookieBanner />
+    </>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <LanguageUrlManager />
+      <AppContent />
     </BrowserRouter>
   )
 }

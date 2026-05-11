@@ -55,6 +55,10 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
   function handleLoginSuccess(data) {
     onLogin(data)
     setShowModal(false)
+
+    if (data?.is_staff) {
+      navigate(localizedPath('/admin/dashboard'))
+    }
   }
 
   // Visitor (non-logged-in) navbar
