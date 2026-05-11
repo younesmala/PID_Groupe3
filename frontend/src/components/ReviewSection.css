@@ -17,7 +17,7 @@
 .rating-input .star { font-size: 1.5rem; cursor: pointer; color: #ccc; transition: 0.2s; }
 .rating-input .star.active, .rating-input .star:hover { color: #ffc107; }
 
-textarea { width: 100%; min-height: 100px; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px; resize: vertical; }
+textarea { width: 100%; min-height: 100px; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px; resize: vertical; color: #333; background: #fff; }
 .form-actions { display: flex; gap: 1rem; justify-content: flex-end; }
 .btn-submit { background: #28a745; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 4px; cursor: pointer; }
 .btn-cancel { background: transparent; border: none; color: #666; cursor: pointer; }
