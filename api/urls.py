@@ -150,16 +150,16 @@ urlpatterns = [
         admin_api.AdminCommentModerateView.as_view(),
         name='admin-comments-moderate',
     ),
-     path(
-          'admin/producers/',
-          admin_api.AdminPendingProducersView.as_view(),
-          name='admin-pending-producers',
-     ),
-     path(
-          'admin/producers/<int:id>/',
-          admin_api.AdminPendingProducerDetailView.as_view(),
-          name='admin-pending-producer-detail',
-     ),
+    path(
+        'admin/producers/',
+        admin_api.AdminPendingProducersView.as_view(),
+        name='admin-pending-producers',
+    ),
+    path(
+        'admin/producers/<int:id>/',
+        admin_api.AdminPendingProducerDetailView.as_view(),
+        name='admin-pending-producer-detail',
+    ),
     path('admin/catalog/import/', admin_api.AdminCatalogImportView.as_view(),
          name='admin-catalog-import'),
     path('admin/catalog/export/', admin_api.AdminCatalogExportView.as_view(),
