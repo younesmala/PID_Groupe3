@@ -11,12 +11,20 @@
     "admin": "Administration",
     "profile": "Mon profil",
     "producer_dashboard": "Dashboard",
+    "role_indicator_title": "Votre type de compte",
+    "role_admin": "Administrateur",
+    "role_producer": "Producteur",
+    "role_client": "Client",
     "producer_shows": "Mes spectacles",
     "producer_sessions": "Mes séances",
     "producer_stats": "Mes statistiques",
     "admin_users": "Gestion utilisateurs",
     "admin_reservations": "Gestion réservations",
-    "admin_locations": "Nos lieux"
+    "admin_locations": "Nos lieux",
+    "toggle_menu": "Basculer le menu",
+    "language": "Langue",
+    "authentication": "Authentification",
+    "select_language": "Sélectionner la langue"
   },
   "footer": {
     "tagline": "La référence pour les spectacles à Bruxelles.",

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import GuestNavbar from './navbar/GuestNavbar'
-import AuthenticatedNavbar from './navbar/AuthenticatedNavbar'
-import LoginModal from './LoginModal'
-import NavbarGuestLogo from './navbar/NavbarGuestLogo'
-import { clearPublicShowsCache } from '../services/publicShowService'
+import NavbarGuestLogo from './NavbarGuestLogo'
+import NavbarLanguageSelector from './NavbarLanguageSelector'
+import NavbarAuthButtons from './NavbarAuthButtons'
+import LoginModal from '../LoginModal'
+import { clearPublicShowsCache } from '../../services/publicShowService'
 
 const SUPPORTED_LANGUAGES = ['fr', 'nl', 'en']
 
@@ -21,8 +21,8 @@ function replacePathLanguage(pathname, language) {
   return pathname === '/' ? `/${language}` : `/${language}${pathname}`
 }
 
-function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
-  const { t, i18n } = useTranslation()
+function GuestNavbar({ onLogin }) {
+  const { i18n } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false)
@@ -30,7 +30,6 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
     () => localStorage.getItem('language') || 'FR'
   )
 
-  const isLoggedIn = !!user?.username
   const urlFirstSegment = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase()
   const languageFromUrl = SUPPORTED_LANGUAGES.includes(urlFirstSegment) ? urlFirstSegment : null
   const normalizedLang = (languageFromUrl || selectedLang || 'FR').toLowerCase()
@@ -44,6 +43,8 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
     return `/${normalizedLang}${normalizedPath}`
   }
 
+  const signupPath = localizedPath('/signup')
+
   useEffect(() => {
     const currentLanguage = (languageFromUrl || (i18n.language || 'fr').slice(0, 2)).toUpperCase()
 
@@ -52,17 +53,23 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
     }
   }, [i18n.language, languageFromUrl, selectedLang])
 
+  function handleLanguageChange(code) {
+    setSelectedLang(code)
+    localStorage.setItem('language', code)
+    const nextLanguage = code.toLowerCase()
+    i18n.changeLanguage(nextLanguage)
+
+    const nextPath = replacePathLanguage(location.pathname, nextLanguage)
+    navigate(`${nextPath}${location.search}${location.hash}`, { replace: true })
+
+    clearPublicShowsCache()
+  }
+
   function handleLoginSuccess(data) {
     onLogin(data)
     setShowModal(false)
   }
 
-  // Visitor (non-logged-in) navbar
-  if (!isLoggedIn) {
-    return <GuestNavbar onLogin={handleLoginSuccess} />
-  }
-
-  // Authenticated user navbar
   return (
     <>
       <nav style={{ backgroundColor: '#00001F' }} className="sticky top-0 z-50 border-b border-white/10">
@@ -76,24 +83,25 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
               <NavbarGuestLogo to={localizedPath('/')} />
             </div>
 
-            {/* Authenticated nav content */}
-            <AuthenticatedNavbar
-              user={user}
-              onLogout={onLogout}
-              localizedPath={localizedPath}
-              selectedLang={selectedLang}
-              setSelectedLang={setSelectedLang}
-              normalizedLang={normalizedLang}
-              location={location}
-              navigate={navigate}
-              cartCount={cartCount}
-              t={t}
-              i18n={i18n}
-            />
+            {/* Right: Langue + Connexion + Inscription */}
+            <div
+              className="flex items-center gap-6"
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: 'auto', paddingRight: '16px' }}
+            >
+              <NavbarLanguageSelector
+                selectedLang={selectedLang}
+                onLanguageChange={handleLanguageChange}
+              />
+              <NavbarAuthButtons
+                onLoginClick={() => setShowModal(true)}
+                signupPath={signupPath}
+              />
+            </div>
           </div>
         </div>
       </nav>
 
+      {/* Login Modal */}
       {showModal && (
         <LoginModal
           onClose={() => setShowModal(false)}
@@ -104,4 +112,4 @@ function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
   )
 }
 
-export default Navbar
+export default GuestNavbar

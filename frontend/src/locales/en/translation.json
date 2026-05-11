@@ -10,13 +10,21 @@
     "producer_space": "Producer Space",
     "admin": "Administration",
     "profile": "My profile",
+    "role_indicator_title": "Your account type",
+    "role_admin": "Administrator",
+    "role_producer": "Producer",
+    "role_client": "Client",
     "producer_dashboard": "Dashboard",
     "producer_shows": "My shows",
     "producer_sessions": "My sessions",
     "producer_stats": "My statistics",
     "admin_users": "User management",
     "admin_reservations": "Reservation management",
-    "admin_locations": "Our venues"
+    "admin_locations": "Our venues",
+    "toggle_menu": "Toggle menu",
+    "language": "Language",
+    "authentication": "Authentication",
+    "select_language": "Select language"
   },
   "footer": {
     "tagline": "The reference for shows in Brussels.",

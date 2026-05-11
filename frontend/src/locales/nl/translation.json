@@ -10,13 +10,21 @@
     "producer_space": "Producentenruimte",
     "admin": "Beheer",
     "profile": "Mijn profiel",
+    "role_indicator_title": "Uw accounttype",
+    "role_admin": "Beheerder",
+    "role_producer": "Producent",
+    "role_client": "Klant",
     "producer_dashboard": "Dashboard",
     "producer_shows": "Mijn voorstellingen",
     "producer_sessions": "Mijn sessies",
     "producer_stats": "Mijn statistieken",
     "admin_users": "Gebruikersbeheer",
     "admin_reservations": "Reserveringsbeheer",
-    "admin_locations": "Onze locaties"
+    "admin_locations": "Onze locaties",
+    "toggle_menu": "Menu wisselen",
+    "language": "Taal",
+    "authentication": "Authenticatie",
+    "select_language": "Taal selecteren"
   },
   "footer": {
     "tagline": "De referentie voor voorstellingen in Brussel.",
