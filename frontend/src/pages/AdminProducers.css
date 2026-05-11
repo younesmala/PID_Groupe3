@@ -1,0 +1,105 @@
+.admin-producers-page {
+  padding: 24px;
+}
+
+.admin-producers-card {
+  background: #111113;
+  border: 1px solid #2a2a2e;
+  border-radius: 14px;
+  padding: 20px;
+  color: #f2f2f2;
+}
+
+.admin-producers-header h1 {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+}
+
+.admin-producers-state {
+  margin: 10px 0;
+  color: #d1d1d6;
+}
+
+.admin-producers-state--error {
+  color: #ff6b6b;
+}
+
+.admin-producers-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-producers-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.admin-producers-table th,
+.admin-producers-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #2a2a2e;
+}
+
+.admin-producers-table th {
+  color: #ffd9a8;
+  font-weight: 700;
+}
+
+.admin-producers-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.admin-producers-status {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.admin-producers-status--pending {
+  background: #3d2a09;
+  color: #ffd483;
+  border: 1px solid #6b4f1d;
+}
+
+.admin-producers-status--approved {
+  background: #123021;
+  color: #9de3bd;
+  border: 1px solid #295c43;
+}
+
+.admin-producers-status--deleted {
+  background: #2a1f2e;
+  color: #dcb6e8;
+  border: 1px solid #61406f;
+}
+
+.admin-producers-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-producers-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.admin-producers-btn--approve {
+  background: #2f9e44;
+  color: #ffffff;
+}
+
+.admin-producers-btn--delete {
+  background: #d94841;
+  color: #ffffff;
+}

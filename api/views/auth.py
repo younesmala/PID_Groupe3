@@ -76,6 +76,10 @@ class AuthSignupView(APIView):
             last_name=last_name,
         )
 
+        if role == 'PRODUCER':
+            user.is_active = False
+            user.save(update_fields=['is_active'])
+
         # Mise à jour du rôle sur le profil (créé automatiquement par signal ou manuellement)
         if hasattr(user, 'profile'):
             user.profile.role = role

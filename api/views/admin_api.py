@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from catalogue.models import Comment
+from api.models import UserProfile
 from api.serializers.comments import CommentAdminSerializer, CommentModerationSerializer
 
 
@@ -94,3 +96,92 @@ class AdminCommentModerateView(APIView):
         comment.status = serializer.validated_data['status']
         comment.save(update_fields=['status'])
         return Response({'id': comment.pk, 'status': comment.status})
+
+
+class AdminPendingProducersView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        profiles = (
+            UserProfile.objects
+            .select_related('user')
+            .filter(role='PRODUCER')
+            .order_by('user__id')
+        )
+
+        data = [
+            {
+                'id': profile.user.id,
+                'name': (
+                    f"{profile.user.first_name} {profile.user.last_name}".strip()
+                    or profile.user.username
+                ),
+                'email': profile.user.email,
+                'status': (
+                    'deleted'
+                    if profile.is_deleted
+                    else ('approved' if profile.user.is_active else 'pending')
+                ),
+            }
+            for profile in profiles
+        ]
+        return Response(data)
+
+
+class AdminPendingProducerDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def _get_producer(self, id):
+        return get_object_or_404(
+            User.objects.select_related('profile'),
+            id=id,
+            profile__role='PRODUCER',
+        )
+
+    def patch(self, request, id):
+        user = self._get_producer(id)
+        if user.profile.is_deleted:
+            return Response(
+                {'detail': 'This producer has been deleted.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.is_active = True
+        user.save(update_fields=['is_active'])
+        return Response(
+            {
+                'id': user.id,
+                'name': (
+                    f"{user.first_name} {user.last_name}".strip()
+                    or user.username
+                ),
+                'email': user.email,
+                'status': 'approved',
+            }
+        )
+
+    def delete(self, request, id):
+        user = self._get_producer(id)
+        if user.profile.is_deleted:
+            return Response(
+                {'detail': 'This producer has already been deleted.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.is_active = False
+        user.set_unusable_password()
+        user.save(update_fields=['is_active', 'password'])
+        user.profile.is_deleted = True
+        user.profile.save(update_fields=['is_deleted'])
+
+        return Response(
+            {
+                'id': user.id,
+                'name': (
+                    f"{user.first_name} {user.last_name}".strip()
+                    or user.username
+                ),
+                'email': user.email,
+                'status': 'deleted',
+            }
+        )

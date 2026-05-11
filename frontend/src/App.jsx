@@ -37,6 +37,7 @@ import ProducerAllSessions from "./pages/ProducerAllSessions"
 import ProducerStats from "./pages/ProducerStats"
 import ProducerShowForm from "./pages/ProducerShowForm"
 import AdminDashboard from "./pages/AdminDashboard"
+import AdminProducers from "./pages/AdminProducers"
 
 import {
   getStoredUser,
@@ -544,7 +545,7 @@ function AppContent() {
           path="/admin/producers"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion des producteurs" />
+              <AdminProducers />
             </AdminProtectedRoute>
           }
         />
@@ -552,7 +553,7 @@ function AppContent() {
           path="/:lang/admin/producers"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion des producteurs" />
+              <AdminProducers />
             </AdminProtectedRoute>
           }
         />

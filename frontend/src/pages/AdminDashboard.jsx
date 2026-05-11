@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './ProducerDashboard.css'
 import './AdminDashboard.css'
 import './AccountPages.css'
 
+const BASE = '/api'
 const ADMIN_SECTIONS = [
   { path: '/admin/producers', labelKey: 'navbar.admin_producers' },
   { path: '/admin/shows', labelKey: 'navbar.admin_shows' },
@@ -14,9 +16,30 @@ const ADMIN_SECTIONS = [
   { path: '/admin/artists', labelKey: 'navbar.admin_artists' },
 ]
 
+async function fetchPendingProducers() {
+  const res = await fetch(`${BASE}/admin/producers/`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error('Unable to load pending producers')
+  return res.json()
+}
+
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation()
   const normalizedLang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
+  const [pendingCount, setPendingCount] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchPendingProducers()
+      .then((producers) => {
+        const pending = producers.filter((p) => p.status === 'pending').length
+        setPendingCount(pending)
+      })
+      .catch(() => setPendingCount(0))
+      .finally(() => setLoading(false))
+  }, [])
 
   function localizedPath(path) {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`
@@ -32,7 +55,12 @@ export default function AdminDashboard() {
             to={localizedPath(section.path)}
             className="pd-card admin-link"
           >
-            <span className="pd-card-label">{t(section.labelKey)}</span>
+            <span className="admin-link-content">
+              <span className="pd-card-label">{t(section.labelKey)}</span>
+              {section.labelKey === 'navbar.admin_producers' && pendingCount > 0 && (
+                <span className="admin-link-count">{pendingCount}</span>
+              )}
+            </span>
           </Link>
         ))}
       </section>

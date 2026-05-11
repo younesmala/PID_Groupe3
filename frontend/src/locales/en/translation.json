@@ -309,5 +309,19 @@
     "confirm_session_msg": "Do you want to delete the session on {{date}} at {{time}}? This action is irreversible.",
     "tarif_one": "rate",
     "tarif_many": "rates"
+  },
+  "admin": {
+    "producers_col_id": "ID",
+    "producers_col_name": "Name",
+    "producers_col_email": "Email",
+    "producers_col_status": "Status",
+    "producers_approve": "Approve",
+    "producers_delete": "Delete",
+    "producers_already_approved": "Already approved",
+    "producers_status_deleted": "Deleted",
+    "producers_empty": "No producers.",
+    "producers_error_load": "Unable to load pending producers.",
+    "producers_error_approve": "Unable to approve this producer.",
+    "producers_error_delete": "Unable to delete this producer."
   }
 }
