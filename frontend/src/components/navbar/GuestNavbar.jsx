@@ -88,12 +88,7 @@ function GuestNavbar({ onLogin }) {
               className="flex items-center gap-6"
               style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: 'auto', paddingRight: '16px' }}
             >
-              <Link
-                to={localizedPath('/locations')}
-                style={{ color: 'white', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}
-              >
-                📍 {t('navbar.admin_locations')}
-              </Link>
+              {/* Locations - hidden */}
               <NavbarLanguageSelector
                 selectedLang={selectedLang}
                 onLanguageChange={handleLanguageChange}
