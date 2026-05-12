@@ -53,6 +53,24 @@ function GuestNavbar({ onLogin }) {
     }
   }, [i18n.language, languageFromUrl, selectedLang])
 
+  useEffect(() => {
+    function handleOpenLoginModal() {
+      setShowModal(true)
+    }
+
+    window.addEventListener('open-login-modal', handleOpenLoginModal)
+
+    return () => {
+      window.removeEventListener('open-login-modal', handleOpenLoginModal)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (location.pathname === localizedPath('/login')) {
+      setShowModal(true)
+    }
+  }, [location.pathname])
+
   function handleLanguageChange(code) {
     setSelectedLang(code)
     localStorage.setItem('language', code)
