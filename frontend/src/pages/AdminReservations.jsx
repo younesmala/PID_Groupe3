@@ -316,7 +316,7 @@ export default function AdminReservations() {
       </div>
       <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
         <button type="button" className="admin-luminous-action-btn" onClick={() => importInputRef.current?.click()}>
-          Importer
+          {t('import_button', { defaultValue: 'Importer' })}
         </button>
         {reservations.length > 0 && (
           <button type="button" className="admin-luminous-action-btn" onClick={handleExportCsv}>

@@ -8,6 +8,9 @@
   "deconnexion": "Deconnexion",
   "back_to_dashboard": "Retour au Dashboard",
   "refresh_button": "Rafraichir",
+  "import_button": "Importer",
+  "export_csv": "Export CSV",
+  "export_json": "Export JSON",
   "navbar": {
     "producer_space": "Espace Producteur",
     "admin": "Administrateur",
