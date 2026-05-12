@@ -68,6 +68,8 @@ export default function AdminDashboard() {
     return `/${normalizedLang}${normalizedPath}`
   }
 
+  const pendingShowsCount = stats?.pending_shows ?? 0
+
   return (
     <main className="account-shell">
       {stats && (
@@ -109,6 +111,9 @@ export default function AdminDashboard() {
               )}
               {section.labelKey === 'navbar.admin_reviews' && pendingReviewsCount > 0 && (
                 <span className="admin-link-count">{pendingReviewsCount}</span>
+              )}
+              {section.labelKey === 'navbar.admin_shows' && pendingShowsCount > 0 && (
+                <span className="admin-link-count">{pendingShowsCount}</span>
               )}
             </span>
           </Link>

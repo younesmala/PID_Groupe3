@@ -159,6 +159,38 @@ class AdminUsersApiTests(APITestCase):
         self.assertEqual(response.data["detail"], "Admin users cannot be deactivated.")
 
 
+class AdminStatsApiTests(APITestCase):
+    def setUp(self):
+        self.admin = User.objects.create_user(
+            username="admin-stats",
+            email="admin-stats@example.com",
+            password="adminpass",
+            is_staff=True,
+        )
+        self.client.force_authenticate(user=self.admin)
+
+    def test_get_admin_stats_includes_pending_shows_count(self):
+        Show.objects.create(
+            slug="pending-show",
+            title="Pending Show",
+            created_in=2026,
+            publication_status=Show.PublicationStatus.PENDING,
+        )
+        Show.objects.create(
+            slug="approved-show",
+            title="Approved Show",
+            created_in=2026,
+            publication_status=Show.PublicationStatus.APPROVED,
+        )
+
+        url = reverse("api:admin-stats")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["total_shows"], 2)
+        self.assertEqual(response.data["pending_shows"], 1)
+
+
 class ShowsApiTests(APITestCase):
     def setUp(self):
         self.show = Show.objects.create(

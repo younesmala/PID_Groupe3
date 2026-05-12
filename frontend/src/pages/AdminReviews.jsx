@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getPendingReviews, moderateReview } from '../services/reviewService'
+import { getAllReviews, moderateReview } from '../services/reviewService'
 import './AdminUsers.css'
 
 export default function AdminReviews() {
@@ -25,13 +25,15 @@ export default function AdminReviews() {
     loadReviews()
   }, [])
 
+  const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
+
   async function loadReviews() {
     setLoading(true)
     setError('')
 
     try {
-      const data = await getPendingReviews()
-      setReviews(Array.isArray(data) ? data : [])
+      const data = await getAllReviews()
+      setReviews(sortByNewestId(Array.isArray(data) ? data : []))
     } catch {
       setError(t('admin_reviews_page.load_error'))
     } finally {
@@ -39,9 +41,22 @@ export default function AdminReviews() {
     }
   }
 
-  const pendingReviews = useMemo(
-    () => reviews.filter((review) => review?.status === 'pending'),
-    [reviews],
+  const statusLabels = useMemo(
+    () => ({
+      pending: t('admin_reviews_page.status_pending', { defaultValue: 'En attente' }),
+      approved: t('admin_reviews_page.status_approved', { defaultValue: 'Approuvé' }),
+      rejected: t('admin_reviews_page.status_rejected', { defaultValue: 'Refusé' }),
+    }),
+    [t],
+  )
+
+  const statusClassNames = useMemo(
+    () => ({
+      pending: 'pending',
+      approved: 'active',
+      rejected: 'inactive',
+    }),
+    [],
   )
 
   async function handleApprove(reviewId) {
@@ -51,8 +66,10 @@ export default function AdminReviews() {
     try {
       await moderateReview(reviewId, 'approved')
       setReviews((prev) =>
-        prev.map((review) =>
-          review.id === reviewId ? { ...review, status: 'approved' } : review,
+        sortByNewestId(
+          prev.map((review) =>
+            review.id === reviewId ? { ...review, status: 'approved' } : review,
+          ),
         ),
       )
     } catch {
@@ -69,8 +86,10 @@ export default function AdminReviews() {
     try {
       await moderateReview(reviewId, 'rejected')
       setReviews((prev) =>
-        prev.map((review) =>
-          review.id === reviewId ? { ...review, status: 'rejected' } : review,
+        sortByNewestId(
+          prev.map((review) =>
+            review.id === reviewId ? { ...review, status: 'rejected' } : review,
+          ),
         ),
       )
     } catch {
@@ -100,11 +119,11 @@ export default function AdminReviews() {
         {loading && <p>{t('admin_reviews_page.loading')}</p>}
         {error && <p className="admin-producers-state admin-producers-state--error">{error}</p>}
 
-        {!loading && !error && pendingReviews.length === 0 && (
+        {!loading && !error && reviews.length === 0 && (
           <p>{t('admin_reviews_page.empty')}</p>
         )}
 
-        {!loading && pendingReviews.length > 0 && (
+        {!loading && reviews.length > 0 && (
           <div className="users-table-wrapper">
             <table className="users-table">
               <thead>
@@ -113,15 +132,19 @@ export default function AdminReviews() {
                   <th>{t('admin_reviews_page.col_show')}</th>
                   <th>{t('admin_reviews_page.col_user')}</th>
                   <th>{t('admin_reviews_page.col_rating')}</th>
+                  <th>{t('admin_reviews_page.col_status', { defaultValue: 'Statut' })}</th>
                   <th>{t('admin_reviews_page.col_review')}</th>
                   <th>{t('admin_reviews_page.col_actions')}</th>
                 </tr>
               </thead>
               <tbody>
-                {pendingReviews.map((review) => {
+                {reviews.map((review) => {
                   const isWorking = workingId === review.id
                   const showId = review.show
                   const hasShowSlug = Boolean(review.show_slug)
+                  const isPending = review.status === 'pending'
+                  const statusLabel = statusLabels[review.status] || review.status || '-'
+                  const statusClassName = statusClassNames[review.status] || 'inactive'
 
                   return (
                     <tr key={review.id}>
@@ -131,13 +154,18 @@ export default function AdminReviews() {
                       </td>
                       <td>{review.username || '-'}</td>
                       <td>{review.stars} / 5</td>
+                      <td>
+                        <span className={`status-badge ${statusClassName}`}>
+                          {statusLabel}
+                        </span>
+                      </td>
                       <td>{review.review}</td>
                       <td>
                         <div className="table-actions-row">
                           <button
                             type="button"
                             className="status-toggle-btn"
-                            disabled={isWorking}
+                            disabled={isWorking || !isPending}
                             onClick={() => handleApprove(review.id)}
                           >
                             {t('admin_reviews_page.approve')}
@@ -145,7 +173,7 @@ export default function AdminReviews() {
                           <button
                             type="button"
                             className="status-toggle-btn status-toggle-btn--danger"
-                            disabled={isWorking}
+                            disabled={isWorking || !isPending}
                             onClick={() => handleReject(review.id)}
                           >
                             {t('admin_reviews_page.reject')}

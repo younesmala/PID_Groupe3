@@ -54,6 +54,8 @@ export default function AdminUsers() {
     fetchUsers()
   }, [])
 
+  const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
+
   const fetchUsers = async () => {
     try {
       setLoading(true)
@@ -63,7 +65,7 @@ export default function AdminUsers() {
         throw new Error(data?.detail || t('admin_users_page.load_error'))
       }
       const data = await response.json()
-      setUsers(data)
+      setUsers(sortByNewestId(Array.isArray(data) ? data : []))
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -85,7 +87,9 @@ export default function AdminUsers() {
       }
       const updatedUser = await response.json()
       setUsers((currentUsers) =>
-        currentUsers.map((user) => (user.id === updatedUser.id ? { ...user, ...updatedUser } : user))
+        sortByNewestId(
+          currentUsers.map((user) => (user.id === updatedUser.id ? { ...user, ...updatedUser } : user))
+        )
       )
     } catch (err) {
       setError(err.message)

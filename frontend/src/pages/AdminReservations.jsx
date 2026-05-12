@@ -41,6 +41,14 @@ export default function AdminReservations() {
     fetchReservations()
   }, [])
 
+  const sortByMostRecent = (items) =>
+    [...items].sort((a, b) => {
+      const dateA = new Date(a?.booking_date || 0).getTime()
+      const dateB = new Date(b?.booking_date || 0).getTime()
+      if (dateA !== dateB) return dateB - dateA
+      return (b?.id || 0) - (a?.id || 0)
+    })
+
   const fetchReservations = async () => {
     try {
       setLoading(true)
@@ -51,7 +59,7 @@ export default function AdminReservations() {
       })
       if (!response.ok) throw new Error(t('admin_reservations_page.load_error'))
       const data = await response.json()
-      setReservations(data)
+      setReservations(sortByMostRecent(Array.isArray(data) ? data : []))
       setError(null)
     } catch (err) {
       setError(err.message)

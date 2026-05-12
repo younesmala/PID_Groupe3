@@ -46,15 +46,17 @@ async function acceptShow(showId) {
   }
 }
 
-async function deleteShow(showSlug) {
+async function rejectShow(showId) {
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-  const response = await fetch(`/api/shows/${showSlug}/`, {
-    method: 'DELETE',
+  const response = await fetch('/api/shows/bulk-actions/', {
+    method: 'POST',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
+      'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken,
     },
+    body: JSON.stringify({ action: 'reject', ids: [showId] }),
   })
 
   if (!response.ok) {
@@ -92,13 +94,15 @@ export default function AdminShows() {
     rejected: 'inactive',
   }
 
+  const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
+
   useEffect(() => {
     let ignore = false
 
     fetchShows()
       .then((data) => {
         if (!ignore) {
-          setShows(data)
+          setShows(sortByNewestId(Array.isArray(data) ? data : []))
         }
       })
       .catch((err) => {
@@ -139,7 +143,15 @@ export default function AdminShows() {
 
     try {
       await acceptShow(showId)
-      setShows((prev) => prev.filter((show) => show.id !== showId))
+      setShows((prev) =>
+        sortByNewestId(
+          prev.map((show) =>
+            show.id === showId
+              ? { ...show, publication_status: 'approved' }
+              : show,
+          ),
+        ),
+      )
     } catch (err) {
       setError(err.message || t('admin_shows_page.accept_error', { defaultValue: 'Impossible d\'accepter ce spectacle.' }))
     } finally {
@@ -152,8 +164,16 @@ export default function AdminShows() {
     setError('')
 
     try {
-      await deleteShow(show.slug)
-      setShows((prev) => prev.filter((item) => item.id !== show.id))
+      await rejectShow(show.id)
+      setShows((prev) =>
+        sortByNewestId(
+          prev.map((item) =>
+            item.id === show.id
+              ? { ...item, publication_status: 'rejected' }
+              : item,
+          ),
+        ),
+      )
     } catch (err) {
       setError(err.message || t('admin_shows_page.delete_error', { defaultValue: 'Impossible de supprimer ce spectacle.' }))
     } finally {
@@ -167,7 +187,7 @@ export default function AdminShows() {
 
     try {
       const data = await fetchShows()
-      setShows(data)
+      setShows(sortByNewestId(Array.isArray(data) ? data : []))
     } catch (err) {
       setError(err.message || t('admin_shows_page.load_error', { defaultValue: 'Impossible de charger les spectacles.' }))
     } finally {
@@ -202,7 +222,7 @@ export default function AdminShows() {
               <tr>
                 <th>{t('admin_shows_page.col_id', { defaultValue: 'ID' })}</th>
                 <th>{t('admin_shows_page.col_title', { defaultValue: 'Titre' })}</th>
-                <th>{t('admin_shows_page.col_artist', { defaultValue: 'Artiste' })}</th>
+                <th>{t('admin_shows_page.col_artist', { defaultValue: 'Producteurs' })}</th>
                 <th>{t('admin_shows_page.col_status', { defaultValue: 'Statut' })}</th>
                 <th>{t('admin_shows_page.col_actions', { defaultValue: 'Actions' })}</th>
               </tr>

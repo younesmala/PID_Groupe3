@@ -41,6 +41,19 @@ export async function getPendingReviews() {
   return normalizeReviewsPayload(data);
 }
 
+export async function getAllReviews() {
+  const response = await fetch('/api/reviews/', {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Erreur lors du chargement des avis');
+  }
+
+  const data = await response.json();
+  return normalizeReviewsPayload(data);
+}
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);

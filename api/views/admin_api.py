@@ -17,6 +17,7 @@ class AdminStatsView(APIView):
     def get(self, request, *args, **kwargs):
         total_users = User.objects.count()
         total_shows = Show.objects.count()
+        pending_shows = Show.objects.filter(publication_status=Show.PublicationStatus.PENDING).count()
         total_reservations = Reservation.objects.count()
         pending_reservations = Reservation.objects.filter(payment_status='pending').count()
         revenue = Reservation.objects.filter(payment_status='paid').aggregate(
@@ -28,6 +29,7 @@ class AdminStatsView(APIView):
         return Response({
             'total_users': total_users,
             'total_shows': total_shows,
+            'pending_shows': pending_shows,
             'total_reservations': total_reservations,
             'pending_reservations': pending_reservations,
             'revenue': float(revenue),

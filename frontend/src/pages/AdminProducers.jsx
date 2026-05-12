@@ -44,10 +44,24 @@ export default function AdminProducers() {
   }
 
   useEffect(() => {
-    loadPendingProducers()
+    loadProducers()
   }, [])
 
-  async function loadPendingProducers() {
+  const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
+
+  const statusLabels = {
+    pending: t('admin.producers_status_pending', { defaultValue: 'En attente' }),
+    approved: t('admin.producers_status_approved', { defaultValue: 'Validé' }),
+    deleted: t('admin.producers_status_deleted', { defaultValue: 'Supprimé' }),
+  }
+
+  const statusClassNames = {
+    pending: 'pending',
+    approved: 'active',
+    deleted: 'inactive',
+  }
+
+  async function loadProducers() {
     setLoading(true)
     setError('')
 
@@ -59,10 +73,7 @@ export default function AdminProducers() {
         throw new Error(data?.detail || t('admin.producers_error_load'))
       }
 
-      const pendingOnly = (Array.isArray(data) ? data : []).filter(
-        (producer) => producer?.status === 'pending',
-      )
-      setProducers(pendingOnly)
+      setProducers(sortByNewestId(Array.isArray(data) ? data : []))
     } catch (err) {
       setError(err.message || t('admin.producers_error_load'))
     } finally {
@@ -84,7 +95,13 @@ export default function AdminProducers() {
         throw new Error(data?.detail || t('admin.producers_error_approve'))
       }
 
-      setProducers((prev) => prev.filter((producer) => producer.id !== producerId))
+      setProducers((prev) =>
+        sortByNewestId(
+          prev.map((producer) =>
+            producer.id === producerId ? { ...producer, status: 'approved' } : producer,
+          ),
+        ),
+      )
     } catch (err) {
       setError(err.message || t('admin.producers_error_approve'))
     } finally {
@@ -107,7 +124,13 @@ export default function AdminProducers() {
         throw new Error(data?.detail || t('admin.producers_error_delete'))
       }
 
-      setProducers((prev) => prev.filter((producer) => producer.id !== producerId))
+      setProducers((prev) =>
+        sortByNewestId(
+          prev.map((producer) =>
+            producer.id === producerId ? { ...producer, status: 'deleted' } : producer,
+          ),
+        ),
+      )
     } catch (err) {
       setError(err.message || t('admin.producers_error_delete'))
     } finally {
@@ -123,7 +146,7 @@ export default function AdminProducers() {
             <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
               ← {t('back_to_dashboard')}
             </Link>
-            <button type="button" onClick={loadPendingProducers} style={topActionStyle}>
+            <button type="button" onClick={loadProducers} style={topActionStyle}>
               {t('refresh_button')}
             </button>
           </div>
@@ -152,6 +175,8 @@ export default function AdminProducers() {
                 {producers.map((producer) => {
                   const isWorking = workingId === producer.id
                   const isPending = producer.status === 'pending'
+                  const statusLabel = statusLabels[producer.status] || producer.status || '-'
+                  const statusClassName = statusClassNames[producer.status] || 'inactive'
 
                   return (
                     <tr key={producer.id}>
@@ -159,7 +184,10 @@ export default function AdminProducers() {
                       <td>{producer.name || '-'}</td>
                       <td>{producer.email || '-'}</td>
                       <td>
-                        <div className="table-actions-row">
+                        <div className="table-actions-row table-actions-row--nowrap">
+                          <span className={`status-badge ${statusClassName}`}>
+                            {statusLabel}
+                          </span>
                           <button
                             type="button"
                             className="status-toggle-btn"
