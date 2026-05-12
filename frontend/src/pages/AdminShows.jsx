@@ -80,6 +80,191 @@ export default function AdminShows() {
   const lang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
   const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
 
+  const escapeCsvValue = (value) => {
+    const text = String(value ?? '')
+    return `"${text.replace(/"/g, '""')}"`
+  }
+
+  const parseCsv = (text) => {
+    const rows = []
+    let row = []
+    let field = ''
+    let inQuotes = false
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i]
+      const next = text[i + 1]
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          field += '"'
+          i += 1
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(field)
+        field = ''
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && next === '\n') i += 1
+        row.push(field)
+        rows.push(row)
+        row = []
+        field = ''
+      } else {
+        field += char
+      }
+    }
+
+    if (field.length > 0 || row.length > 0) {
+      row.push(field)
+      rows.push(row)
+    }
+
+    return rows.filter((cells) => cells.some((cell) => String(cell).trim() !== ''))
+  }
+
+  const normalizeImportedStatus = (value) => {
+    const statusValue = String(value || '').trim().toLowerCase()
+
+    if (['published', 'publie', 'publié'].includes(statusValue)) {
+      return { publication_status: 'approved', bookable: true }
+    }
+
+    if (['validated', 'valide', 'validé', 'approved'].includes(statusValue)) {
+      return { publication_status: 'approved', bookable: false }
+    }
+
+    if (['rejected', 'refuse', 'refusé'].includes(statusValue)) {
+      return { publication_status: 'rejected', bookable: false }
+    }
+
+    return { publication_status: 'pending', bookable: false }
+  }
+
+  function handleExportCsv() {
+    const headers = [
+      t('admin_shows_page.col_id', { defaultValue: 'ID' }),
+      t('admin_shows_page.col_title', { defaultValue: 'Titre' }),
+      t('admin_shows_page.col_artist', { defaultValue: 'Producteur / artiste' }),
+      t('admin_shows_page.col_status', { defaultValue: 'Statut' }),
+    ]
+
+    const rows = shows.map((show) => {
+      const workflowStatus = getWorkflowStatus(show)
+      const label =
+        workflowStatus === 'pending'
+          ? t('producer.status_pending', { defaultValue: 'En attente' })
+          : workflowStatus === 'validated'
+            ? t('producer.status_validated', { defaultValue: 'Valide' })
+            : workflowStatus === 'published'
+              ? t('producer.status_published', { defaultValue: 'Publie' })
+              : t('producer.status_rejected', { defaultValue: 'Refuse' })
+
+      return [
+        show.id ?? '',
+        tField(show, 'title', lang) || show.title || '-',
+        show.artist_name || '-',
+        label,
+      ]
+    })
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map(escapeCsvValue).join(','))
+      .join('\n')
+
+    const blob = new Blob([`\uFEFF${csvContent}`], {
+      type: 'text/csv;charset=utf-8;',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `shows-${date}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleExportJson() {
+    const payload = shows.map((show) => ({
+      id: show.id ?? null,
+      title: tField(show, 'title', lang) || show.title || '',
+      artist_name: show.artist_name || '',
+      publication_status: show.publication_status || 'pending',
+      bookable: Boolean(show.bookable),
+    }))
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json;charset=utf-8;',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `shows-${date}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleImportFile(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      const text = await file.text()
+      const extension = (file.name.split('.').pop() || '').toLowerCase()
+      let imported = []
+
+      if (extension === 'json') {
+        const items = JSON.parse(text)
+        if (!Array.isArray(items)) {
+          throw new Error('Fichier invalide.')
+        }
+
+        imported = items.map((item, index) => {
+          const statusInfo = normalizeImportedStatus(item?.publication_status || item?.status)
+          const idValue = Number(item?.id)
+          return {
+            id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+            title: String(item?.title || '').trim(),
+            artist_name: String(item?.artist_name || '').trim(),
+            ...statusInfo,
+          }
+        })
+      } else if (extension === 'csv') {
+        const rows = parseCsv(text)
+        const dataRows = rows.slice(1)
+        imported = dataRows.map((cells, index) => {
+          const statusInfo = normalizeImportedStatus(cells[3])
+          const idValue = Number(cells[0])
+          return {
+            id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+            title: String(cells[1] || '').trim(),
+            artist_name: String(cells[2] || '').trim(),
+            ...statusInfo,
+          }
+        })
+      } else {
+        throw new Error('Formats acceptes: CSV, JSON.')
+      }
+
+      if (!imported.length) {
+        throw new Error('Aucune donnee a importer.')
+      }
+
+      setShows(sortByNewestId(imported))
+      setError('')
+    } catch (importError) {
+      setError(importError.message || 'Impossible d importer ce fichier.')
+    } finally {
+      event.target.value = ''
+    }
+  }
+
   useEffect(() => {
     let ignore = false
 
