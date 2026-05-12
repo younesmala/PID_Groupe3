@@ -1,25 +1,32 @@
-import json
-from django.http import JsonResponse
-from django.views import View
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from catalogue.models import NewsletterSubscriber
+import re
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from api.models import NewsletterSubscriber
+
+EMAIL_RE = re.compile(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class NewsletterSubscribeView(View):
-    def post(self, request):
-        try:
-            data = json.loads(request.body)
-            email = data.get('email', '').strip()
-        except (json.JSONDecodeError, AttributeError):
-            return JsonResponse({'error': 'Invalid data'}, status=400)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def newsletter_subscribe(request):
+    email = (request.data.get('email') or '').strip().lower()
 
-        if not email:
-            return JsonResponse({'error': 'Email required'}, status=400)
+    if not email or not EMAIL_RE.match(email):
+        return Response(
+            {'error': 'Adresse email invalide.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-        _, created = NewsletterSubscriber.objects.get_or_create(email=email)
-        if not created:
-            return JsonResponse({'message': 'Already subscribed'}, status=200)
+    if NewsletterSubscriber.objects.filter(email=email).exists():
+        return Response(
+            {'error': 'Email déjà inscrit.'},
+            status=status.HTTP_409_CONFLICT,
+        )
 
-        return JsonResponse({'message': 'Subscribed successfully'}, status=201)
+    NewsletterSubscriber.objects.create(email=email)
+    return Response(
+        {'message': 'Inscription réussie.'},
+        status=status.HTTP_201_CREATED,
+    )

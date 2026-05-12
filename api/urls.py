@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     auth, users, artists, types, artist_types, localities, locations,
     shows, representations, prices, cart, checkout, reservations,
-    tickets, reviews, review, producer, admin_api, affiliate, rss, public_api,
+    tickets, reviews, producer, admin_api, affiliate, rss, public_api,
     comments, show_prices,
 )
 from api.views.artists import ArtistsView, ArtistsDetailView
@@ -16,7 +16,7 @@ from api.views.affiliate_views import (
 from api.views.stats import show_stats, show_stat_detail
 from api.views.external_api import brussels_events, external_shows
 from api.views.rss import UpcomingRepresentationsFeed
-from api.views.newsletter import NewsletterSubscribeView
+from api.views.newsletter import newsletter_subscribe
 
 app_name = 'api'
 
@@ -118,16 +118,20 @@ urlpatterns = [
          tickets.TicketsView.as_view(), name='reservations-ticket'),
 
     # REVIEWS
-    path('reviews/', review.ReviewListCreateView.as_view(), name='reviews-list-create'),
-    path('reviews/<int:pk>/', review.ReviewAdminUpdateView.as_view(), name='reviews-admin-update'),
+    path('reviews/', reviews.ReviewsView.as_view(), name='reviews-list-create'),
+    path('reviews/', reviews.ReviewsView.as_view(), name='reviews-update'),
+    path('reviews/<int:id>/', reviews.ReviewsDetailView.as_view(),
+         name='reviews-detail'),
+    path('reviews/<int:id>/validate/',
+         reviews.ReviewsValidateView.as_view(), name='reviews-validate'),
+    path('reviews/<int:id>/reject/',
+         reviews.ReviewsRejectView.as_view(), name='reviews-reject'),
 
     # PRODUCER
     path('producer/shows/', producer.ProducerShowsView.as_view(),
          name='producer-shows'),
     path('producer/shows/<slug:slug>/', producer.ProducerShowDetailView.as_view(),
          name='producer-shows-detail'),
-    path('producer/shows/<slug:slug>/sessions/', producer.ProducerShowSessionsView.as_view(),
-         name='producer-shows-sessions'),
     path('producer/shows/<int:id>/stats/',
          producer.ProducerShowsStatsView.as_view(), name='producer-shows-stats'),
     path('producer/comments/', producer.ProducerCommentsView.as_view(),
@@ -147,34 +151,11 @@ urlpatterns = [
 
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
-    path('admin/shows/<int:id>/', admin_api.AdminShowDetailView.as_view(), name='admin-shows-detail'),
-    path('admin/stats/', admin_api.AdminStatsView.as_view(), name='admin-stats'),
-    path('admin/users/<int:id>/status/', admin_api.AdminApiUserStatusView.as_view(), name='admin-users-status'),
     path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
     path(
         'admin/comments/<int:id>/moderate/',
         admin_api.AdminCommentModerateView.as_view(),
         name='admin-comments-moderate',
-    ),
-    path(
-        'admin/producers/',
-        admin_api.AdminPendingProducersView.as_view(),
-        name='admin-pending-producers',
-    ),
-    path(
-        'admin/reservations/',
-        reservations.AdminReservationsView.as_view(),
-        name='admin-reservations',
-    ),
-    path(
-        'admin/reservations/<int:id>/',
-        reservations.AdminReservationsDetailView.as_view(),
-        name='admin-reservations-detail',
-    ),
-    path(
-        'admin/producers/<int:id>/',
-        admin_api.AdminPendingProducerDetailView.as_view(),
-        name='admin-pending-producer-detail',
     ),
     path('admin/catalog/import/', admin_api.AdminCatalogImportView.as_view(),
          name='admin-catalog-import'),
@@ -229,5 +210,5 @@ urlpatterns = [
     path('external/shows/', external_shows, name='external-shows'),
 
     # NEWSLETTER
-    path('newsletter/subscribe/', NewsletterSubscribeView.as_view(), name='newsletter-subscribe'),
+    path('newsletter/subscribe/', newsletter_subscribe, name='newsletter-subscribe'),
 ]
