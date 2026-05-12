@@ -13,7 +13,7 @@ const ADMIN_SECTIONS = [
   { path: '/admin/users', labelKey: 'navbar.admin_users' },
   { path: '/admin/reservations', labelKey: 'navbar.admin_reservations' },
   { path: '/admin/reviews', labelKey: 'navbar.admin_reviews' },
-  // { path: '/admin/locations', labelKey: 'navbar.admin_locations' },
+  { path: '/admin/locations', labelKey: 'navbar.admin_locations' },
   { path: '/admin/artists', labelKey: 'navbar.admin_artists' },
 ]
 
