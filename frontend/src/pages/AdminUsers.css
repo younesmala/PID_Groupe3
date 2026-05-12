@@ -357,3 +357,121 @@
 .btn-close-panel:hover {
   color: #333;
 }
+
+.location-form-card {
+  background: linear-gradient(180deg, #e9edf2 0%, #dfe5ec 100%);
+  border: 1px solid #c0c9d4;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+}
+
+.location-form-header h2 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+}
+
+.location-form-header p {
+  margin: 6px 0 0;
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.location-form-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.location-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.location-form-field span {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.location-form-field input,
+.location-form-field select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #b5c0cc;
+  border-radius: 8px;
+  background: #f7f9fb;
+  color: #1f2937;
+  font-size: 0.95rem;
+}
+
+.location-form-field input:focus,
+.location-form-field select:focus {
+  border-color: #d9911d;
+  outline: 2px solid rgba(217, 145, 29, 0.2);
+  outline-offset: 0;
+}
+
+.location-form-field--full {
+  grid-column: 1 / -1;
+}
+
+.location-form-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.location-form-btn {
+  min-height: 40px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.location-form-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.location-form-btn--secondary {
+  background: #f8fafc;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+.location-form-btn--secondary:hover:not(:disabled) {
+  background: #eef2f7;
+}
+
+.location-form-btn--primary {
+  background: #d9911d;
+  color: #0f172a;
+  border-color: rgba(217, 119, 6, 0.26);
+}
+
+.location-form-btn--primary:hover:not(:disabled) {
+  filter: brightness(0.96);
+}
+
+.admin-locations-state {
+  margin: 10px 0;
+}
+
+.admin-locations-state--error {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.admin-locations-state--success {
+  color: #166534;
+  font-weight: 600;
+}

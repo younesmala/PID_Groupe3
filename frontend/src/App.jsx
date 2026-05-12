@@ -42,6 +42,7 @@ import AdminUsers from "./pages/AdminUsers"
 import AdminShows from "./pages/AdminShows"
 import AdminReservations from "./pages/AdminReservations"
 import AdminReviews from "./pages/AdminReviews"
+import AdminLocations from "./pages/AdminLocations"
 import Locations from "./pages/Locations"
 
 import {
@@ -535,7 +536,7 @@ function AppContent() {
           path="/admin/locations"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Nos lieux" />
+              <AdminLocations />
             </AdminProtectedRoute>
           }
         />
@@ -543,7 +544,7 @@ function AppContent() {
           path="/:lang/admin/locations"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Nos lieux" />
+              <AdminLocations />
             </AdminProtectedRoute>
           }
         />
