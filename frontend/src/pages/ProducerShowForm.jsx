@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import './ProducerShowForm.css'
 
 const BASE = '/api'
@@ -11,148 +12,197 @@ function getCookie(name) {
   return ''
 }
 
-export default function ProducerShowForm() {
-  const navigate   = useNavigate()
-  const { slug }   = useParams()
-  const isEdit     = !!slug
-  const fileRef    = useRef(null)
+function getPosterPreview(posterUrl, slug) {
+  if (!posterUrl && slug) return `/show-posters/${slug}.png`
+  if (!posterUrl) return null
+  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
+    return posterUrl
+  }
+  return `/show-posters/${posterUrl}`
+}
 
-  const [types,      setTypes]      = useState([])
-  const [localities, setLocalities] = useState([])
-  const [form,       setForm]       = useState({
-    title:       '',
-    description: '',
-    genre:       '',
-    duration:    '',
-    created_in:  '',
-  })
-  const [posterFile,   setPosterFile]   = useState(null)
-  const [posterPreview, setPosterPreview] = useState(null)
+function flattenErrors(data) {
+  const out = {}
+  for (const [key, val] of Object.entries(data || {})) {
+    if (Array.isArray(val)) out[key] = val.join(' ')
+    else if (typeof val === 'string') out[key] = val
+    else out[key] = JSON.stringify(val)
+  }
+  return out
+}
+
+export default function ProducerShowForm() {
+  const navigate = useNavigate()
+  const { t } = useTranslation()
+  const { slug } = useParams()
+  const isEdit = !!slug
+  const fileRef = useRef(null)
+
+  const [artists, setArtists] = useState([])
+  const [genres, setGenres] = useState([])
+  const [loading, setLoading] = useState(isEdit)
   const [submitting, setSubmitting] = useState(false)
-  const [errors,     setErrors]     = useState({})
-  const [loading,    setLoading]    = useState(isEdit)
+  const [errors, setErrors] = useState({})
+  const [posterFile, setPosterFile] = useState(null)
+  const [posterPreview, setPosterPreview] = useState(null)
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    artist: '',
+    genre: '',
+    duration: '',
+    spoken_language: 'fr',
+    created_in: String(new Date().getFullYear()),
+  })
+
+  useEffect(() => {
+    async function loadOptions() {
+      const opts = { credentials: 'include', headers: { Accept: 'application/json' } }
+      const [artistsRes, genresRes] = await Promise.all([
+        fetch(`${BASE}/artists/`, opts),
+        fetch(`${BASE}/artist-types/`, opts),
+      ])
+
+      const artistsData = await artistsRes.json().catch(() => [])
+      const genresData = await genresRes.json().catch(() => [])
+
+      setArtists(Array.isArray(artistsData) ? artistsData : (artistsData.results ?? []))
+      setGenres(Array.isArray(genresData) ? genresData : (genresData.results ?? []))
+    }
+
+    loadOptions().catch(() => {
+      setErrors((prev) => ({
+        ...prev,
+        _global: t('producer.load_options_error', { defaultValue: 'Impossible de charger les artistes et genres.' }),
+      }))
+    })
+  }, [t])
 
   useEffect(() => {
     if (!isEdit) return
-    fetch(`${BASE}/shows/${slug}/`, { credentials: 'include', headers: { Accept: 'application/json' } })
-      .then((r) => { if (!r.ok) throw new Error(); return r.json() })
+
+    fetch(`${BASE}/producer/shows/${slug}/`, {
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}))
+          throw new Error(body.detail || 'Impossible de charger le spectacle.')
+        }
+        return response.json()
+      })
       .then((data) => {
         setForm({
-          title:       data.title       ?? '',
+          title: data.title ?? '',
           description: data.description ?? '',
-          genre:       data.artist_types?.[0] ?? '',
-          duration:    data.duration    ?? '',
-          created_in:  data.created_in  ?? '',
+          artist: data.artist ? String(data.artist) : '',
+          genre: data.artist_types?.[0] ? String(data.artist_types[0]) : '',
+          duration: data.duration ? String(data.duration) : '',
+          spoken_language: data.spoken_language || 'fr',
+          created_in: data.created_in ? String(data.created_in) : String(new Date().getFullYear()),
         })
-        if (data.poster_url) setPosterPreview(data.poster_url)
+        setPosterPreview(getPosterPreview(data.poster_url, data.slug))
       })
-      .catch(() => setErrors({ _global: 'Impossible de charger le spectacle.' }))
-      .finally(() => setLoading(false))
-  }, [slug, isEdit])
+      .catch((error) => {
+        setErrors({ _global: error.message })
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [isEdit, slug])
 
-  useEffect(() => {
-    const opts = { credentials: 'include', headers: { Accept: 'application/json' } }
-    fetch(`${BASE}/types/`, opts)
-      .then((r) => r.json())
-      .then((data) => setTypes(Array.isArray(data) ? data : (data.results ?? [])))
-      .catch(() => {})
-    fetch(`${BASE}/localities/`, opts)
-      .then((r) => r.json())
-      .then((data) => setLocalities(Array.isArray(data) ? data : (data.results ?? [])))
-      .catch(() => {})
-  }, [])
-
-  function handleChange(e) {
-    const { name, value } = e.target
-    setForm((f) => ({ ...f, [name]: value }))
-    if (errors[name]) setErrors((prev) => { const n = { ...prev }; delete n[name]; return n })
+  function handleChange(event) {
+    const { name, value } = event.target
+    setForm((current) => ({ ...current, [name]: value }))
+    if (errors[name]) {
+      setErrors((current) => {
+        const next = { ...current }
+        delete next[name]
+        return next
+      })
+    }
   }
 
-  function handleFile(e) {
-    const file = e.target.files?.[0] ?? null
+  function handleFile(event) {
+    const file = event.target.files?.[0] ?? null
     setPosterFile(file)
     setPosterPreview(file ? URL.createObjectURL(file) : null)
-    if (errors.poster_url) setErrors((prev) => { const n = { ...prev }; delete n.poster_url; return n })
   }
 
-  function flattenErrors(data) {
-    const out = {}
-    for (const [key, val] of Object.entries(data)) {
-      if (Array.isArray(val))           out[key] = val.join(' ')
-      else if (typeof val === 'string') out[key] = val
-      else                              out[key] = JSON.stringify(val)
-    }
-    return out
-  }
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setErrors({})
 
-  async function handleSubmit(e) {
-    e.preventDefault()
     if (!form.title.trim()) {
-      setErrors({ title: 'Le titre est obligatoire.' })
-      return
-    }
-
-    if (!form.created_in) {
-      setErrors({ created_in: 'La ville de création est obligatoire.' })
+      setErrors({ title: t('producer.required_title', { defaultValue: 'Le titre est obligatoire.' }) })
       return
     }
 
     setSubmitting(true)
-    setErrors({})
 
-    const fd = new FormData()
-    fd.append('title', form.title.trim())
-    if (form.description.trim()) fd.append('description', form.description.trim())
-    fd.append('created_in', Number(form.created_in))
-    if (form.duration)           fd.append('duration', Number(form.duration))
-    if (form.genre)              fd.append('artist_types', form.genre)
-    if (posterFile)              fd.append('poster', posterFile)
+    const payload = new FormData()
+    payload.append('title', form.title.trim())
+    payload.append('description', form.description.trim())
+    payload.append('created_in', form.created_in || String(new Date().getFullYear()))
+    payload.append('spoken_language', form.spoken_language || 'fr')
+
+    if (form.duration) payload.append('duration', form.duration)
+    if (form.artist) payload.append('artist', form.artist)
+    if (form.genre) payload.append('artist_types', form.genre)
+    if (posterFile) payload.append('poster', posterFile)
 
     try {
-      const res = await fetch(isEdit ? `${BASE}/shows/${slug}/` : `${BASE}/shows/`, {
-        method:      isEdit ? 'PATCH' : 'POST',
+      const response = await fetch(isEdit ? `${BASE}/producer/shows/${slug}/` : `${BASE}/producer/shows/`, {
+        method: isEdit ? 'PATCH' : 'POST',
         credentials: 'include',
-        headers:     { 'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '' },
-        body:        fd,
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '',
+        },
+        body: payload,
       })
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        const mapped = flattenErrors(data)
-        setErrors(Object.keys(mapped).length ? mapped : { _global: `Erreur ${res.status}` })
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}))
+        const mapped = flattenErrors(body)
+        setErrors(Object.keys(mapped).length ? mapped : { _global: `Erreur ${response.status}` })
         return
       }
 
       navigate('/producer/shows')
     } catch {
-      setErrors({ _global: 'Erreur réseau. Vérifiez votre connexion.' })
+      setErrors({
+        _global: t('producer.network_error', { defaultValue: 'Erreur reseau. Reessayez dans un instant.' }),
+      })
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (loading) return <div className="psf-page">Chargement…</div>
+  if (loading) {
+    return <div className="psf-page">{t('producer.loading', { defaultValue: 'Chargement...' })}</div>
+  }
 
   return (
     <div className="psf-page">
       <button className="psf-breadcrumb" onClick={() => navigate('/producer/shows')}>
-        ← Mes spectacles
+        {t('producer.back_shows', { defaultValue: 'Mes spectacles' })}
       </button>
 
       <header className="psf-header">
-        <h1 className="psf-title">{isEdit ? 'Modifier le spectacle' : 'Ajouter un spectacle'}</h1>
+        <h1 className="psf-title">
+          {isEdit
+            ? t('producer.edit_show_title', { defaultValue: 'Modifier le spectacle' })
+            : t('producer.create_show_title', { defaultValue: 'Creer un spectacle' })}
+        </h1>
       </header>
 
       <form className="psf-form" onSubmit={handleSubmit} noValidate>
+        {errors._global && <p className="psf-error-global">{errors._global}</p>}
 
-        {errors._global && (
-          <p className="psf-error-global">{errors._global}</p>
-        )}
-
-        {/* Titre */}
         <div className="psf-field">
           <label className="psf-label" htmlFor="title">
-            Titre <span className="psf-required">*</span>
+            {t('producer.title_label', { defaultValue: 'Titre' })} <span className="psf-required">*</span>
           </label>
           <input
             id="title"
@@ -161,52 +211,53 @@ export default function ProducerShowForm() {
             className={`psf-input${errors.title ? ' psf-input--error' : ''}`}
             value={form.title}
             onChange={handleChange}
-            placeholder="Nom du spectacle"
-            required
+            placeholder={t('producer.title_placeholder', { defaultValue: 'Nom du spectacle' })}
           />
           {errors.title && <span className="psf-field-error">{errors.title}</span>}
         </div>
 
-        {/* Description */}
         <div className="psf-field">
-          <label className="psf-label" htmlFor="description">Description</label>
+          <label className="psf-label" htmlFor="description">
+            {t('producer.description_label', { defaultValue: 'Description' })}
+          </label>
           <textarea
             id="description"
             name="description"
-            className="psf-input psf-textarea"
+            className={`psf-input psf-textarea${errors.description ? ' psf-input--error' : ''}`}
             value={form.description}
             onChange={handleChange}
-            placeholder="Présentation du spectacle…"
             rows={5}
+            placeholder={t('producer.description_placeholder', { defaultValue: 'Presentation du spectacle...' })}
           />
           {errors.description && <span className="psf-field-error">{errors.description}</span>}
         </div>
 
-        {/* Ville de création */}
-        <div className="psf-field">
-          <label className="psf-label" htmlFor="created_in">
-            Ville de création <span className="psf-required">*</span>
-          </label>
-          <select
-            id="created_in"
-            name="created_in"
-            className={`psf-input${errors.created_in ? ' psf-input--error' : ''}`}
-            value={form.created_in}
-            onChange={handleChange}
-            required
-          >
-            <option value="">— Sélectionner une localité —</option>
-            {localities.map((l) => (
-              <option key={l.id} value={l.id}>{l.locality}</option>
-            ))}
-          </select>
-          {errors.created_in && <span className="psf-field-error">{errors.created_in}</span>}
-        </div>
-
-        {/* Deux colonnes : Genre + Durée */}
         <div className="psf-row">
           <div className="psf-field">
-            <label className="psf-label" htmlFor="genre">Genre</label>
+            <label className="psf-label" htmlFor="artist">
+              {t('producer.artist_label', { defaultValue: 'Artiste principal' })}
+            </label>
+            <select
+              id="artist"
+              name="artist"
+              className={`psf-input${errors.artist ? ' psf-input--error' : ''}`}
+              value={form.artist}
+              onChange={handleChange}
+            >
+              <option value="">{t('producer.artist_placeholder', { defaultValue: 'Selectionner un artiste' })}</option>
+              {artists.map((artist) => (
+                <option key={artist.id} value={artist.id}>
+                  {artist.stage_name || artist.name || `${artist.firstname || ''} ${artist.lastname || ''}`.trim() || `Artiste #${artist.id}`}
+                </option>
+              ))}
+            </select>
+            {errors.artist && <span className="psf-field-error">{errors.artist}</span>}
+          </div>
+
+          <div className="psf-field">
+            <label className="psf-label" htmlFor="genre">
+              {t('producer.genre_label', { defaultValue: 'Genre' })}
+            </label>
             <select
               id="genre"
               name="genre"
@@ -214,44 +265,86 @@ export default function ProducerShowForm() {
               value={form.genre}
               onChange={handleChange}
             >
-              <option value="">— Sélectionner —</option>
-              {types.map((t) => (
-                <option key={t.id} value={t.id}>{t.type}</option>
+              <option value="">{t('producer.genre_placeholder', { defaultValue: 'Selectionner un genre' })}</option>
+              {genres.map((genre) => (
+                <option key={genre.id} value={genre.id}>
+                  {genre.type || genre.name || `Genre #${genre.id}`}
+                </option>
               ))}
             </select>
             {errors.artist_types && <span className="psf-field-error">{errors.artist_types}</span>}
           </div>
+        </div>
 
+        <div className="psf-row">
           <div className="psf-field">
-            <label className="psf-label" htmlFor="duration">Durée (minutes)</label>
+            <label className="psf-label" htmlFor="duration">
+              {t('producer.duration_label', { defaultValue: 'Duree (minutes)' })}
+            </label>
             <input
               id="duration"
               name="duration"
               type="number"
+              min="1"
               className={`psf-input${errors.duration ? ' psf-input--error' : ''}`}
               value={form.duration}
               onChange={handleChange}
-              placeholder="ex. 90"
-              min={1}
+              placeholder="90"
             />
             {errors.duration && <span className="psf-field-error">{errors.duration}</span>}
           </div>
+
+          <div className="psf-field">
+            <label className="psf-label" htmlFor="spoken_language">
+              {t('producer.language_label', { defaultValue: 'Langue' })}
+            </label>
+            <select
+              id="spoken_language"
+              name="spoken_language"
+              className={`psf-input${errors.spoken_language ? ' psf-input--error' : ''}`}
+              value={form.spoken_language}
+              onChange={handleChange}
+            >
+              <option value="fr">Francais</option>
+              <option value="nl">Neerlandais</option>
+              <option value="en">Anglais</option>
+            </select>
+            {errors.spoken_language && <span className="psf-field-error">{errors.spoken_language}</span>}
+          </div>
         </div>
 
-        {/* Affiche */}
         <div className="psf-field">
-          <label className="psf-label">Affiche</label>
+          <label className="psf-label" htmlFor="created_in">
+            {t('producer.created_in_label', { defaultValue: 'Annee de creation' })}
+          </label>
+          <input
+            id="created_in"
+            name="created_in"
+            type="number"
+            min="1900"
+            max="2100"
+            className={`psf-input${errors.created_in ? ' psf-input--error' : ''}`}
+            value={form.created_in}
+            onChange={handleChange}
+          />
+          {errors.created_in && <span className="psf-field-error">{errors.created_in}</span>}
+        </div>
+
+        <div className="psf-field">
+          <label className="psf-label">
+            {t('producer.poster_label', { defaultValue: 'Image du spectacle' })}
+          </label>
           <div
             className={`psf-file-zone${errors.poster_url ? ' psf-file-zone--error' : ''}`}
             onClick={() => fileRef.current?.click()}
           >
             {posterPreview ? (
-              <img src={posterPreview} alt="Aperçu affiche" className="psf-preview" />
+              <img src={posterPreview} alt={form.title || 'Apercu'} className="psf-preview" />
             ) : (
               <div className="psf-file-placeholder">
-                <span className="psf-file-icon">🖼️</span>
-                <span>Cliquer pour choisir une image</span>
-                <span className="psf-file-hint">JPG, PNG, WEBP — max 5 Mo</span>
+                <span className="psf-file-icon">IMG</span>
+                <span>{t('producer.poster_pick', { defaultValue: 'Cliquer pour choisir une image' })}</span>
+                <span className="psf-file-hint">{t('producer.poster_hint', { defaultValue: 'PNG, JPG ou WEBP' })}</span>
               </div>
             )}
           </div>
@@ -266,32 +359,28 @@ export default function ProducerShowForm() {
             <button
               type="button"
               className="psf-file-remove"
-              onClick={() => { setPosterFile(null); setPosterPreview(null); fileRef.current.value = '' }}
+              onClick={() => {
+                setPosterFile(null)
+                setPosterPreview(null)
+                if (fileRef.current) fileRef.current.value = ''
+              }}
             >
-              Supprimer l'image
+              {t('producer.remove_image', { defaultValue: 'Supprimer l image' })}
             </button>
           )}
           {errors.poster_url && <span className="psf-field-error">{errors.poster_url}</span>}
         </div>
 
-        {/* Actions */}
         <div className="psf-actions">
-          <button
-            type="button"
-            className="psf-btn psf-btn--outline"
-            onClick={() => navigate('/producer/shows')}
-            disabled={submitting}
-          >
-            Annuler
+          <button type="button" className="psf-btn psf-btn--outline" onClick={() => navigate('/producer/shows')} disabled={submitting}>
+            {t('producer.cancel', { defaultValue: 'Annuler' })}
           </button>
-          <button
-            type="submit"
-            className="psf-btn psf-btn--primary"
-            disabled={submitting}
-          >
+          <button type="submit" className="psf-btn psf-btn--primary" disabled={submitting}>
             {submitting
-              ? (isEdit ? 'Mise à jour…' : 'Enregistrement…')
-              : (isEdit ? 'Mettre à jour' : 'Enregistrer')}
+              ? t('producer.saving', { defaultValue: 'Enregistrement...' })
+              : isEdit
+                ? t('producer.save_show', { defaultValue: 'Mettre a jour' })
+                : t('producer.create_show_cta', { defaultValue: 'Creer le spectacle' })}
           </button>
         </div>
       </form>

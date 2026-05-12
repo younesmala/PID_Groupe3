@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './ProducerShows.css'
@@ -6,37 +6,57 @@ import './ProducerShows.css'
 const BASE = '/api'
 
 async function apiFetch(path, options = {}) {
-  const res = await fetch(`${BASE}${path}`, {
+  const response = await fetch(`${BASE}${path}`, {
     credentials: 'include',
     headers: { Accept: 'application/json', ...options.headers },
     ...options,
   })
-  return res
+  return response
+}
+
+function getPosterSrc(posterUrl, slug) {
+  if (!posterUrl && slug) return `/show-posters/${slug}.png`
+  if (!posterUrl) return null
+  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
+    return posterUrl
+  }
+  return `/show-posters/${posterUrl}`
+}
+
+function getWorkflowStatus(show) {
+  if (show.publication_status === 'rejected') return 'rejected'
+  if (show.publication_status === 'approved' && show.bookable) return 'published'
+  if (show.publication_status === 'approved') return 'validated'
+  return 'pending'
 }
 
 export default function ProducerShows() {
   const { t } = useTranslation()
-  const [shows,   setShows]   = useState([])
+  const navigate = useNavigate()
+  const [shows, setShows] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const [error, setError] = useState(null)
   const [confirm, setConfirm] = useState(null)
   const [deleting, setDeleting] = useState(false)
-  const navigate = useNavigate()
+  const [workingSlug, setWorkingSlug] = useState(null)
 
   const statusLabels = {
-    approved: { label: t('producer.status_approved'), cls: 'ps-badge ps-badge--green'  },
-    pending:  { label: t('producer.status_pending'),  cls: 'ps-badge ps-badge--orange' },
-    rejected: { label: t('producer.status_rejected'), cls: 'ps-badge ps-badge--red'    },
+    pending: { label: t('producer.status_pending', { defaultValue: 'En attente' }), cls: 'ps-badge ps-badge--orange' },
+    validated: { label: t('producer.status_validated', { defaultValue: 'Valide' }), cls: 'ps-badge ps-badge--blue' },
+    published: { label: t('producer.status_published', { defaultValue: 'Publie' }), cls: 'ps-badge ps-badge--green' },
+    rejected: { label: t('producer.status_rejected', { defaultValue: 'Refuse' }), cls: 'ps-badge ps-badge--red' },
+  }
+
+  async function loadShows() {
+    const response = await apiFetch('/producer/shows/')
+    if (!response.ok) throw new Error(`Erreur ${response.status}`)
+    return response.json()
   }
 
   useEffect(() => {
-    apiFetch('/producer/shows/')
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`Erreur ${res.status}`)
-        return res.json()
-      })
+    loadShows()
       .then(setShows)
-      .catch((e) => setError(e.message))
+      .catch((loadError) => setError(loadError.message))
       .finally(() => setLoading(false))
   }, [])
 
@@ -44,17 +64,37 @@ export default function ProducerShows() {
     if (!confirm) return
     setDeleting(true)
     try {
-      const res = await apiFetch(`/producer/shows/${confirm.slug}/`, { method: 'DELETE' })
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        throw new Error(body.detail || `Erreur ${res.status}`)
+      const response = await apiFetch(`/producer/shows/${confirm.slug}/`, { method: 'DELETE' })
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}))
+        throw new Error(body.detail || `Erreur ${response.status}`)
       }
-      setShows((prev) => prev.filter((s) => s.slug !== confirm.slug))
+      setShows((current) => current.filter((item) => item.slug !== confirm.slug))
       setConfirm(null)
-    } catch (e) {
-      setError(e.message)
+    } catch (deleteError) {
+      setError(deleteError.message)
     } finally {
       setDeleting(false)
+    }
+  }
+
+  async function handleStatusChange(show, status) {
+    setWorkingSlug(show.slug)
+    try {
+      const response = await apiFetch(`/producer/shows/${show.slug}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+      const body = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(body.detail || `Erreur ${response.status}`)
+      }
+      setShows((current) => current.map((item) => (item.slug === show.slug ? body : item)))
+    } catch (statusError) {
+      setError(statusError.message)
+    } finally {
+      setWorkingSlug(null)
     }
   }
 
@@ -62,19 +102,19 @@ export default function ProducerShows() {
     <div className="ps-page">
       <header className="ps-header">
         <div>
-          <h1 className="ps-title">{t('producer.shows_title')}</h1>
-          <p className="ps-subtitle">{shows.length} {shows.length !== 1 ? t('spectacles') : t('spectacles')}</p>
+          <h1 className="ps-title">{t('producer.shows_title', { defaultValue: 'Mes spectacles' })}</h1>
+          <p className="ps-subtitle">{shows.length} spectacle{shows.length !== 1 ? 's' : ''}</p>
         </div>
-        <a href="/producer/shows/new" className="ps-btn ps-btn--primary">
-          {t('producer.add_show')}
-        </a>
+        <button type="button" className="ps-btn ps-btn--primary" onClick={() => navigate('/producer/shows/new')}>
+          {t('producer.add_show', { defaultValue: 'Ajouter un spectacle' })}
+        </button>
       </header>
 
-      {loading && <p className="ps-state">{t('producer.loading')}</p>}
-      {error   && <p className="ps-state ps-state--error">{error}</p>}
+      {loading && <p className="ps-state">{t('producer.loading', { defaultValue: 'Chargement...' })}</p>}
+      {error && <p className="ps-state ps-state--error">{error}</p>}
 
       {!loading && !error && shows.length === 0 && (
-        <p className="ps-state">{t('producer.no_shows')}</p>
+        <p className="ps-state">{t('producer.no_shows', { defaultValue: 'Aucun spectacle pour le moment.' })}</p>
       )}
 
       {!loading && !error && shows.length > 0 && (
@@ -82,56 +122,72 @@ export default function ProducerShows() {
           <table className="ps-table">
             <thead>
               <tr>
-                <th>{t('producer.col_image')}</th>
-                <th>{t('producer.col_title')}</th>
-                <th>{t('producer.col_status')}</th>
-                <th>{t('producer.col_tickets')}</th>
-                <th>{t('producer.col_actions')}</th>
+                <th>{t('producer.col_image', { defaultValue: 'Image' })}</th>
+                <th>{t('producer.col_title', { defaultValue: 'Titre' })}</th>
+                <th>{t('producer.col_status', { defaultValue: 'Statut' })}</th>
+                <th>{t('producer.col_tickets', { defaultValue: 'Seances' })}</th>
+                <th>{t('producer.col_actions', { defaultValue: 'Actions' })}</th>
               </tr>
             </thead>
             <tbody>
-              {shows.map((show) => (
-                <tr key={show.slug}>
-                  <td className="ps-td-img">
-                    {show.poster_url
-                      ? <img src={show.poster_url} alt={show.title} className="ps-poster" />
-                      : <div className="ps-poster-placeholder">🎭</div>
-                    }
-                  </td>
-                  <td className="ps-td-title">{show.title}</td>
-                  <td>
-                    {(() => {
-                      const s = statusLabels[show.publication_status] ?? { label: show.publication_status, cls: 'ps-badge' }
-                      return <span className={s.cls}>{s.label}</span>
-                    })()}
-                  </td>
-                  <td className="ps-td-tickets">
-                    {show.prices?.length > 0
-                      ? `${show.prices.length} ${show.prices.length > 1 ? t('producer.tarif_many') : t('producer.tarif_one')}`
-                      : '—'}
-                  </td>
-                  <td className="ps-td-actions">
-                    <button
-                      className="ps-btn ps-btn--sm ps-btn--outline"
-                      onClick={() => navigate(`/producer/shows/${show.slug}/sessions`)}
-                    >
-                      {t('producer.sessions_btn')}
-                    </button>
-                    <a
-                      href={`/producer/shows/${show.slug}/edit`}
-                      className="ps-btn ps-btn--sm ps-btn--outline"
-                    >
-                      {t('producer.edit_btn')}
-                    </a>
-                    <button
-                      className="ps-btn ps-btn--sm ps-btn--danger"
-                      onClick={() => setConfirm(show)}
-                    >
-                      {t('producer.delete_btn')}
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {shows.map((show) => {
+                const workflowStatus = getWorkflowStatus(show)
+                const badge = statusLabels[workflowStatus] ?? { label: workflowStatus, cls: 'ps-badge' }
+                const isWorking = workingSlug === show.slug
+
+                return (
+                  <tr key={show.slug}>
+                    <td className="ps-td-img">
+                      {getPosterSrc(show.poster_url, show.slug) ? (
+                        <img src={getPosterSrc(show.poster_url, show.slug)} alt={show.title} className="ps-poster" />
+                      ) : (
+                        <div className="ps-poster-placeholder">SP</div>
+                      )}
+                    </td>
+                    <td className="ps-td-title">{show.title}</td>
+                    <td><span className={badge.cls}>{badge.label}</span></td>
+                    <td className="ps-td-tickets">
+                      {show.sessions_count > 0 ? `${show.sessions_count} seance${show.sessions_count > 1 ? 's' : ''}` : 'Aucune'}
+                    </td>
+                    <td className="ps-td-actions">
+                      <button type="button" className="ps-btn ps-btn--sm ps-btn--outline" onClick={() => navigate(`/producer/shows/${show.slug}/sessions`)}>
+                        {t('producer.sessions_btn', { defaultValue: 'Seances' })}
+                      </button>
+                      <button type="button" className="ps-btn ps-btn--sm ps-btn--outline" onClick={() => navigate(`/producer/shows/${show.slug}/edit`)}>
+                        {t('producer.edit_btn', { defaultValue: 'Modifier' })}
+                      </button>
+                      {workflowStatus === 'validated' && (
+                        <button
+                          type="button"
+                          className="ps-btn ps-btn--sm ps-btn--primary"
+                          disabled={isWorking || !show.sessions_count}
+                          onClick={() => handleStatusChange(show, 'published')}
+                        >
+                          {t('producer.publish_btn', { defaultValue: 'Publier' })}
+                        </button>
+                      )}
+                      {workflowStatus === 'published' && (
+                        <button
+                          type="button"
+                          className="ps-btn ps-btn--sm ps-btn--outline"
+                          disabled={isWorking}
+                          onClick={() => handleStatusChange(show, 'validated')}
+                        >
+                          {t('producer.unpublish_btn', { defaultValue: 'Depublier' })}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="ps-btn ps-btn--sm ps-btn--danger"
+                        disabled={workflowStatus === 'published'}
+                        onClick={() => setConfirm(show)}
+                      >
+                        {t('producer.delete_btn', { defaultValue: 'Supprimer' })}
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -139,25 +195,17 @@ export default function ProducerShows() {
 
       {confirm && (
         <div className="ps-modal-backdrop" onClick={() => !deleting && setConfirm(null)}>
-          <div className="ps-modal" onClick={(e) => e.stopPropagation()}>
-            <h2 className="ps-modal-title">{t('producer.confirm_delete_title')}</h2>
+          <div className="ps-modal" onClick={(event) => event.stopPropagation()}>
+            <h2 className="ps-modal-title">{t('producer.confirm_delete_title', { defaultValue: 'Confirmer la suppression' })}</h2>
             <p className="ps-modal-body">
-              {t('producer.confirm_delete_msg', { title: confirm.title })}
+              {t('producer.confirm_delete_msg', { title: confirm.title, defaultValue: `Supprimer ${confirm.title} ?` })}
             </p>
             <div className="ps-modal-actions">
-              <button
-                className="ps-btn ps-btn--outline"
-                onClick={() => setConfirm(null)}
-                disabled={deleting}
-              >
-                {t('producer.cancel')}
+              <button type="button" className="ps-btn ps-btn--outline" onClick={() => setConfirm(null)} disabled={deleting}>
+                {t('producer.cancel', { defaultValue: 'Annuler' })}
               </button>
-              <button
-                className="ps-btn ps-btn--danger"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting ? t('producer.deleting') : t('producer.delete_btn')}
+              <button type="button" className="ps-btn ps-btn--danger" onClick={handleDelete} disabled={deleting}>
+                {deleting ? t('producer.deleting', { defaultValue: 'Suppression...' }) : t('producer.delete_btn', { defaultValue: 'Supprimer' })}
               </button>
             </div>
           </div>

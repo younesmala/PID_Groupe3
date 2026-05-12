@@ -19,50 +19,38 @@ async function fetchShows() {
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))
-    throw new Error(data?.detail || 'Impossible de charger les spectacles en attente.')
+    throw new Error(data?.detail || 'Impossible de charger les spectacles.')
   }
 
   const data = await response.json()
-  const list = Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : [])
-  return list
+  return Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : [])
 }
 
-async function acceptShow(showId) {
+async function updateShowStatus(showId, status) {
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-  const response = await fetch('/api/shows/bulk-actions/', {
-    method: 'POST',
+  const response = await fetch(`/api/admin/shows/${showId}/`, {
+    method: 'PATCH',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken,
     },
-    body: JSON.stringify({ action: 'publish', ids: [showId] }),
+    body: JSON.stringify({ status }),
   })
 
+  const data = await response.json().catch(() => ({}))
   if (!response.ok) {
-    const data = await response.json().catch(() => ({}))
-    throw new Error(data?.detail || data?.error || 'Impossible d\'accepter ce spectacle.')
+    throw new Error(data?.detail || data?.error || `Erreur ${response.status}`)
   }
+  return data
 }
 
-async function rejectShow(showId) {
-  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-  const response = await fetch('/api/shows/bulk-actions/', {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken,
-    },
-    body: JSON.stringify({ action: 'reject', ids: [showId] }),
-  })
-
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}))
-    throw new Error(data?.detail || 'Impossible de supprimer ce spectacle.')
-  }
+function getWorkflowStatus(show) {
+  if (show.publication_status === 'rejected') return 'rejected'
+  if (show.publication_status === 'approved' && show.bookable) return 'published'
+  if (show.publication_status === 'approved') return 'validated'
+  return 'pending'
 }
 
 export default function AdminShows() {
@@ -73,27 +61,22 @@ export default function AdminShows() {
   const [workingId, setWorkingId] = useState(null)
 
   const topActionStyle = {
-    display: 'inline-flex', alignItems: 'center', gap: '8px',
-    padding: '10px 20px', borderRadius: '18px',
-    border: '1px solid rgba(217, 119, 6, 0.26)', background: '#d9911d',
-    color: '#0f172a', textDecoration: 'none', fontSize: '0.95rem',
-    fontWeight: 700, cursor: 'pointer',
-    boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)'
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px 20px',
+    borderRadius: '18px',
+    border: '1px solid rgba(217, 119, 6, 0.26)',
+    background: '#d9911d',
+    color: '#0f172a',
+    textDecoration: 'none',
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)',
   }
 
   const lang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
-  const statusLabels = {
-    pending: t('admin_shows_page.pending', { defaultValue: 'En attente' }),
-    approved: t('admin_shows_page.approved', { defaultValue: 'Approuvé' }),
-    rejected: t('admin_shows_page.rejected', { defaultValue: 'Refusé' }),
-  }
-
-  const statusClassNames = {
-    pending: 'inactive',
-    approved: 'active',
-    rejected: 'inactive',
-  }
-
   const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
 
   useEffect(() => {
@@ -101,25 +84,44 @@ export default function AdminShows() {
 
     fetchShows()
       .then((data) => {
-        if (!ignore) {
-          setShows(sortByNewestId(Array.isArray(data) ? data : []))
-        }
+        if (!ignore) setShows(sortByNewestId(data))
       })
-      .catch((err) => {
-        if (!ignore) {
-          setError(err.message || t('admin_shows_page.load_error', { defaultValue: 'Impossible de charger les spectacles.' }))
-        }
+      .catch((loadError) => {
+        if (!ignore) setError(loadError.message || 'Impossible de charger les spectacles.')
       })
       .finally(() => {
-        if (!ignore) {
-          setLoading(false)
-        }
+        if (!ignore) setLoading(false)
       })
 
     return () => {
       ignore = true
     }
-  }, [t])
+  }, [])
+
+  async function handleStatus(showId, status) {
+    setWorkingId(showId)
+    setError('')
+    try {
+      const updatedShow = await updateShowStatus(showId, status)
+      setShows((current) => sortByNewestId(current.map((item) => (item.id === showId ? updatedShow : item))))
+    } catch (statusError) {
+      setError(statusError.message)
+    } finally {
+      setWorkingId(null)
+    }
+  }
+
+  async function refreshShows() {
+    setLoading(true)
+    setError('')
+    try {
+      setShows(sortByNewestId(await fetchShows()))
+    } catch (refreshError) {
+      setError(refreshError.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -129,89 +131,20 @@ export default function AdminShows() {
     )
   }
 
-  if (error) {
-    return (
-      <div className="admin-users error-message">
-        <p>{t('admin_shows_page.error_label', { defaultValue: 'Erreur' })}: {error}</p>
-      </div>
-    )
-  }
-
-  async function handleAccept(showId) {
-    setWorkingId(showId)
-    setError('')
-
-    try {
-      await acceptShow(showId)
-      setShows((prev) =>
-        sortByNewestId(
-          prev.map((show) =>
-            show.id === showId
-              ? { ...show, publication_status: 'approved' }
-              : show,
-          ),
-        ),
-      )
-    } catch (err) {
-      setError(err.message || t('admin_shows_page.accept_error', { defaultValue: 'Impossible d\'accepter ce spectacle.' }))
-    } finally {
-      setWorkingId(null)
-    }
-  }
-
-  async function handleDelete(show) {
-    setWorkingId(show.id)
-    setError('')
-
-    try {
-      await rejectShow(show.id)
-      setShows((prev) =>
-        sortByNewestId(
-          prev.map((item) =>
-            item.id === show.id
-              ? { ...item, publication_status: 'rejected' }
-              : item,
-          ),
-        ),
-      )
-    } catch (err) {
-      setError(err.message || t('admin_shows_page.delete_error', { defaultValue: 'Impossible de supprimer ce spectacle.' }))
-    } finally {
-      setWorkingId(null)
-    }
-  }
-
-  async function refreshShows() {
-    setError('')
-    setLoading(true)
-
-    try {
-      const data = await fetchShows()
-      setShows(sortByNewestId(Array.isArray(data) ? data : []))
-    } catch (err) {
-      setError(err.message || t('admin_shows_page.load_error', { defaultValue: 'Impossible de charger les spectacles.' }))
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="admin-users">
       <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
         <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
-          ← {t('back_to_dashboard')}
+          Retour dashboard
         </Link>
         <button type="button" onClick={refreshShows} style={topActionStyle}>
-          {t('refresh_button')}
+          {t('refresh_button', { defaultValue: 'Rafraichir' })}
         </button>
       </div>
-      <h1>{t('admin_shows_page.title', { defaultValue: 'Tous les spectacles' })}</h1>
 
-      {error && (
-        <p className="admin-producers-state admin-producers-state--error">
-          {error}
-        </p>
-      )}
+      <h1>{t('admin_shows_page.title', { defaultValue: 'Validation des spectacles' })}</h1>
+
+      {error && <p className="admin-producers-state admin-producers-state--error">{error}</p>}
 
       {shows.length === 0 ? (
         <p>{t('admin_shows_page.empty', { defaultValue: 'Aucun spectacle pour le moment.' })}</p>
@@ -222,14 +155,24 @@ export default function AdminShows() {
               <tr>
                 <th>{t('admin_shows_page.col_id', { defaultValue: 'ID' })}</th>
                 <th>{t('admin_shows_page.col_title', { defaultValue: 'Titre' })}</th>
-                <th>{t('admin_shows_page.col_artist', { defaultValue: 'Producteurs' })}</th>
+                <th>{t('admin_shows_page.col_artist', { defaultValue: 'Producteur / artiste' })}</th>
                 <th>{t('admin_shows_page.col_status', { defaultValue: 'Statut' })}</th>
                 <th>{t('admin_shows_page.col_actions', { defaultValue: 'Actions' })}</th>
               </tr>
             </thead>
             <tbody>
               {shows.map((show) => {
+                const workflowStatus = getWorkflowStatus(show)
                 const isWorking = workingId === show.id
+                const badgeClass = workflowStatus === 'validated' || workflowStatus === 'published' ? 'active' : 'inactive'
+                const badgeLabel =
+                  workflowStatus === 'pending'
+                    ? t('producer.status_pending', { defaultValue: 'En attente' })
+                    : workflowStatus === 'validated'
+                      ? t('producer.status_validated', { defaultValue: 'Valide' })
+                      : workflowStatus === 'published'
+                        ? t('producer.status_published', { defaultValue: 'Publie' })
+                        : t('producer.status_rejected', { defaultValue: 'Refuse' })
 
                 return (
                   <tr key={show.id}>
@@ -237,31 +180,31 @@ export default function AdminShows() {
                     <td>{tField(show, 'title', lang) || show.title || '-'}</td>
                     <td>{show.artist_name || '-'}</td>
                     <td>
-                      <span className={`status-badge ${statusClassNames[show.publication_status] || 'inactive'}`}>
-                        {statusLabels[show.publication_status] || show.publication_status || '-'}
-                      </span>
+                      <span className={`status-badge ${badgeClass}`}>{badgeLabel}</span>
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        {show.publication_status === 'pending' && (
+                        {workflowStatus === 'pending' && (
                           <button
                             type="button"
                             className="status-toggle-btn"
                             disabled={isWorking}
-                            onClick={() => handleAccept(show.id)}
+                            onClick={() => handleStatus(show.id, 'validated')}
                           >
-                            {isWorking ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' }) : t('admin_shows_page.accept', { defaultValue: 'Accepter' })}
+                            {isWorking ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' }) : 'Valider'}
                           </button>
                         )}
-                        <button
-                          type="button"
-                          className="status-toggle-btn"
-                          disabled={isWorking}
-                          onClick={() => handleDelete(show)}
-                          style={{ backgroundColor: '#fee2e2', borderColor: '#ef4444', color: '#991b1b' }}
-                        >
-                          {isWorking ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' }) : t('admin_shows_page.delete', { defaultValue: 'Supprimer' })}
-                        </button>
+                        {(workflowStatus === 'pending' || workflowStatus === 'validated') && (
+                          <button
+                            type="button"
+                            className="status-toggle-btn"
+                            disabled={isWorking}
+                            onClick={() => handleStatus(show.id, 'rejected')}
+                            style={{ backgroundColor: '#fee2e2', borderColor: '#ef4444', color: '#991b1b' }}
+                          >
+                            {isWorking ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' }) : 'Refuser'}
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

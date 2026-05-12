@@ -84,6 +84,31 @@ class AdminApiUserStatusView(APIView):
         )
 
 
+class AdminShowDetailView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, id):
+        show = get_object_or_404(Show, pk=id)
+        requested_status = str(request.data.get('status', '')).strip().lower()
+
+        if requested_status == 'validated':
+            show.publication_status = Show.PublicationStatus.APPROVED
+            show.bookable = False
+            show.save(update_fields=['publication_status', 'bookable'])
+            return Response({'id': show.id, 'publication_status': show.publication_status, 'bookable': show.bookable})
+
+        if requested_status == 'rejected':
+            show.publication_status = Show.PublicationStatus.REJECTED
+            show.bookable = False
+            show.save(update_fields=['publication_status', 'bookable'])
+            return Response({'id': show.id, 'publication_status': show.publication_status, 'bookable': show.bookable})
+
+        return Response(
+            {'detail': "Statut invalide. Valeurs acceptees: validated, rejected."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
 class AdminCatalogImportView(APIView):
     def get(self, request, *args, **kwargs):
         return Response({"detail": "Placeholder"}, status=501)

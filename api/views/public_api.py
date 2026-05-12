@@ -9,7 +9,9 @@ from api.serializers.shows import ShowSerializer
 
 class PublicShowsView(APIView):
     def get(self, request, *args, **kwargs):
-        shows = Show.objects.filter(bookable=True)
+        shows = Show.objects.filter(
+            publication_status=Show.PublicationStatus.APPROVED,
+        )
 
         filter_type = request.query_params.get('filter')
         location_name = request.query_params.get('location')
