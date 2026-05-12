@@ -110,7 +110,10 @@ class ProducerShowsView(APIView):
         return Response(ShowSerializer(show).data, status=status.HTTP_201_CREATED)
 
     def put(self, request, *args, **kwargs):
-        return Response({"detail": "Utilisez la mise a jour detaillee du spectacle."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return Response(
+            {"detail": "Utilisez la mise a jour detaillee du spectacle."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
 
 class ProducerShowDetailView(APIView):
@@ -130,7 +133,10 @@ class ProducerShowDetailView(APIView):
 
         show = self._get_show(request, slug)
         if show is None:
-            return Response({"detail": "Vous n'etes pas le producteur de ce spectacle."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "Vous n'etes pas le producteur de ce spectacle."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         return Response(ShowSerializer(show).data)
 
@@ -141,7 +147,10 @@ class ProducerShowDetailView(APIView):
 
         show = self._get_show(request, slug)
         if show is None:
-            return Response({"detail": "Vous n'etes pas le producteur de ce spectacle."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "Vous n'etes pas le producteur de ce spectacle."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         requested_status = str(request.data.get("status", "")).strip().lower()
         if requested_status:
@@ -221,7 +230,10 @@ class ProducerShowSessionsView(APIView):
             return guard
         show = self._get_show(request, slug)
         if show is None:
-            return Response({"detail": "Vous n'etes pas le producteur de ce spectacle."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "Vous n'etes pas le producteur de ce spectacle."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         sessions = show.representations.order_by("schedule")
         return Response(RepresentationSerializer(sessions, many=True).data)
 
@@ -231,7 +243,10 @@ class ProducerShowSessionsView(APIView):
             return guard
         show = self._get_show(request, slug)
         if show is None:
-            return Response({"detail": "Vous n'etes pas le producteur de ce spectacle."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "Vous n'etes pas le producteur de ce spectacle."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if show.publication_status != Show.PublicationStatus.APPROVED:
             return Response(
                 {"detail": "Les seances sont configurables uniquement apres validation admin."},
@@ -354,7 +369,11 @@ class ProducerReviewsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        reviews = Review.objects.filter(show__producer=request.user).select_related("user", "show").order_by("-created_at")
+        reviews = (
+            Review.objects.filter(show__producer=request.user)
+            .select_related("user", "show")
+            .order_by("-created_at")
+        )
         serializer = ReviewProducerSerializer(reviews, many=True)
         return Response(serializer.data)
 
