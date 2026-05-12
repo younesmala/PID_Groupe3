@@ -39,7 +39,10 @@ export default function ProducerShowForm() {
   const fileRef = useRef(null)
 
   const [artists, setArtists] = useState([])
-  const [genres, setGenres] = useState([])
+  const genres = [
+    { id: 6, type: 'Masculin' },
+    { id: 7, type: 'Féminin' },
+  ]
   const [loading, setLoading] = useState(isEdit)
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState({})
@@ -58,16 +61,9 @@ export default function ProducerShowForm() {
   useEffect(() => {
     async function loadOptions() {
       const opts = { credentials: 'include', headers: { Accept: 'application/json' } }
-      const [artistsRes, genresRes] = await Promise.all([
-        fetch(`${BASE}/artists/`, opts),
-        fetch(`${BASE}/artist-types/`, opts),
-      ])
-
+      const artistsRes = await fetch(`${BASE}/artists/`, opts)
       const artistsData = await artistsRes.json().catch(() => [])
-      const genresData = await genresRes.json().catch(() => [])
-
       setArtists(Array.isArray(artistsData) ? artistsData : (artistsData.results ?? []))
-      setGenres(Array.isArray(genresData) ? genresData : (genresData.results ?? []))
     }
 
     loadOptions().catch(() => {
