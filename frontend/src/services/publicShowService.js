@@ -43,11 +43,6 @@ export function clearPublicShowsCache() {
 }
 
 export async function getPublicShows() {
-  const cachedShows = readCachedShows()
-  if (cachedShows && cachedShows.length > 0) {
-    return cachedShows
-  }
-
   if (pendingRequest) {
     return pendingRequest
   }
