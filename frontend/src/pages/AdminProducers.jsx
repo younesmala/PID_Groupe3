@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './AdminUsers.css'
@@ -33,6 +33,7 @@ export default function AdminProducers() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [workingId, setWorkingId] = useState(null)
+  const importInputRef = useRef(null)
 
   const topActionStyle = {
     display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -138,15 +139,211 @@ export default function AdminProducers() {
     }
   }
 
+  function escapeCsvValue(value) {
+    const text = String(value ?? '')
+    return `"${text.replace(/"/g, '""')}"`
+  }
+
+  function handleExportCsv() {
+    const headers = [
+      t('admin.producers_col_id'),
+      t('admin.producers_col_name'),
+      t('admin.producers_col_email'),
+      t('admin.producers_col_status'),
+    ]
+
+    const rows = producers.map((producer) => {
+      const statusLabel = statusLabels[producer.status] || producer.status || '-'
+      return [producer.id ?? '', producer.name || '-', producer.email || '-', statusLabel]
+    })
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map(escapeCsvValue).join(','))
+      .join('\n')
+
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+
+    link.href = url
+    link.setAttribute('download', `producers-${date}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleExportJson() {
+    const items = producers.map((producer) => ({
+      id: producer.id ?? null,
+      name: producer.name || '-',
+      email: producer.email || '-',
+      status: producer.status || '-',
+      status_label: statusLabels[producer.status] || producer.status || '-',
+    }))
+
+    const jsonContent = JSON.stringify(items, null, 2)
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+
+    link.href = url
+    link.setAttribute('download', `producers-${date}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function normalizeStatus(statusValue) {
+    const normalized = String(statusValue || '')
+      .trim()
+      .toLowerCase()
+
+    if (['pending', 'en attente'].includes(normalized)) {
+      return 'pending'
+    }
+
+    if (['approved', 'valide', 'validé', 'actif', 'active'].includes(normalized)) {
+      return 'approved'
+    }
+
+    if (['deleted', 'supprime', 'supprimé', 'inactive', 'inactif'].includes(normalized)) {
+      return 'deleted'
+    }
+
+    return 'pending'
+  }
+
+  function parseCsv(text) {
+    const rows = []
+    let row = []
+    let field = ''
+    let inQuotes = false
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i]
+      const next = text[i + 1]
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          field += '"'
+          i += 1
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(field)
+        field = ''
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && next === '\n') {
+          i += 1
+        }
+        row.push(field)
+        rows.push(row)
+        row = []
+        field = ''
+      } else {
+        field += char
+      }
+    }
+
+    if (field.length > 0 || row.length > 0) {
+      row.push(field)
+      rows.push(row)
+    }
+
+    return rows.filter((r) => r.some((cell) => String(cell).trim() !== ''))
+  }
+
+  function mapCsvToProducers(csvRows) {
+    if (!csvRows.length) {
+      return []
+    }
+
+    const normalizedHeader = csvRows[0].map((h) => String(h || '').trim().toLowerCase())
+    const hasHeader = normalizedHeader.some((h) =>
+      ['id', 'nom', 'name', 'email', 'statut', 'status'].includes(h),
+    )
+
+    const startIndex = hasHeader ? 1 : 0
+
+    return csvRows.slice(startIndex).map((cells, index) => {
+      const idValue = Number(cells[0])
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        name: String(cells[1] || '-').trim() || '-',
+        email: String(cells[2] || '-').trim() || '-',
+        status: normalizeStatus(cells[3]),
+      }
+    })
+  }
+
+  function mapJsonToProducers(items) {
+    if (!Array.isArray(items)) {
+      throw new Error(t('admin.producers_error_import', { defaultValue: 'Fichier invalide.' }))
+    }
+
+    return items.map((item, index) => {
+      const idValue = Number(item?.id)
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        name: String(item?.name || item?.nom || '-').trim() || '-',
+        email: String(item?.email || '-').trim() || '-',
+        status: normalizeStatus(item?.status || item?.status_label),
+      }
+    })
+  }
+
+  async function handleImportFile(event) {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    setError('')
+
+    try {
+      const text = await file.text()
+      const extension = (file.name.split('.').pop() || '').toLowerCase()
+      let imported = []
+
+      if (extension === 'csv') {
+        imported = mapCsvToProducers(parseCsv(text))
+      } else if (extension === 'json') {
+        imported = mapJsonToProducers(JSON.parse(text))
+      } else {
+        throw new Error(
+          t('admin.producers_error_import_format', {
+            defaultValue: 'Formats acceptes: CSV, JSON.',
+          }),
+        )
+      }
+
+      if (!imported.length) {
+        throw new Error(t('admin.producers_error_import_empty', { defaultValue: 'Aucune donnee a importer.' }))
+      }
+
+      setProducers(sortByNewestId(imported))
+    } catch (err) {
+      setError(err.message || t('admin.producers_error_import', { defaultValue: 'Impossible d importer ce fichier.' }))
+    } finally {
+      event.target.value = ''
+    }
+  }
+
   return (
     <main className="admin-users">
       <section>
         <header>
           <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
-            <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
+            <Link to={`/${i18n.language}/admin/dashboard`} className="admin-luminous-action-btn">
               ← {t('back_to_dashboard')}
             </Link>
-            <button type="button" onClick={loadProducers} style={topActionStyle}>
+            <button type="button" onClick={loadProducers} className="admin-luminous-action-btn">
               {t('refresh_button')}
             </button>
           </div>
@@ -211,6 +408,34 @@ export default function AdminProducers() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+        {!loading && !error && (
+          <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="admin-luminous-action-btn"
+              onClick={() => importInputRef.current?.click()}
+               >
+                {t('import_button', { defaultValue: 'Importer' })}
+            </button>
+            {producers.length > 0 && (
+              <button type="button" className="admin-luminous-action-btn" onClick={handleExportCsv}>
+                {t('export_csv', { defaultValue: 'Export CSV' })}
+              </button>
+            )}
+            {producers.length > 0 && (
+              <button type="button" className="admin-luminous-action-btn" onClick={handleExportJson}>
+                {t('export_json', { defaultValue: 'Export JSON' })}
+              </button>
+            )}
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".csv,.json,application/json,text/csv"
+              onChange={handleImportFile}
+              style={{ display: 'none' }}
+            />
           </div>
         )}
       </section>

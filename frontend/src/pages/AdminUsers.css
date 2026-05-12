@@ -329,6 +329,40 @@
   margin-bottom: 1rem;
 }
 
+.admin-luminous-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(217, 119, 6, 0.26);
+  background: #d9911d;
+  color: #0f172a;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(217, 145, 29, 0.22);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-luminous-action-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #f1b53f;
+  box-shadow: 0 12px 24px rgba(217, 145, 29, 0.32);
+}
+
+.admin-luminous-action-btn:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.admin-luminous-action-btn:focus-visible {
+  outline: 2px solid rgba(241, 181, 63, 0.85);
+  outline-offset: 2px;
+}
+
 .admin-producers-state {
   margin: 10px 0;
 }

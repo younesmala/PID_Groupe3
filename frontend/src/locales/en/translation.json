@@ -8,6 +8,7 @@
   "deconnexion": "Logout",
   "back_to_dashboard": "Back to Dashboard",
   "refresh_button": "Refresh",
+  "import_button": "Import",
   "navbar": {
     "producer_space": "Producer Space",
     "admin": "Administrator",

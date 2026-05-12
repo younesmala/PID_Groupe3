@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getAllReviews, moderateReview } from '../services/reviewService'
@@ -11,6 +11,7 @@ export default function AdminReviews() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [workingId, setWorkingId] = useState(null)
+  const importInputRef = useRef(null)
 
   const topActionStyle = {
     display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -99,16 +100,201 @@ export default function AdminReviews() {
     }
   }
 
+  function escapeCsvValue(value) {
+    const text = String(value ?? '')
+    return `"${text.replace(/"/g, '""')}"`
+  }
+
+  function parseCsv(text) {
+    const rows = []
+    let row = []
+    let field = ''
+    let inQuotes = false
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i]
+      const next = text[i + 1]
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          field += '"'
+          i += 1
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(field)
+        field = ''
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && next === '\n') i += 1
+        row.push(field)
+        rows.push(row)
+        row = []
+        field = ''
+      } else {
+        field += char
+      }
+    }
+
+    if (field.length > 0 || row.length > 0) {
+      row.push(field)
+      rows.push(row)
+    }
+
+    return rows.filter((r) => r.some((cell) => String(cell).trim() !== ''))
+  }
+
+  function normalizeStatus(value) {
+    const status = String(value || '').trim().toLowerCase()
+    if (['approved', 'approuve', 'approuvé'].includes(status)) return 'approved'
+    if (['rejected', 'refuse', 'refusé'].includes(status)) return 'rejected'
+    return 'pending'
+  }
+
+  function mapCsvToReviews(csvRows) {
+    if (!csvRows.length) return []
+    const header = csvRows[0].map((h) => String(h || '').trim().toLowerCase())
+    const hasHeader = header.some((h) => ['id', 'show', 'user', 'rating', 'status', 'review'].includes(h))
+    const dataRows = csvRows.slice(hasHeader ? 1 : 0)
+
+    return dataRows.map((cells, index) => {
+      const idValue = Number(cells[0])
+      const starsValue = Number(cells[3])
+      const showCell = String(cells[1] || '').trim()
+      const parsedShowId = Number(showCell)
+
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        show: Number.isFinite(parsedShowId) ? parsedShowId : null,
+        show_title: showCell || '-',
+        username: String(cells[2] || '-').trim() || '-',
+        stars: Number.isFinite(starsValue) ? Math.max(0, Math.min(5, starsValue)) : 0,
+        status: normalizeStatus(cells[4]),
+        review: String(cells[5] || '-').trim() || '-',
+        show_slug: '',
+      }
+    })
+  }
+
+  function mapJsonToReviews(items) {
+    if (!Array.isArray(items)) {
+      throw new Error(t('admin_reviews_page.import_invalid', { defaultValue: 'Fichier invalide.' }))
+    }
+
+    return items.map((item, index) => {
+      const idValue = Number(item?.id)
+      const starsValue = Number(item?.stars)
+      const showId = Number(item?.show)
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        show: Number.isFinite(showId) ? showId : null,
+        show_title: String(item?.show_title || '-').trim() || '-',
+        username: String(item?.username || '-').trim() || '-',
+        stars: Number.isFinite(starsValue) ? Math.max(0, Math.min(5, starsValue)) : 0,
+        status: normalizeStatus(item?.status),
+        review: String(item?.review || '-').trim() || '-',
+        show_slug: String(item?.show_slug || '').trim(),
+      }
+    })
+  }
+
+  function handleExportCsv() {
+    const headers = [
+      t('admin_reviews_page.col_id'),
+      t('admin_reviews_page.col_show'),
+      t('admin_reviews_page.col_user'),
+      t('admin_reviews_page.col_rating'),
+      t('admin_reviews_page.col_status', { defaultValue: 'Statut' }),
+      t('admin_reviews_page.col_review'),
+    ]
+
+    const rows = reviews.map((review) => [
+      review.id ?? '',
+      review.show_title || review.show || '-',
+      review.username || '-',
+      review.stars ?? 0,
+      statusLabels[review.status] || review.status || '-',
+      review.review || '-',
+    ])
+
+    const csvContent = [headers, ...rows].map((row) => row.map(escapeCsvValue).join(',')).join('\n')
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `reviews-${date}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleExportJson() {
+    const payload = reviews.map((review) => ({
+      id: review.id ?? null,
+      show: review.show ?? null,
+      show_title: review.show_title || '-',
+      show_slug: review.show_slug || '',
+      username: review.username || '-',
+      stars: review.stars ?? 0,
+      status: review.status || 'pending',
+      review: review.review || '-',
+    }))
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `reviews-${date}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleImportFile(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setError('')
+
+    try {
+      const text = await file.text()
+      const extension = (file.name.split('.').pop() || '').toLowerCase()
+      let imported = []
+
+      if (extension === 'csv') {
+        imported = mapCsvToReviews(parseCsv(text))
+      } else if (extension === 'json') {
+        imported = mapJsonToReviews(JSON.parse(text))
+      } else {
+        throw new Error(t('admin_reviews_page.import_format', { defaultValue: 'Formats acceptes: CSV, JSON.' }))
+      }
+
+      if (!imported.length) {
+        throw new Error(t('admin_reviews_page.import_empty', { defaultValue: 'Aucune donnee a importer.' }))
+      }
+
+      setReviews(sortByNewestId(imported))
+    } catch (err) {
+      setError(err.message || t('admin_reviews_page.import_error', { defaultValue: 'Impossible d importer ce fichier.' }))
+    } finally {
+      event.target.value = ''
+    }
+  }
+
   return (
     <main className="admin-users">
       <section>
         <header className="admin-table-header-row">
           <div>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
-              <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
+              <Link to={`/${i18n.language}/admin/dashboard`} className="admin-luminous-action-btn">
                 ← {t('back_to_dashboard')}
               </Link>
-              <button type="button" onClick={loadReviews} style={topActionStyle}>
+              <button type="button" onClick={loadReviews} className="admin-luminous-action-btn">
                 {t('refresh_button')}
               </button>
             </div>
@@ -192,6 +378,30 @@ export default function AdminReviews() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+        {!loading && (
+          <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+            <button type="button" className="admin-luminous-action-btn" onClick={() => importInputRef.current?.click()}>
+              {t('import_button', { defaultValue: 'Importer' })}
+            </button>
+            {reviews.length > 0 && (
+              <button type="button" className="admin-luminous-action-btn" onClick={handleExportCsv}>
+                {t('export_csv', { defaultValue: 'Export CSV' })}
+              </button>
+            )}
+            {reviews.length > 0 && (
+              <button type="button" className="admin-luminous-action-btn" onClick={handleExportJson}>
+                {t('export_json', { defaultValue: 'Export JSON' })}
+              </button>
+            )}
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".csv,.json,application/json,text/csv"
+              onChange={handleImportFile}
+              style={{ display: 'none' }}
+            />
           </div>
         )}
       </section>

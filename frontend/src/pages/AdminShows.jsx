@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { tField } from '../utils/locale'
@@ -59,6 +59,7 @@ export default function AdminShows() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [workingId, setWorkingId] = useState(null)
+  const importInputRef = useRef(null)
 
   const topActionStyle = {
     display: 'inline-flex',
@@ -212,6 +213,30 @@ export default function AdminShows() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+      {!loading && (
+        <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+          <button type="button" className="admin-luminous-action-btn" onClick={() => importInputRef.current?.click()}>
+            {t('import_button', { defaultValue: 'Importer' })}
+          </button>
+          {shows.length > 0 && (
+            <button type="button" className="admin-luminous-action-btn" onClick={handleExportCsv}>
+              {t('export_csv', { defaultValue: 'Export CSV' })}
+            </button>
+          )}
+          {shows.length > 0 && (
+            <button type="button" className="admin-luminous-action-btn" onClick={handleExportJson}>
+              {t('export_json', { defaultValue: 'Export JSON' })}
+            </button>
+          )}
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".csv,.json,application/json,text/csv"
+            onChange={handleImportFile}
+            style={{ display: 'none' }}
+          />
         </div>
       )}
     </div>

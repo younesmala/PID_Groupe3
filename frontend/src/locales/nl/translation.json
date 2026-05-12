@@ -8,6 +8,7 @@
   "deconnexion": "Uitloggen",
   "back_to_dashboard": "Terug naar Dashboard",
   "refresh_button": "Vernieuwen",
+  "import_button": "Importeren",
   "navbar": {
     "producer_space": "Producentenruimte",
     "admin": "Beheerder",
