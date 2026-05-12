@@ -6,6 +6,7 @@
   "inscription": "Inscription",
   "connexion": "Connexion",
   "deconnexion": "Deconnexion",
+  "back_to_dashboard": "Retour au Dashboard",
   "navbar": {
     "producer_space": "Espace Producteur",
     "admin": "Administrateur",
@@ -98,6 +99,20 @@
     "reject": "Rejeter",
     "view_show": "Voir spectacle",
     "slug_unavailable": "Slug indisponible"
+  },
+  "admin_reservations_page": {
+    "title": "Gestion des réservations",
+    "loading": "Chargement des réservations...",
+    "error_label": "Erreur",
+    "load_error": "Erreur lors du chargement des réservations",
+    "col_id": "ID",
+    "col_user": "Utilisateur",
+    "col_email": "Email",
+    "col_show": "Spectacle",
+    "col_booking_date": "Date réservation",
+    "col_quantity": "Quantité",
+    "col_payment_status": "Statut paiement",
+    "col_total_paid": "Somme payée"
   },
   "footer": {
     "tagline": "La référence pour les spectacles à Bruxelles.",

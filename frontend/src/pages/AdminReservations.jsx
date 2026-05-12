@@ -1,10 +1,20 @@
 import { useState, useEffect } from 'react'
-import './AdminReservations.css'
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import './AdminUsers.css'
 
 export default function AdminReservations() {
+  const { t, i18n } = useTranslation()
   const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const getPaymentStatusClass = (status) => {
+    if (status === 'paid') return 'active'
+    if (status === 'pending') return 'pending'
+    if (status === 'refunded') return 'refunded'
+    return 'inactive'
+  }
 
   const formatEuroAmount = (value) => {
     const amount = Number(value || 0)
@@ -30,7 +40,7 @@ export default function AdminReservations() {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         }
       })
-      if (!response.ok) throw new Error('Erreur lors du chargement des réservations')
+      if (!response.ok) throw new Error(t('admin_reservations_page.load_error'))
       const data = await response.json()
       setReservations(data)
       setError(null)
@@ -42,25 +52,38 @@ export default function AdminReservations() {
     }
   }
 
-  if (loading) return <div className="admin-reservations"><p>Chargement...</p></div>
-  if (error) return <div className="admin-reservations error-message"><p>Erreur: {error}</p></div>
+  if (loading) return <div className="admin-users"><p>{t('admin_reservations_page.loading')}</p></div>
+  if (error) return <div className="admin-users error-message"><p>{t('admin_reservations_page.error_label')}: {error}</p></div>
 
   return (
-    <div className="admin-reservations">
-      <h1>Gestion des réservations</h1>
+    <div className="admin-users">
+      <Link
+        to={`/${i18n.language}/admin/dashboard`}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
+          padding: '10px 20px', borderRadius: '18px',
+          border: '1px solid rgba(217, 119, 6, 0.26)', background: '#d9911d',
+          color: '#0f172a', textDecoration: 'none', fontSize: '0.95rem',
+          fontWeight: 700, cursor: 'pointer',
+          boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)', marginBottom: '12px',
+        }}
+      >
+        ← {t('back_to_dashboard')}
+      </Link>
+      <h1>{t('admin_reservations_page.title')}</h1>
 
-      <div className="reservations-table-wrapper">
-        <table className="reservations-table">
+      <div className="users-table-wrapper">
+        <table className="users-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Utilisateur</th>
-              <th>Email</th>
-              <th>Spectacle</th>
-              <th>Date réservation</th>
-              <th>Quantité</th>
-              <th>Statut paiement</th>
-              <th>Somme payée</th>
+              <th>{t('admin_reservations_page.col_id')}</th>
+              <th>{t('admin_reservations_page.col_user')}</th>
+              <th>{t('admin_reservations_page.col_email')}</th>
+              <th>{t('admin_reservations_page.col_show')}</th>
+              <th>{t('admin_reservations_page.col_booking_date')}</th>
+              <th>{t('admin_reservations_page.col_quantity')}</th>
+              <th>{t('admin_reservations_page.col_payment_status')}</th>
+              <th>{t('admin_reservations_page.col_total_paid')}</th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +96,7 @@ export default function AdminReservations() {
                 <td>{new Date(reservation.booking_date).toLocaleString()}</td>
                 <td>{reservation.quantity}</td>
                 <td>
-                  <span className={`payment-status ${reservation.payment_status}`}>
+                  <span className={`status-badge ${getPaymentStatusClass(reservation.payment_status)}`}>
                     {reservation.payment_status}
                   </span>
                 </td>

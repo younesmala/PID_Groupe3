@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './AdminUsers.css'
 
@@ -27,7 +28,7 @@ async function apiFetch(path, options = {}) {
 }
 
 export default function AdminUsers() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -89,6 +90,19 @@ export default function AdminUsers() {
 
   return (
     <div className="admin-users">
+      <Link
+        to={`/${i18n.language}/admin/dashboard`}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: '8px',
+          padding: '10px 20px', borderRadius: '18px',
+          border: '1px solid rgba(217, 119, 6, 0.26)', background: '#d9911d',
+          color: '#0f172a', textDecoration: 'none', fontSize: '0.95rem',
+          fontWeight: 700, cursor: 'pointer',
+          boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)', marginBottom: '12px',
+        }}
+      >
+        ← {t('back_to_dashboard')}
+      </Link>
       <h1>{t('admin_users_page.title')}</h1>
       
       <div className="users-table-wrapper">

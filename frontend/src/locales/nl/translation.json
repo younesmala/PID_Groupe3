@@ -6,6 +6,7 @@
   "inscription": "Registreren",
   "connexion": "Inloggen",
   "deconnexion": "Uitloggen",
+  "back_to_dashboard": "Terug naar Dashboard",
   "navbar": {
     "producer_space": "Producentenruimte",
     "admin": "Beheerder",
@@ -98,6 +99,20 @@
     "reject": "Weigeren",
     "view_show": "Voorstelling bekijken",
     "slug_unavailable": "Slug niet beschikbaar"
+  },
+  "admin_reservations_page": {
+    "title": "Reserveringsbeheer",
+    "loading": "Reserveringen laden...",
+    "error_label": "Fout",
+    "load_error": "Fout bij het laden van reserveringen",
+    "col_id": "ID",
+    "col_user": "Gebruiker",
+    "col_email": "E-mail",
+    "col_show": "Voorstelling",
+    "col_booking_date": "Reserveringsdatum",
+    "col_quantity": "Aantal",
+    "col_payment_status": "Betalingsstatus",
+    "col_total_paid": "Totaal betaald"
   },
   "footer": {
     "tagline": "De referentie voor voorstellingen in Brussel.",

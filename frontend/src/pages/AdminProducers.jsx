@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import './AdminProducers.css'
+import './AdminUsers.css'
 
 function getCookie(name) {
   const value = `; ${document.cookie}`
@@ -27,7 +28,7 @@ async function apiFetch(path, options = {}) {
 }
 
 export default function AdminProducers() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [producers, setProducers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -106,22 +107,35 @@ export default function AdminProducers() {
   }
 
   return (
-    <main className="admin-producers-page">
-      <section className="admin-producers-card">
-        <header className="admin-producers-header">
+    <main className="admin-users">
+      <section>
+        <header>
+          <Link
+            to={`/${i18n.language}/admin/dashboard`}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              padding: '10px 20px', borderRadius: '18px',
+              border: '1px solid rgba(217, 119, 6, 0.26)', background: '#d9911d',
+              color: '#0f172a', textDecoration: 'none', fontSize: '0.95rem',
+              fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)', marginBottom: '12px',
+            }}
+          >
+            ← {t('back_to_dashboard')}
+          </Link>
           <h1>{t('navbar.admin_producers')}</h1>
         </header>
 
-        {loading && <p className="admin-producers-state">{t('producer.loading')}</p>}
+        {loading && <p>{t('producer.loading')}</p>}
         {error && <p className="admin-producers-state admin-producers-state--error">{error}</p>}
 
         {!loading && !error && producers.length === 0 && (
-          <p className="admin-producers-state">{t('admin.producers_empty')}</p>
+          <p>{t('admin.producers_empty')}</p>
         )}
 
         {!loading && producers.length > 0 && (
-          <div className="admin-producers-table-wrap">
-            <table className="admin-producers-table">
+          <div className="users-table-wrapper">
+            <table className="users-table">
               <thead>
                 <tr>
                   <th>{t('admin.producers_col_id')}</th>
@@ -141,10 +155,10 @@ export default function AdminProducers() {
                       <td>{producer.name || '-'}</td>
                       <td>{producer.email || '-'}</td>
                       <td>
-                        <div className="admin-producers-actions">
+                        <div className="table-actions-row">
                           <button
                             type="button"
-                            className="admin-producers-btn admin-producers-btn--approve"
+                            className="status-toggle-btn"
                             disabled={isWorking || !isPending}
                             onClick={() => handleApprove(producer.id)}
                           >
@@ -152,7 +166,7 @@ export default function AdminProducers() {
                           </button>
                           <button
                             type="button"
-                            className="admin-producers-btn admin-producers-btn--delete"
+                            className="status-toggle-btn status-toggle-btn--danger"
                             disabled={isWorking || !isPending}
                             onClick={() => handleDelete(producer.id)}
                           >

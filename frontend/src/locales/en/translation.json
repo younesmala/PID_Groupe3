@@ -6,6 +6,7 @@
   "inscription": "Sign up",
   "connexion": "Login",
   "deconnexion": "Logout",
+  "back_to_dashboard": "Back to Dashboard",
   "navbar": {
     "producer_space": "Producer Space",
     "admin": "Administrator",
@@ -98,6 +99,20 @@
     "reject": "Reject",
     "view_show": "View show",
     "slug_unavailable": "Slug unavailable"
+  },
+  "admin_reservations_page": {
+    "title": "Reservation management",
+    "loading": "Loading reservations...",
+    "error_label": "Error",
+    "load_error": "Error while loading reservations",
+    "col_id": "ID",
+    "col_user": "User",
+    "col_email": "Email",
+    "col_show": "Show",
+    "col_booking_date": "Booking date",
+    "col_quantity": "Quantity",
+    "col_payment_status": "Payment status",
+    "col_total_paid": "Total paid"
   },
   "footer": {
     "tagline": "The reference for shows in Brussels.",
