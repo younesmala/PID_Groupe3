@@ -26,9 +26,13 @@ def newsletter_subscribe(request):
             status=status.HTTP_409_CONFLICT,
         )
     NewsletterSubscriber.objects.create(email=email)
+    msg = (
+        f'Bonjour,\n\nVous êtes bien inscrit à la newsletter '
+        f'BrusselsShow avec l\'adresse {email}.\n\nÀ bientôt !'
+    )
     send_mail(
         subject='Confirmation inscription newsletter BrusselsShow',
-        message=f'Bonjour,\n\nVous êtes bien inscrit à la newsletter BrusselsShow avec l\'adresse {email}.\n\nÀ bientôt !',
+        message=msg,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[email],
         fail_silently=True,
