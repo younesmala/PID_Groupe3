@@ -25,11 +25,21 @@ async function fetchPendingProducers() {
   return res.json()
 }
 
+async function fetchAdminStats() {
+  const res = await fetch(`${BASE}/admin/stats/`, {
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) throw new Error('Unable to load stats')
+  return res.json()
+}
+
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation()
   const normalizedLang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
   const [pendingCount, setPendingCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState(null)
 
   useEffect(() => {
     fetchPendingProducers()
@@ -39,6 +49,10 @@ export default function AdminDashboard() {
       })
       .catch(() => setPendingCount(0))
       .finally(() => setLoading(false))
+
+    fetchAdminStats()
+      .then((data) => setStats(data))
+      .catch(() => setStats(null))
   }, [])
 
   function localizedPath(path) {
@@ -48,6 +62,31 @@ export default function AdminDashboard() {
 
   return (
     <main className="account-shell">
+      {stats && (
+        <div className="admin-stats-row">
+          <div className="admin-stat-card">
+            <span className="admin-stat-value">{stats.total_users}</span>
+            <span className="admin-stat-label">Utilisateurs</span>
+          </div>
+          <div className="admin-stat-card">
+            <span className="admin-stat-value">{stats.total_shows}</span>
+            <span className="admin-stat-label">Spectacles</span>
+          </div>
+          <div className="admin-stat-card">
+            <span className="admin-stat-value">{stats.total_reservations}</span>
+            <span className="admin-stat-label">Réservations</span>
+          </div>
+          <div className="admin-stat-card">
+            <span className="admin-stat-value">{stats.pending_reservations}</span>
+            <span className="admin-stat-label">En attente paiement</span>
+          </div>
+          <div className="admin-stat-card">
+            <span className="admin-stat-value">{stats.revenue.toFixed(2)}€</span>
+            <span className="admin-stat-label">Revenus</span>
+          </div>
+        </div>
+      )}
+
       <section className="pd-cards admin-cards-container">
         {ADMIN_SECTIONS.map((section) => (
           <Link
