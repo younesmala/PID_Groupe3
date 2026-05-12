@@ -248,6 +248,16 @@
   color: white;
 }
 
+.status-badge.pending {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.status-badge.refunded {
+  background-color: #0f766e;
+  color: white;
+}
+
 .status-cell {
   display: grid;
   grid-template-columns: 7rem 7.5rem;
@@ -282,6 +292,43 @@
 .status-toggle-btn:disabled {
   cursor: wait;
   opacity: 0.7;
+}
+
+.status-toggle-btn--danger {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.table-link-btn {
+  text-decoration: none;
+}
+
+.status-toggle-placeholder-visible {
+  opacity: 0.75;
+}
+
+.table-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.admin-table-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-producers-state {
+  margin: 10px 0;
+}
+
+.admin-producers-state--error {
+  color: #c62828;
 }
 
 .status-toggle-placeholder {

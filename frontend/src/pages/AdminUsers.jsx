@@ -34,6 +34,15 @@ export default function AdminUsers() {
   const [error, setError] = useState(null)
   const [updatingUserId, setUpdatingUserId] = useState(null)
 
+  const topActionStyle = {
+    display: 'inline-flex', alignItems: 'center', gap: '8px',
+    padding: '10px 20px', borderRadius: '18px',
+    border: '1px solid rgba(217, 119, 6, 0.26)', background: '#d9911d',
+    color: '#0f172a', textDecoration: 'none', fontSize: '0.95rem',
+    fontWeight: 700, cursor: 'pointer',
+    boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)'
+  }
+
   const getRoleLabel = (role) => {
     if (role === 'USER') return t('admin_users_page.role_user')
     if (role === 'PRODUCER') return t('admin_users_page.role_producer')
@@ -90,19 +99,14 @@ export default function AdminUsers() {
 
   return (
     <div className="admin-users">
-      <Link
-        to={`/${i18n.language}/admin/dashboard`}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: '8px',
-          padding: '10px 20px', borderRadius: '18px',
-          border: '1px solid rgba(217, 119, 6, 0.26)', background: '#d9911d',
-          color: '#0f172a', textDecoration: 'none', fontSize: '0.95rem',
-          fontWeight: 700, cursor: 'pointer',
-          boxShadow: '0 8px 20px rgba(217, 145, 29, 0.22)', marginBottom: '12px',
-        }}
-      >
-        ← {t('back_to_dashboard')}
-      </Link>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
+        <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
+          ← {t('back_to_dashboard')}
+        </Link>
+        <button type="button" onClick={fetchUsers} style={topActionStyle}>
+          {t('refresh_button')}
+        </button>
+      </div>
       <h1>{t('admin_users_page.title')}</h1>
       
       <div className="users-table-wrapper">
