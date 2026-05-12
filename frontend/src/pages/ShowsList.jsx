@@ -1,32 +1,33 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getPublicShows, getPublicLocations } from "../services/showService";
+import { tField } from "../utils/locale";
 
 function getPosterSrc(posterUrl) {
-  if (!posterUrl) return null
-  if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
-    return posterUrl
+  if (!posterUrl) return null;
+  if (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/")) {
+    return posterUrl;
   }
-  const name = posterUrl.replace(/\.[^.]+$/, '.png')
-  return `/show-posters/${name}`
+  return `/show-posters/${posterUrl}`;
 }
 
 function StarRating({ rating }) {
-  if (!rating) return <span className="shows-no-rating">Non noté</span>;
+  if (!rating) return <span className="shows-no-rating">Non note</span>;
   const full = Math.floor(rating);
   const empty = 5 - Math.ceil(rating);
   const half = rating % 1 >= 0.5 ? 1 : 0;
   return (
     <span className="shows-stars">
-      {"★".repeat(full)}
-      {half ? "½" : ""}
-      {"☆".repeat(empty)}
+      {"*".repeat(full)}
+      {half ? " 1/2" : ""}
+      {".".repeat(empty)}
       <span className="shows-rating-value"> {rating}/5</span>
     </span>
   );
 }
 
-function ShowCard({ show }) {
+function ShowCard({ show, lang, noRepLabel }) {
   const nextDate = show.next_schedule
     ? new Date(show.next_schedule).toLocaleDateString("fr-FR", {
         day: "numeric",
@@ -43,28 +44,28 @@ function ShowCard({ show }) {
         {posterSrc ? (
           <img src={posterSrc} alt={show.title} />
         ) : (
-          <div className="show-card-placeholder">🎭</div>
+          <div className="show-card-placeholder">THEATRE</div>
         )}
       </div>
       <div className="show-card-body">
-        <h3 className="show-card-title">{show.title}</h3>
+        <h3 className="show-card-title">{tField(show, "title", lang)}</h3>
         <div className="show-card-rating">
           <StarRating rating={show.rating} />
         </div>
         {show.next_location_name && (
-          <p className="show-card-meta">📍 {show.next_location_name}</p>
+          <p className="show-card-meta">Lieu : {show.next_location_name}</p>
         )}
         {nextDate ? (
-          <p className="show-card-meta">📅 {nextDate}</p>
+          <p className="show-card-meta">Date : {nextDate}</p>
         ) : (
-          <p className="show-card-meta text-muted">Aucune représentation prévue</p>
+          <p className="show-card-meta text-muted">{noRepLabel}</p>
         )}
         <div className="show-card-actions">
-          <Link to={`/show/${show.id}`}>
-            <button className="btn primary">Détails</button>
+          <Link to={`/shows/${show.slug}`}>
+            <button className="btn primary">Details</button>
           </Link>
-          <Link to={`/show/${show.id}`}>
-            <button className="btn btn-reserve">Réserver</button>
+          <Link to={`/shows/${show.slug}`}>
+            <button className="btn btn-reserve">Reserver</button>
           </Link>
         </div>
       </div>
@@ -72,13 +73,11 @@ function ShowCard({ show }) {
   );
 }
 
-const FILTERS = [
-  { key: "all", label: "Tous" },
-  { key: "today", label: "Aujourd'hui" },
-  { key: "upcoming", label: "Prochainement" },
-];
+const FILTER_KEYS = ["all", "today", "upcoming"];
 
 function ShowsList() {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split("-")[0] || "fr";
   const [shows, setShows] = useState([]);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -111,13 +110,13 @@ function ShowsList() {
 
       <div className="shows-filters">
         <div className="filter-tabs">
-          {FILTERS.map(({ key, label }) => (
+          {FILTER_KEYS.map((key) => (
             <button
               key={key}
               className={`filter-tab${activeFilter === key ? " active" : ""}`}
               onClick={() => setActiveFilter(key)}
             >
-              {label}
+              {t(`filters.${key}`)}
             </button>
           ))}
         </div>
@@ -128,7 +127,7 @@ function ShowsList() {
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
           >
-            <option value="">Tous les lieux</option>
+            <option value="">{t("filters.all_locations")}</option>
             {locations.map((loc) => (
               <option key={loc} value={loc}>
                 {loc}
@@ -149,7 +148,7 @@ function ShowsList() {
                 onClick={() => setSelectedDate("")}
                 title="Effacer la date"
               >
-                ✕
+                x
               </button>
             )}
           </div>
@@ -159,13 +158,13 @@ function ShowsList() {
       {loading && <div className="shows-status">Chargement...</div>}
       {error && <div className="shows-status shows-error">Erreur : {error}</div>}
       {!loading && !error && shows.length === 0 && (
-        <div className="shows-status">Aucun spectacle trouvé.</div>
+        <div className="shows-status">Aucun spectacle trouve.</div>
       )}
 
       {!loading && !error && shows.length > 0 && (
         <div className="shows-grid">
           {shows.map((show) => (
-            <ShowCard key={show.id} show={show} />
+            <ShowCard key={show.id} show={show} lang={lang} noRepLabel={t("filters.no_rep")} />
           ))}
         </div>
       )}

@@ -93,7 +93,7 @@ class ShowsDetailView(generics.GenericAPIView):
 class ShowBulkActionsView(APIView):
     permission_classes = [IsAdminUser]
 
-    VALID_ACTIONS = ('publish', 'unpublish', 'delete')
+    VALID_ACTIONS = ('publish', 'unpublish', 'reject', 'delete')
 
     def post(self, request):
         action = request.data.get('action')
@@ -116,6 +116,8 @@ class ShowBulkActionsView(APIView):
             affected = queryset.update(publication_status=Show.PublicationStatus.APPROVED)
         elif action == 'unpublish':
             affected = queryset.update(publication_status=Show.PublicationStatus.PENDING)
+        elif action == 'reject':
+            affected = queryset.update(publication_status=Show.PublicationStatus.REJECTED)
         else:
             affected, _ = queryset.delete()
 

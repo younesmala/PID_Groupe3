@@ -67,6 +67,39 @@
   border-color: #888888;
 }
 
+.modal-password-field {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-password-field input {
+  width: 100%;
+  padding-right: 52px;
+  box-sizing: border-box;
+}
+
+.modal-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #cfcfcf;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+.modal-password-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .modal-error {
   color: #e63946;
   font-size: 0.85rem;
@@ -94,4 +127,19 @@
 .modal-submit:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.modal-forgot-password {
+  display: inline-flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 12px;
+  color: #cfcfcf;
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.modal-forgot-password:hover {
+  color: #ffffff;
+  text-decoration: underline;
 }

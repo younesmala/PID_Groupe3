@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from catalogue.models.reservation import Reservation
+from catalogue.models.reservation import RepresentationReservation
 from catalogue.models.representation import Representation
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -52,7 +53,14 @@ class CheckoutView(APIView):
                     representation=representation,
                     quantity=quantity,
                     status="confirmed",
-                    payment_status="paid"
+                    payment_status="paid",
+                    total_paid=item['total_price'],
+                )
+                RepresentationReservation.objects.create(
+                    reservation=reservation,
+                    representation=representation,
+                    price=item['price_obj'],
+                    quantity=quantity,
                 )
                 reservations_created.append(reservation.id)
 

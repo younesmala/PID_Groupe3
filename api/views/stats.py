@@ -7,11 +7,20 @@ from catalogue.models.show import Show
 from catalogue.models.representation import Representation
 
 
+def _shows_for_request(request):
+    profile = getattr(request.user, "profile", None)
+
+    if request.user.is_authenticated and not request.user.is_staff and profile and profile.role == "PRODUCER":
+        return Show.objects.filter(producer=request.user)
+
+    return Show.objects.all()
+
+
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def show_stats(request):
-    shows = Show.objects.all()
+    shows = _shows_for_request(request)
     stats = []
 
     for show in shows:
@@ -40,7 +49,7 @@ def show_stats(request):
 @permission_classes([IsAuthenticatedOrReadOnly])
 def show_stat_detail(request, show_id):
     try:
-        show = Show.objects.get(id=show_id)
+        show = _shows_for_request(request).get(id=show_id)
     except Show.DoesNotExist:
         return Response(
             {'error': 'Spectacle introuvable.'},

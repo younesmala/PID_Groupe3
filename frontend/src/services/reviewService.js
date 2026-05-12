@@ -2,41 +2,99 @@
  * Service pour gérer les avis (Reviews) via l'API Django
  */
 
-export async function getReviews() {
-  const response = await fetch('/api/reviews/');
+function normalizeReviewsPayload(payload) {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (payload && Array.isArray(payload.results)) {
+    return payload.results;
+  }
+
+  return [];
+}
+
+export async function getReviews(showId) {
+  const url = showId ? `/api/reviews/?show_id=${showId}` : '/api/reviews/';
+  const response = await fetch(url, {
+    credentials: 'include',
+  });
+
   if (!response.ok) {
     throw new Error('Erreur lors du chargement des avis');
   }
-  return response.json();
+
+  const data = await response.json();
+  return normalizeReviewsPayload(data);
+}
+
+export async function getPendingReviews() {
+  const response = await fetch('/api/reviews/?status=pending', {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Erreur lors du chargement des avis en attente');
+  }
+
+  const data = await response.json();
+  return normalizeReviewsPayload(data);
+}
+
+export async function getAllReviews() {
+  const response = await fetch('/api/reviews/', {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Erreur lors du chargement des avis');
+  }
+
+  const data = await response.json();
+  return normalizeReviewsPayload(data);
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
 }
 
 export async function createReview(reviewData) {
-  // Fonction utilitaire pour récupérer le token CSRF requis par Django
-  const getCookie = (name) => {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  };
+  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
 
   const response = await fetch('/api/reviews/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken'),
+      'X-CSRFToken': csrfToken,
     },
     body: JSON.stringify(reviewData),
     credentials: 'include',
   });
 
   if (!response.ok) throw new Error("Erreur lors de l'envoi de l'avis");
+  return response.json();
+}
+
+export async function moderateReview(reviewId, status) {
+  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
+
+  const response = await fetch(`/api/reviews/${reviewId}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({ status }),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.detail || "Erreur lors de la modération de l'avis");
+  }
+
   return response.json();
 }

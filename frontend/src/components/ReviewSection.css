@@ -1,0 +1,161 @@
+.review-section { margin-top: 2rem; padding-top: 1.5rem; }
+
+.review-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.review-section-header h3 { margin-bottom: 0; }
+
+.review-avg {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffc107;
+    background: rgba(255,193,7,0.12);
+    border: 1px solid rgba(255,193,7,0.35);
+    border-radius: 20px;
+    padding: 4px 14px;
+    white-space: nowrap;
+}
+
+.review-section h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.03em;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+.review-item { 
+    background: #e9e9e9; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;
+    border-left: 4px solid #007bff; color: #111;
+}
+.review-item p, .review-item strong, .review-item small { color: #111; }
+.review-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+.stars { color: #ffc107; font-size: 1.2rem; }
+.no-reviews { font-style: italic; color: #666; margin-bottom: 1rem; }
+
+.btn-write-review {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 18px;
+    border: 1px solid rgba(217, 119, 6, 0.26);
+    background: #d9911d;
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(217, 145, 29, 0.22);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-write-review:hover {
+    background: #f1b53f;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(217, 145, 29, 0.32);
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(217, 119, 6, 0.2);
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+    margin-top: 1rem;
+}
+
+.rating-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rating-input label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.rating-input .star { font-size: 1.8rem; cursor: pointer; color: #ddd; transition: color 0.15s, transform 0.15s; }
+.rating-input .star.active, .rating-input .star:hover { color: #ffc107; transform: scale(1.2); }
+
+textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 0.9rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    resize: vertical;
+    color: #111;
+    background: #f8f9fa;
+    font-size: 0.97rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #d9911d;
+    background: #fff;
+}
+
+textarea::placeholder { color: #888; }
+
+.form-actions { display: flex; gap: 1rem; justify-content: flex-end; align-items: center; }
+
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border-radius: 18px;
+    border: 1px solid rgba(217, 119, 6, 0.26);
+    background: #d9911d;
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(217, 145, 29, 0.22);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-submit:hover { background: #f1b53f; transform: translateY(-1px); }
+
+.btn-cancel {
+    background: transparent;
+    border: 1.5px solid #ccc;
+    color: #555;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-cancel:hover { border-color: #999; color: #111; }
+
+.login-prompt-box {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.status-msg { margin-top: 1rem; padding: 0.8rem; border-radius: 4px; }
+.status-msg.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.status-msg.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }

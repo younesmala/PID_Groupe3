@@ -1,16 +1,28 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { tField } from "../utils/locale";
 import { getShowByIdentifier } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
 import { getStoredUsername } from "../services/authService";
+import ReviewSection from '../components/ReviewSection';
 
-function getPosterSrc(posterUrl) {
-  if (!posterUrl) return null;
-  if (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/")) {
+
+function getPosterSrc(show) {
+  const posterUrl = show?.poster_url;
+  const fallbackSlug = show?.slug;
+
+  if (posterUrl && (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/"))) {
     return posterUrl;
   }
+
+  if (!posterUrl && fallbackSlug) {
+    return `/show-posters/${fallbackSlug}.png`;
+  }
+
+  if (!posterUrl) return null;
+
   return `/show-posters/${posterUrl}`;
 }
 
@@ -149,7 +161,8 @@ function RepresentationCard({ rep, prices, isLoggedIn, onLoginRequired }) {
 }
 
 function ShowDetail() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split('-')[0] || 'fr'
   const { id, slug } = useParams();
   const navigate = useNavigate();
   const isLoggedIn = !!getStoredUsername();
@@ -166,21 +179,38 @@ function ShowDetail() {
   useEffect(() => {
     const identifier = slug || id;
 
-    Promise.all([
-      getShowByIdentifier(identifier),
-      fetch("/api/prices/").then((r) => r.json()),
-    ])
-      .then(async ([showData, pricesData]) => {
-        const repsData = await getRepresentationsByShow(showData.id);
+    if (!identifier) {
+      setError("Show introuvable");
+      setLoading(false);
+      return;
+    }
+
+    async function loadShowPage() {
+      try {
+        const showData = await getShowByIdentifier(identifier);
         setShow(showData);
-        setRepresentations(repsData);
-        setPrices(pricesData);
-        const firstAvailableRep = repsData.find((rep) => (rep.available_seats ?? 0) > 0);
+
+        const pricesResponse = await fetch("/api/prices/");
+        const pricesData = pricesResponse.ok ? await pricesResponse.json() : [];
+        setPrices(Array.isArray(pricesData) ? pricesData : []);
+
+        const repsData = await getRepresentationsByShow(showData.id);
+        setRepresentations(Array.isArray(repsData) ? repsData : []);
+
+        const firstAvailableRep = (Array.isArray(repsData) ? repsData : []).find(
+          (rep) => (rep.available_seats ?? 0) > 0
+        );
+
         setSelectedRepId(firstAvailableRep?.id ? String(firstAvailableRep.id) : "");
-        setSelectedPriceId(pricesData[0]?.id ? String(pricesData[0].id) : "");
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+        setSelectedPriceId(Array.isArray(pricesData) && pricesData[0]?.id ? String(pricesData[0].id) : "");
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadShowPage();
   }, [id, slug]);
 
   if (loading) return <div>{t("show.loading")}</div>;
@@ -242,9 +272,9 @@ function ShowDetail() {
   return (
     <div style={pageBackground}>
       <div style={contentWrap}>
-        {getPosterSrc(show.poster_url) && (
+        {getPosterSrc(show) && (
           <img
-            src={getPosterSrc(show.poster_url)}
+            src={getPosterSrc(show)}
             alt={show.title}
             style={{
               width: "100%",
@@ -257,11 +287,16 @@ function ShowDetail() {
             }}
           />
         )}
-        <h1 style={{ marginBottom: 10 }}>{show.title}</h1>
+        <h1 style={{ marginBottom: 10 }}>{tField(show, 'title', lang)}</h1>
         <p style={{ ...subtleText, margin: 0 }}>{show.slug}</p>
         {show.artist_name && (
           <p style={{ marginTop: 8, color: "#fda4af", fontWeight: 700 }}>
             Artiste : {show.artist_name}
+          </p>
+        )}
+        {show.spoken_language && (
+          <p style={{ marginTop: 6, color: "#94a3b8", fontSize: 14 }}>
+            🎭 {t("show.spoken_language_label")} : <strong style={{ color: "#f8fafc" }}>{t(`show.spoken_language_${show.spoken_language}`)}</strong>
           </p>
         )}
         <p
@@ -277,7 +312,7 @@ function ShowDetail() {
             boxShadow: "0 12px 28px rgba(0, 0, 0, 0.22)",
           }}
         >
-          {show.description || "Description a venir."}
+          {tField(show, 'description', lang) || "Description a venir."}
         </p>
 
         <h2 id="representations" style={{ marginTop: 32 }}>{t("show.representations")}</h2>
@@ -300,7 +335,12 @@ function ShowDetail() {
         <div style={{ display: "flex", gap: 16, marginTop: 8, alignItems: "center", flexWrap: "wrap" }}>
           <Link to="/#shows" style={linkStyle}>{t("show.back")}</Link>
           <Link to="/cart" style={linkStyle}>{t("show.view_cart")}</Link>
-          <Link to="/reviews" style={linkStyle}>{t("show.view_reviews")}</Link>
+          <button 
+            onClick={() => document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{ ...linkStyle, background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}
+          >
+            {t("show.view_reviews")}
+          </button>
         </div>
 
         {representations.length > 0 && (
@@ -424,6 +464,9 @@ function ShowDetail() {
             )}
           </form>
         )}
+
+        {/* Intégration de la section des avis en bas de page */}
+        {show?.id && <ReviewSection showId={show.id} />}
       </div>
     </div>
   );

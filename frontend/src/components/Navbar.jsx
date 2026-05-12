@@ -1,194 +1,100 @@
-import { useState, useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import GuestNavbar from './navbar/GuestNavbar'
+import AuthenticatedNavbar from './navbar/AuthenticatedNavbar'
 import LoginModal from './LoginModal'
-import './Navbar.css'
+import NavbarGuestLogo from './navbar/NavbarGuestLogo'
+import { clearPublicShowsCache } from '../services/publicShowService'
 
-const LANGUAGES = [
-  { code: 'FR', label: 'Français', flag: '🇫🇷' },
-  { code: 'NL', label: 'Nederlands', flag: '🇳🇱' },
-  { code: 'EN', label: 'English', flag: '🇬🇧' },
-]
+const SUPPORTED_LANGUAGES = ['fr', 'nl', 'en']
 
-const PRODUCER_LINKS = [
-  { to: '/producer/dashboard', label: 'Tableau de bord' },
-  { to: '/producer/shows',     label: 'Mes spectacles'  },
-  { to: '/producer/sessions',  label: 'Mes séances'     },
-  { to: '/producer/stats',     label: 'Mes statistiques'},
-]
+function replacePathLanguage(pathname, language) {
+  const segments = pathname.split('/').filter(Boolean)
+  const firstSegment = (segments[0] || '').toLowerCase()
 
-const ADMIN_LINKS = [
-  { to: '/admin/users',        label: 'Gestion utilisateurs'  },
-  { to: '/admin/reservations', label: 'Gestion réservations'  },
-  { to: '/admin/locations',    label: 'Nos lieux'              },
-]
+  if (SUPPORTED_LANGUAGES.includes(firstSegment)) {
+    const remainingSegments = segments.slice(1).join('/')
+    return remainingSegments ? `/${language}/${remainingSegments}` : `/${language}`
+  }
 
-function NavDropdown({ label, links, accentClass, menuRef, open, onToggle }) {
-  return (
-    <div className={`nav-dropdown ${accentClass}`} ref={menuRef}>
-      <button
-        className="nav-dropdown-trigger"
-        onClick={onToggle}
-        aria-expanded={open}
-      >
-        {label} ▾
-      </button>
-      {open && (
-        <ul className="nav-dropdown-menu">
-          {links.map(({ to, label: text }) => (
-            <li key={to}>
-              <Link to={to} className="nav-dropdown-item" onClick={onToggle}>
-                {text}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
+  return pathname === '/' ? `/${language}` : `/${language}${pathname}`
 }
 
 function Navbar({ user, onLogin, onLogout, cartCount = 0 }) {
   const { t, i18n } = useTranslation()
-  const [showModal,    setShowModal]    = useState(false)
-  const [langOpen,     setLangOpen]     = useState(false)
-  const [producerOpen, setProducerOpen] = useState(false)
-  const [adminOpen,    setAdminOpen]    = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [showModal, setShowModal] = useState(false)
   const [selectedLang, setSelectedLang] = useState(
     () => localStorage.getItem('language') || 'FR'
   )
 
-  const langRef     = useRef(null)
-  const producerRef = useRef(null)
-  const adminRef    = useRef(null)
+  const isLoggedIn = !!user?.username
+  const urlFirstSegment = (location.pathname.split('/').filter(Boolean)[0] || '').toLowerCase()
+  const languageFromUrl = SUPPORTED_LANGUAGES.includes(urlFirstSegment) ? urlFirstSegment : null
+  const normalizedLang = (languageFromUrl || selectedLang || 'FR').toLowerCase()
 
-  const isLoggedIn  = !!user?.username
-  const isProducer  = user?.role === 'PRODUCER'
-  const isAdmin     = !!user?.is_staff
+  function localizedPath(path) {
+    if (path === '/') {
+      return `/${normalizedLang}`
+    }
 
-  const currentLang = LANGUAGES.find((l) => l.code === selectedLang) || LANGUAGES[0]
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`
+    return `/${normalizedLang}${normalizedPath}`
+  }
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (langRef.current     && !langRef.current.contains(e.target))     setLangOpen(false)
-      if (producerRef.current && !producerRef.current.contains(e.target)) setProducerOpen(false)
-      if (adminRef.current    && !adminRef.current.contains(e.target))    setAdminOpen(false)
+    const currentLanguage = (languageFromUrl || (i18n.language || 'fr').slice(0, 2)).toUpperCase()
+
+    if (currentLanguage !== selectedLang) {
+      setSelectedLang(currentLanguage)
     }
-
-    function handleOpenLoginModal() {
-      setShowModal(true)
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    window.addEventListener('open-login-modal', handleOpenLoginModal)
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      window.removeEventListener('open-login-modal', handleOpenLoginModal)
-    }
-  }, [])
-
-  function selectLang(code) {
-    setSelectedLang(code)
-    localStorage.setItem('language', code)
-    i18n.changeLanguage(code.toLowerCase())
-    setLangOpen(false)
-  }
+  }, [i18n.language, languageFromUrl, selectedLang])
 
   function handleLoginSuccess(data) {
     onLogin(data)
     setShowModal(false)
+
+    if (data?.is_staff) {
+      navigate(localizedPath('/admin/dashboard'))
+    }
   }
 
+  // Visitor (non-logged-in) navbar
+  if (!isLoggedIn) {
+    return <GuestNavbar onLogin={handleLoginSuccess} />
+  }
+
+  // Authenticated user navbar
   return (
     <>
-      <nav className="navbar">
-        <div className="navbar-logo">
-          <Link to="/">
-            <span className="logo-pid">Brussels</span>
-            <span className="logo-booking">Show</span>
-          </Link>
-        </div>
+      <nav style={{ backgroundColor: '#00001F' }} className="sticky top-0 z-50 border-b border-white/10">
+        <div className="w-full px-10 sm:px-14 lg:px-24">
+          <div
+            className="flex items-center justify-between h-16"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: '64px' }}
+          >
+            {/* Logo - Left side */}
+            <div className="flex-shrink-0">
+              <NavbarGuestLogo to={localizedPath('/')} />
+            </div>
 
-        <div className="navbar-right">
-          {/* Espace Producteur */}
-          {isLoggedIn && isProducer && (
-            <NavDropdown
-              label="Espace Producteur"
-              links={PRODUCER_LINKS}
-              accentClass="nav-dropdown--producer"
-              menuRef={producerRef}
-              open={producerOpen}
-              onToggle={() => setProducerOpen((o) => !o)}
+            {/* Authenticated nav content */}
+            <AuthenticatedNavbar
+              user={user}
+              onLogout={onLogout}
+              localizedPath={localizedPath}
+              selectedLang={selectedLang}
+              setSelectedLang={setSelectedLang}
+              normalizedLang={normalizedLang}
+              location={location}
+              navigate={navigate}
+              cartCount={cartCount}
+              t={t}
+              i18n={i18n}
             />
-          )}
-
-          {/* Administration */}
-          {isLoggedIn && isAdmin && (
-            <NavDropdown
-              label="Administration"
-              links={ADMIN_LINKS}
-              accentClass="nav-dropdown--admin"
-              menuRef={adminRef}
-              open={adminOpen}
-              onToggle={() => setAdminOpen((o) => !o)}
-            />
-          )}
-
-          {/* Langue */}
-          <div className="lang-dropdown" ref={langRef}>
-            <button
-              className="btn-lang"
-              onClick={() => setLangOpen((o) => !o)}
-              aria-expanded={langOpen}
-            >
-              <span className="lang-flag">{currentLang.flag}</span>
-              <span>{currentLang.code}</span>
-              <span className="btn-lang-arrow">▼</span>
-            </button>
-            {langOpen && (
-              <ul className="lang-menu">
-                {LANGUAGES.map(({ code, label, flag }) => (
-                  <li key={code}>
-                    <button
-                      className={`lang-option ${selectedLang === code ? 'lang-option--active' : ''}`}
-                      onClick={() => selectLang(code)}
-                    >
-                      <span className="lang-flag">{flag}</span>
-                      <span className="lang-code">{code}</span>
-                      <span className="lang-label">{label}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
-
-          {/* Panier */}
-          <Link to="/cart" className="btn-cart">
-            🛒 {t('panier')}
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </Link>
-
-          {/* Auth */}
-          {isLoggedIn ? (
-            <>
-              <Link to="/profile" className="btn-outline">Mon profil</Link>
-              {user?.username && (
-                <span className="navbar-username">{user.username}</span>
-              )}
-              <button className="btn-outline" onClick={onLogout}>
-                {t('deconnexion')}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/signup" className="btn-outline">{t('inscription')}</Link>
-              <button className="btn-primary" onClick={() => setShowModal(true)}>
-                {t('connexion')}
-              </button>
-            </>
-          )}
         </div>
       </nav>
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Avg
 from django.utils import timezone
-from catalogue.models import Show
+from catalogue.models import Show, Review
 from api.serializers.show_prices import ShowPriceSerializer
 
 
@@ -11,15 +11,19 @@ class ShowSerializer(serializers.ModelSerializer):
     next_schedule = serializers.SerializerMethodField()
     next_location_name = serializers.SerializerMethodField()
     artist_name = serializers.SerializerMethodField()
+    sessions_count = serializers.SerializerMethodField()
     prices = ShowPriceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Show
         fields = [
-            "id", "slug", "title", "description", "poster_url", "duration",
+            "id", "slug",
+            "title", "title_fr", "title_nl", "title_en",
+            "description", "description_fr", "description_nl", "description_en",
+            "poster_url", "duration", "spoken_language",
             "created_in", "artist", "artist_name", "location", "location_name", "bookable",
             "publication_status", "created_at", "updated_at", "artist_types",
-            "rating", "next_schedule", "next_location_name", "prices",
+            "rating", "next_schedule", "next_location_name", "sessions_count", "prices",
         ]
 
     def get_artist_name(self, obj):
@@ -28,7 +32,7 @@ class ShowSerializer(serializers.ModelSerializer):
         return None
 
     def get_rating(self, obj):
-        avg = obj.show.filter(validated=True).aggregate(Avg('stars'))['stars__avg']
+        avg = obj.reviews.filter(status=Review.STATUS_APPROVED).aggregate(Avg('stars'))['stars__avg']
         return round(avg, 1) if avg else None
 
     def get_location_name(self, obj):
@@ -56,3 +60,6 @@ class ShowSerializer(serializers.ModelSerializer):
         if obj.location:
             return obj.location.designation
         return None
+
+    def get_sessions_count(self, obj):
+        return obj.representations.count()

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { QRCodeSVG } from 'qrcode.react'
 import { getMyReservations } from '../services/reservationService'
 import './MyTickets.css'
 
-function formatDate(value) {
-  if (!value) return 'Date non disponible'
+function formatDate(value, t) {
+  if (!value) return t('tickets.no_date')
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return String(value)
   return new Intl.DateTimeFormat('fr-BE', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
@@ -19,8 +20,8 @@ function getDate(r) {
   return r.representation_date || r.booking_date || r.date || r.created_at || r.representation?.when
 }
 
-function getLocation(r) {
-  return r.location_name || r.location?.name || r.representation?.location?.name || 'Lieu non disponible'
+function getLocation(r, t) {
+  return r.location_name || r.location?.name || r.representation?.location?.name || t('tickets.no_location')
 }
 
 function getQuantity(r) {
@@ -32,31 +33,31 @@ function buildQRData(reservation) {
     id: reservation.id || reservation.pk,
     title: getTitle(reservation),
     date: getDate(reservation),
-    location: getLocation(reservation),
     quantity: getQuantity(reservation),
   })
 }
 
 function TicketCard({ reservation }) {
+  const { t } = useTranslation()
   const [flipped, setFlipped] = useState(false)
 
   return (
     <article className="ticket-card" onClick={() => setFlipped((f) => !f)}>
       {!flipped ? (
         <div className="ticket-card__front">
-          <span className="ticket-card__eyebrow">Billet numerique</span>
+          <span className="ticket-card__eyebrow">{t('tickets.digital')}</span>
           <h3>{getTitle(reservation)}</h3>
-          <p className="ticket-card__date">{formatDate(getDate(reservation))}</p>
-          <p className="ticket-card__location">{getLocation(reservation)}</p>
+          <p className="ticket-card__date">{formatDate(getDate(reservation), t)}</p>
+          <p className="ticket-card__location">{getLocation(reservation, t)}</p>
           <div className="ticket-card__footer">
-            <strong>{getQuantity(reservation)} place(s)</strong>
-            <span className="ticket-card__hint">Cliquez pour le QR code</span>
+            <strong>{getQuantity(reservation)} {t('tickets.places')}</strong>
+            <span className="ticket-card__hint">{t('tickets.click_qr')}</span>
           </div>
         </div>
       ) : (
         <div className="ticket-card__back">
           <QRCodeSVG value={buildQRData(reservation)} size={160} bgColor="#0f1f35" fgColor="#f8fafc" />
-          <p className="ticket-card__hint">Cliquez pour revenir</p>
+          <p className="ticket-card__hint">{t('tickets.click_back')}</p>
         </div>
       )}
     </article>
@@ -64,6 +65,7 @@ function TicketCard({ reservation }) {
 }
 
 function MyTickets({ isLoggedIn }) {
+  const { t } = useTranslation()
   const [tickets, setTickets] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -79,21 +81,21 @@ function MyTickets({ isLoggedIn }) {
   if (!isLoggedIn) {
     return (
       <main className="tickets-shell">
-        <h1>Mes Billets</h1>
-        <p>Vous devez être <Link to="/signup">connecté</Link> pour voir vos billets.</p>
+        <h1>{t('tickets.title')}</h1>
+        <p>{t('tickets.login_required')} <Link to="/signup">{t('connexion')}</Link></p>
       </main>
     )
   }
 
   return (
     <main className="tickets-shell">
-      <h1>Mes Billets</h1>
-      <p className="tickets-subtitle">Cliquez sur un billet pour afficher son QR code.</p>
+      <h1>{t('tickets.title')}</h1>
+      <p className="tickets-subtitle">{t('tickets.subtitle')}</p>
 
-      {loading && <p className="tickets-status">Chargement...</p>}
+      {loading && <p className="tickets-status">{t('tickets.loading')}</p>}
       {error && <p className="tickets-status tickets-error">{error}</p>}
       {!loading && !error && tickets.length === 0 && (
-        <p className="tickets-status">Aucun billet disponible pour le moment.</p>
+        <p className="tickets-status">{t('tickets.empty')}</p>
       )}
 
       <div className="tickets-grid">

@@ -165,3 +165,41 @@ export async function checkEmail(email) {
   })
   return res.json().catch(() => ({}))
 }
+
+export async function requestPasswordReset(email, lang = 'fr') {
+  const res = await fetch(`${BASE}/auth/password-reset/`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, lang }),
+  })
+
+  const data = await parseJsonResponse(res)
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, 'Impossible d’envoyer le lien de réinitialisation'))
+  }
+
+  return data
+}
+
+export async function confirmPasswordReset(payload) {
+  const res = await fetch(`${BASE}/auth/password-reset-confirm/`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = await parseJsonResponse(res)
+
+  if (!res.ok) {
+    throw new Error(getErrorMessage(data, 'Impossible de réinitialiser le mot de passe'))
+  }
+
+  return data
+}

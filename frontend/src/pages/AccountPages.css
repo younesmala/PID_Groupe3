@@ -186,6 +186,14 @@
   font-size: 0.95rem;
 }
 
+.account-form-field--full {
+  grid-column: span 2;
+}
+
+.account-form label.account-form-field--compact {
+  grid-column: auto;
+}
+
 .account-form input {
   min-height: 52px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -193,6 +201,41 @@
   background: rgba(15, 23, 42, 0.72);
   color: #f8fafc;
   padding: 0 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.account-password-field {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.account-password-field input {
+  width: 100%;
+  padding-right: 52px;
+  box-sizing: border-box;
+}
+
+.account-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+.account-password-toggle:hover {
+  background: rgba(148, 163, 184, 0.14);
 }
 
 .account-form select {
@@ -231,6 +274,10 @@
 .account-feedback,
 .account-submit {
   grid-column: span 2;
+}
+
+.account-form label.account-form-field--compact:nth-last-of-type(-n + 2) {
+  grid-column: auto;
 }
 
 .account-submit,
