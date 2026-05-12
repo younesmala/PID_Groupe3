@@ -49,6 +49,44 @@
   white-space: nowrap;
 }
 
+.admin-stats-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 720px;
+  margin: 0 auto 28px auto;
+}
+
+.admin-stat-card {
+  flex: 1;
+  min-width: 120px;
+  background: #1e1e1e;
+  border: 1px solid #d9911d;
+  border-radius: 12px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-stat-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #d9911d;
+  line-height: 1;
+}
+
+.admin-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #aaa;
+  text-align: center;
+}
+
 .admin-cards-container {
   display: flex;
   flex-direction: column;

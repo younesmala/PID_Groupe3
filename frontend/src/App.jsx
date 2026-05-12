@@ -41,6 +41,7 @@ import AdminProducers from "./pages/AdminProducers"
 import AdminUsers from "./pages/AdminUsers"
 import AdminShows from "./pages/AdminShows"
 import AdminReservations from "./pages/AdminReservations"
+import Locations from "./pages/Locations"
 
 import {
   getStoredUser,
@@ -298,6 +299,8 @@ function AppContent() {
         <Route path="/:lang/shows/:slug" element={<ShowDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/:lang/cart" element={<Cart />} />
+        <Route path="/locations" element={<Locations />} />
+        <Route path="/:lang/locations" element={<Locations />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/:lang/checkout" element={<Checkout />} />
         <Route

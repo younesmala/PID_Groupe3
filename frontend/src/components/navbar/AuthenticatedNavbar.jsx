@@ -193,6 +193,17 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
           </Link>
         )}
 
+        {/* Locations */}
+        <Link
+          to={localizedPath('/locations')}
+          style={{
+            ...actionStyle,
+            transform: 'translateY(0)',
+          }}
+        >
+          <span>📍 {t('navbar.admin_locations')}</span>
+        </Link>
+
         {/* Language Selector */}
         <NavbarLanguageSelector
           selectedLang={selectedLang}
