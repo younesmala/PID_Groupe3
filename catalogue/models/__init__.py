@@ -12,3 +12,4 @@ from .review import *
 from .show import *
 from .type import *
 from .user_meta import *
+from .newsletter import NewsletterSubscriber

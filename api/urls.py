@@ -16,6 +16,7 @@ from api.views.affiliate_views import (
 from api.views.stats import show_stats, show_stat_detail
 from api.views.external_api import brussels_events, external_shows
 from api.views.rss import UpcomingRepresentationsFeed
+from api.views.newsletter import NewsletterSubscribeView
 
 app_name = 'api'
 
@@ -223,4 +224,7 @@ urlpatterns = [
     # EXTERNAL APIs
     path('external/brussels/', brussels_events, name='external-brussels'),
     path('external/shows/', external_shows, name='external-shows'),
+
+    # NEWSLETTER
+    path('newsletter/subscribe/', NewsletterSubscribeView.as_view(), name='newsletter-subscribe'),
 ]
