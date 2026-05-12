@@ -4,9 +4,43 @@ import { getReviews, createReview } from '../services/reviewService';
 import { getStoredUsername } from '../services/authService';
 import './ReviewSection.css';
 
+const AUTO_TRANSLATE_LANGS = new Set(['en', 'nl']);
+
+function normalizeLang(lang) {
+  return (lang || 'fr').split('-')[0].toLowerCase();
+}
+
+async function translateTextDirect(text, targetLang) {
+  if (!text || !AUTO_TRANSLATE_LANGS.has(targetLang)) {
+    return text;
+  }
+
+  const sourceCandidates = ['fr', 'en', 'nl'].filter((lang) => lang !== targetLang);
+
+  for (const sourceLang of sourceCandidates) {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      continue;
+    }
+
+    const payload = await res.json();
+    const translated = payload?.responseData?.translatedText;
+
+    if (translated && !translated.toLowerCase().includes('invalid source language')) {
+      return translated;
+    }
+  }
+
+  throw new Error('Translation unavailable');
+}
+
 const ReviewSection = ({ showId }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [reviews, setReviews] = useState([]);
+  const [translatedReviews, setTranslatedReviews] = useState({});
+  const [translationUnavailable, setTranslationUnavailable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isLoggedIn = !!getStoredUsername();
   const [showForm, setShowForm] = useState(false);
@@ -21,6 +55,42 @@ const ReviewSection = ({ showId }) => {
     }
   }, [showId]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const targetLang = normalizeLang(i18n.resolvedLanguage || i18n.language);
+
+    async function translateReviews() {
+      if (!reviews.length || !AUTO_TRANSLATE_LANGS.has(targetLang)) {
+        setTranslatedReviews({});
+        setTranslationUnavailable(false);
+        return;
+      }
+
+      const translatedById = {};
+      let hadError = false;
+
+      for (const rev of reviews) {
+        try {
+          translatedById[rev.id] = await translateTextDirect(rev.review, targetLang);
+        } catch {
+          translatedById[rev.id] = rev.review;
+          hadError = true;
+        }
+      }
+
+      if (!cancelled) {
+        setTranslatedReviews(translatedById);
+        setTranslationUnavailable(hadError);
+      }
+    }
+
+    translateReviews();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [reviews, i18n.resolvedLanguage, i18n.language]);
+
   const fetchReviews = async () => {
     setIsLoading(true);
     setStatusMsg({ type: '', text: '' });
@@ -28,7 +98,7 @@ const ReviewSection = ({ showId }) => {
       const data = await getReviews(showId);
       setReviews(data);
     } catch (error) {
-      setStatusMsg({ type: 'error', text: "Impossible de contacter le serveur." });
+      setStatusMsg({ type: 'error', text: t('show.review_load_error') });
     } finally {
       setIsLoading(false);
     }
@@ -36,7 +106,7 @@ const ReviewSection = ({ showId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (rating === 0) return setStatusMsg({ type: 'error', text: 'Veuillez choisir une note' });
+    if (rating === 0) return setStatusMsg({ type: 'error', text: t('show.rating_required') });
 
     try {
       await createReview({ 
@@ -54,9 +124,23 @@ const ReviewSection = ({ showId }) => {
     }
   };
 
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, r) => sum + r.stars, 0) / reviews.length).toFixed(1).replace('.', ',')
+    : null;
+  const targetLang = normalizeLang(i18n.resolvedLanguage || i18n.language);
+  const isAutoTranslating = AUTO_TRANSLATE_LANGS.has(targetLang) && reviews.length > 0;
+
   return (
     <div className="review-section" id="reviews-section">
-      <h3>{t('show.view_reviews')}</h3>
+      <div className="review-section-header">
+        <h3>{t('show.reviews_title')}</h3>
+        {avgRating && (
+          <span className="review-avg">{t('show.reviews_average')}: {avgRating}/5</span>
+        )}
+      </div>
+      {isAutoTranslating && translationUnavailable && (
+        <p className="loading-text">{t('show.reviews_translation_unavailable')}</p>
+      )}
 
       {/* Liste des avis existants */}
       <div className="reviews-list">
@@ -69,7 +153,7 @@ const ReviewSection = ({ showId }) => {
                 <strong>{rev.username}</strong>
                 <span className="stars">{'★'.repeat(rev.stars)}{'☆'.repeat(5-rev.stars)}</span>
               </div>
-              <p>{rev.review}</p>
+              <p>{translatedReviews[rev.id] || rev.review}</p>
               <small>{new Date(rev.created_at).toLocaleDateString()}</small>
             </div>
           ))
@@ -131,7 +215,7 @@ const ReviewSection = ({ showId }) => {
             onChange={(e) => setComment(e.target.value)}
           />
           <div className="form-actions">
-            <button type="button" onClick={() => setShowForm(false)} className="btn-cancel">Annuler</button>
+            <button type="button" onClick={() => setShowForm(false)} className="btn-cancel">{t('show.cancel')}</button>
             <button type="submit" className="btn-submit">{t('show.review_submit')}</button>
           </div>
         </form>

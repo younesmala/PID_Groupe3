@@ -5,12 +5,14 @@ from catalogue.models.review import Review
 class ReviewSerializer(serializers.ModelSerializer):
     # On affiche le nom de l'utilisateur plutôt que son ID pour le frontend
     username = serializers.ReadOnlyField(source='user.username')
+    show_title = serializers.ReadOnlyField(source='show.title')
+    show_slug = serializers.ReadOnlyField(source='show.slug')
 
     class Meta:
         model = Review
-        fields = ['id', 'show', 'username', 'review', 'stars', 'status', 'created_at']
+        fields = ['id', 'show', 'show_title', 'show_slug', 'username', 'review', 'stars', 'status', 'created_at']
         # Ces champs ne sont pas remplis par l'utilisateur via le formulaire
-        read_only_fields = ['id', 'status', 'username', 'created_at']
+        read_only_fields = ['id', 'status', 'username', 'show_title', 'show_slug', 'created_at']
 
 
 class ReviewCreateSerializer(serializers.ModelSerializer):

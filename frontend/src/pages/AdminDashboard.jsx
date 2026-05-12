@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { getPendingReviews } from '../services/reviewService'
 import './ProducerDashboard.css'
 import './AdminDashboard.css'
 import './AccountPages.css'
@@ -38,6 +39,7 @@ export default function AdminDashboard() {
   const { t, i18n } = useTranslation()
   const normalizedLang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
   const [pendingCount, setPendingCount] = useState(0)
+  const [pendingReviewsCount, setPendingReviewsCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState(null)
 
@@ -49,6 +51,12 @@ export default function AdminDashboard() {
       })
       .catch(() => setPendingCount(0))
       .finally(() => setLoading(false))
+
+    getPendingReviews()
+      .then((reviews) => {
+        setPendingReviewsCount(Array.isArray(reviews) ? reviews.length : 0)
+      })
+      .catch(() => setPendingReviewsCount(0))
 
     fetchAdminStats()
       .then((data) => setStats(data))
@@ -98,6 +106,9 @@ export default function AdminDashboard() {
               <span className="pd-card-label">{t(section.labelKey)}</span>
               {section.labelKey === 'navbar.admin_producers' && pendingCount > 0 && (
                 <span className="admin-link-count">{pendingCount}</span>
+              )}
+              {section.labelKey === 'navbar.admin_reviews' && pendingReviewsCount > 0 && (
+                <span className="admin-link-count">{pendingReviewsCount}</span>
               )}
             </span>
           </Link>

@@ -41,6 +41,7 @@ import AdminProducers from "./pages/AdminProducers"
 import AdminUsers from "./pages/AdminUsers"
 import AdminShows from "./pages/AdminShows"
 import AdminReservations from "./pages/AdminReservations"
+import AdminReviews from "./pages/AdminReviews"
 import Locations from "./pages/Locations"
 
 import {
@@ -585,7 +586,7 @@ function AppContent() {
           path="/admin/reviews"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion des avis" />
+              <AdminReviews />
             </AdminProtectedRoute>
           }
         />
@@ -593,7 +594,7 @@ function AppContent() {
           path="/:lang/admin/reviews"
           element={
             <AdminProtectedRoute user={user}>
-              <PlaceholderPage title="Gestion des avis" />
+              <AdminReviews />
             </AdminProtectedRoute>
           }
         />

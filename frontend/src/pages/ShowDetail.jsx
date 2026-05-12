@@ -460,7 +460,7 @@ function ShowDetail() {
         )}
 
         {/* Intégration de la section des avis en bas de page */}
-        <ReviewSection showSlug={slug || id} />
+        {show?.id && <ReviewSection showId={show.id} />}
       </div>
     </div>
   );
