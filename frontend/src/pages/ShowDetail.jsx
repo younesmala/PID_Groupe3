@@ -243,6 +243,7 @@ function ShowDetail() {
   }
 
   function handleLoginRedirect() {
+    navigate(`/${lang}/login`);
     window.dispatchEvent(new Event("open-login-modal"));
   }
 

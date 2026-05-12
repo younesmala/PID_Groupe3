@@ -10,6 +10,12 @@ function normalizeLang(lang) {
   return (lang || 'fr').split('-')[0].toLowerCase();
 }
 
+function openLoginFlow(lang) {
+  const normalizedLang = normalizeLang(lang);
+  window.history.pushState({}, '', `/${normalizedLang}/login`);
+  window.dispatchEvent(new Event('open-login-modal'));
+}
+
 async function translateTextDirect(text, targetLang) {
   if (!text || !AUTO_TRANSLATE_LANGS.has(targetLang)) {
     return text;
@@ -171,7 +177,7 @@ const ReviewSection = ({ showId }) => {
         <div className="review-actions" style={{ marginTop: '30px', textAlign: 'center' }}>
           <button 
             className="btn-write-review"
-            onClick={() => isLoggedIn ? setShowForm(true) : window.dispatchEvent(new Event("open-login-modal"))}
+            onClick={() => isLoggedIn ? setShowForm(true) : openLoginFlow(i18n.resolvedLanguage || i18n.language)}
           >
             {t('show.write_review')}
           </button>
@@ -188,7 +194,7 @@ const ReviewSection = ({ showId }) => {
             </button>
             <button 
               onClick={() => {
-                window.dispatchEvent(new Event("open-login-modal"));
+                openLoginFlow(i18n.resolvedLanguage || i18n.language);
                 setShowLoginPrompt(false);
               }} 
               className="btn-submit"
