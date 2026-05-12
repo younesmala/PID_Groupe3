@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './AdminUsers.css'
@@ -37,6 +37,7 @@ export default function AdminLocations() {
   const [createLoading, setCreateLoading] = useState(false)
   const [createError, setCreateError] = useState('')
   const [createSuccess, setCreateSuccess] = useState('')
+  const importInputRef = useRef(null)
   const [formData, setFormData] = useState({
     designation: '',
     address: '',
@@ -176,21 +177,190 @@ export default function AdminLocations() {
     }
   }
 
+  function escapeCsvValue(value) {
+    const text = String(value ?? '')
+    return `"${text.replace(/"/g, '""')}"`
+  }
+
+  function parseCsv(text) {
+    const rows = []
+    let row = []
+    let field = ''
+    let inQuotes = false
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i]
+      const next = text[i + 1]
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          field += '"'
+          i += 1
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(field)
+        field = ''
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && next === '\n') i += 1
+        row.push(field)
+        rows.push(row)
+        row = []
+        field = ''
+      } else {
+        field += char
+      }
+    }
+
+    if (field.length > 0 || row.length > 0) {
+      row.push(field)
+      rows.push(row)
+    }
+
+    return rows.filter((r) => r.some((cell) => String(cell).trim() !== ''))
+  }
+
+  function mapCsvToLocations(csvRows) {
+    if (!csvRows.length) return []
+    const header = csvRows[0].map((h) => String(h || '').trim().toLowerCase())
+    const hasHeader = header.some((h) => ['id', 'name', 'nom', 'address', 'adresse', 'website'].includes(h))
+    const dataRows = csvRows.slice(hasHeader ? 1 : 0)
+
+    return dataRows.map((cells, index) => {
+      const idValue = Number(cells[0])
+      const localityRaw = String(cells[3] || '').trim()
+      const localityAsNumber = Number(localityRaw)
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        designation: String(cells[1] || '-').trim() || '-',
+        address: String(cells[2] || '-').trim() || '-',
+        locality: Number.isFinite(localityAsNumber) && localityAsNumber > 0 ? localityAsNumber : localityRaw,
+        phone: String(cells[4] || '').trim(),
+        website: String(cells[5] || '').trim(),
+      }
+    })
+  }
+
+  function mapJsonToLocations(items) {
+    if (!Array.isArray(items)) {
+      throw new Error(t('admin.locations_import_invalid', { defaultValue: 'Fichier invalide.' }))
+    }
+
+    return items.map((item, index) => {
+      const idValue = Number(item?.id)
+      const localityValue = Number(item?.locality)
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        designation: String(item?.designation || item?.name || '-').trim() || '-',
+        address: String(item?.address || '-').trim() || '-',
+        locality: Number.isFinite(localityValue) && localityValue > 0 ? localityValue : (item?.locality || '-'),
+        phone: String(item?.phone || '').trim(),
+        website: String(item?.website || '').trim(),
+      }
+    })
+  }
+
+  function handleExportCsv() {
+    const headers = [
+      t('admin.locations_col_id', { defaultValue: 'ID' }),
+      t('admin.locations_col_name', { defaultValue: 'Nom' }),
+      t('admin.locations_col_address', { defaultValue: 'Adresse' }),
+      t('admin.locations_col_locality', { defaultValue: 'Localité' }),
+      t('admin.locations_col_phone', { defaultValue: 'Téléphone' }),
+      t('admin.locations_col_website', { defaultValue: 'Site web' }),
+    ]
+
+    const rows = locations.map((loc) => [
+      loc.id ?? '',
+      loc.designation || '-',
+      loc.address || '-',
+      formatLocality(loc.locality),
+      loc.phone || '-',
+      loc.website || '-',
+    ])
+
+    const csvContent = [headers, ...rows].map((row) => row.map(escapeCsvValue).join(',')).join('\n')
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `locations-${date}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleExportJson() {
+    const payload = locations.map((loc) => ({
+      id: loc.id ?? null,
+      designation: loc.designation || '-',
+      address: loc.address || '-',
+      locality: loc.locality ?? '-',
+      phone: loc.phone || '',
+      website: loc.website || '',
+    }))
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `locations-${date}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleImportFile(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setError('')
+
+    try {
+      const text = await file.text()
+      const extension = (file.name.split('.').pop() || '').toLowerCase()
+      let imported = []
+
+      if (extension === 'csv') {
+        imported = mapCsvToLocations(parseCsv(text))
+      } else if (extension === 'json') {
+        imported = mapJsonToLocations(JSON.parse(text))
+      } else {
+        throw new Error(t('admin.locations_import_format', { defaultValue: 'Formats acceptes: CSV, JSON.' }))
+      }
+
+      if (!imported.length) {
+        throw new Error(t('admin.locations_import_empty', { defaultValue: 'Aucune donnee a importer.' }))
+      }
+
+      setLocations(sortByNewestId(imported))
+    } catch (err) {
+      setError(err.message || t('admin.locations_import_error', { defaultValue: 'Impossible d importer ce fichier.' }))
+    } finally {
+      event.target.value = ''
+    }
+  }
+
   return (
     <main className="admin-users">
       <section>
         <header>
           <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
-            <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
+            <Link to={`/${i18n.language}/admin/dashboard`} className="admin-luminous-action-btn">
               ← {t('back_to_dashboard')}
             </Link>
-            <button type="button" onClick={loadLocations} style={topActionStyle}>
+            <button type="button" onClick={loadLocations} className="admin-luminous-action-btn">
               {t('refresh_button', { defaultValue: 'Rafraîchir' })}
             </button>
             <button
               type="button"
               onClick={toggleCreateForm}
-              style={topActionStyle}
+              className="admin-luminous-action-btn"
             >
               {showCreateForm
                 ? t('admin.locations_form_close', { defaultValue: 'Close form' })
@@ -337,6 +507,30 @@ export default function AdminLocations() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {!loading && (
+          <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+            <button type="button" className="admin-luminous-action-btn" onClick={() => importInputRef.current?.click()}>
+              Importer
+            </button>
+            {locations.length > 0 && (
+              <button type="button" className="admin-luminous-action-btn" onClick={handleExportCsv}>
+                {t('export_csv', { defaultValue: 'Export CSV' })}
+              </button>
+            )}
+            {locations.length > 0 && (
+              <button type="button" className="admin-luminous-action-btn" onClick={handleExportJson}>
+                {t('export_json', { defaultValue: 'Export JSON' })}
+              </button>
+            )}
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".csv,.json,application/json,text/csv"
+              onChange={handleImportFile}
+              style={{ display: 'none' }}
+            />
           </div>
         )}
       </section>

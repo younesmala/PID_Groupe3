@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { tField } from '../utils/locale'
@@ -71,6 +71,7 @@ export default function AdminShows() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [workingId, setWorkingId] = useState(null)
+  const importInputRef = useRef(null)
 
   const topActionStyle = {
     display: 'inline-flex', alignItems: 'center', gap: '8px',
@@ -195,13 +196,176 @@ export default function AdminShows() {
     }
   }
 
+  function escapeCsvValue(value) {
+    const text = String(value ?? '')
+    return `"${text.replace(/"/g, '""')}"`
+  }
+
+  function parseCsv(text) {
+    const rows = []
+    let row = []
+    let field = ''
+    let inQuotes = false
+
+    for (let i = 0; i < text.length; i += 1) {
+      const char = text[i]
+      const next = text[i + 1]
+
+      if (char === '"') {
+        if (inQuotes && next === '"') {
+          field += '"'
+          i += 1
+        } else {
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(field)
+        field = ''
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && next === '\n') i += 1
+        row.push(field)
+        rows.push(row)
+        row = []
+        field = ''
+      } else {
+        field += char
+      }
+    }
+
+    if (field.length > 0 || row.length > 0) {
+      row.push(field)
+      rows.push(row)
+    }
+
+    return rows.filter((r) => r.some((cell) => String(cell).trim() !== ''))
+  }
+
+  function normalizeStatus(value) {
+    const status = String(value || '').trim().toLowerCase()
+    if (['approved', 'approuve', 'approuvé', 'publie', 'publié'].includes(status)) return 'approved'
+    if (['rejected', 'refuse', 'refusé'].includes(status)) return 'rejected'
+    return 'pending'
+  }
+
+  function mapCsvToShows(csvRows) {
+    if (!csvRows.length) return []
+    const header = csvRows[0].map((h) => String(h || '').trim().toLowerCase())
+    const hasHeader = header.some((h) => ['id', 'titre', 'title', 'status', 'statut'].includes(h))
+    const dataRows = csvRows.slice(hasHeader ? 1 : 0)
+
+    return dataRows.map((cells, index) => {
+      const idValue = Number(cells[0])
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        title: String(cells[1] || '-').trim() || '-',
+        artist_name: String(cells[2] || '-').trim() || '-',
+        publication_status: normalizeStatus(cells[3]),
+      }
+    })
+  }
+
+  function mapJsonToShows(items) {
+    if (!Array.isArray(items)) {
+      throw new Error(t('admin_shows_page.import_invalid', { defaultValue: 'Fichier invalide.' }))
+    }
+
+    return items.map((item, index) => {
+      const idValue = Number(item?.id)
+      return {
+        id: Number.isFinite(idValue) && idValue > 0 ? idValue : Date.now() + index,
+        title: String(item?.title || '-').trim() || '-',
+        artist_name: String(item?.artist_name || '-').trim() || '-',
+        publication_status: normalizeStatus(item?.publication_status || item?.status),
+      }
+    })
+  }
+
+  function handleExportCsv() {
+    const headers = [
+      t('admin_shows_page.col_id', { defaultValue: 'ID' }),
+      t('admin_shows_page.col_title', { defaultValue: 'Titre' }),
+      t('admin_shows_page.col_artist', { defaultValue: 'Producteurs' }),
+      t('admin_shows_page.col_status', { defaultValue: 'Statut' }),
+    ]
+
+    const rows = shows.map((show) => [
+      show.id ?? '',
+      tField(show, 'title', lang) || show.title || '-',
+      show.artist_name || '-',
+      statusLabels[show.publication_status] || show.publication_status || '-',
+    ])
+
+    const csvContent = [headers, ...rows].map((row) => row.map(escapeCsvValue).join(',')).join('\n')
+    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `shows-${date}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  function handleExportJson() {
+    const payload = shows.map((show) => ({
+      id: show.id ?? null,
+      title: tField(show, 'title', lang) || show.title || '-',
+      artist_name: show.artist_name || '-',
+      publication_status: show.publication_status || 'pending',
+    }))
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const date = new Date().toISOString().slice(0, 10)
+    link.href = url
+    link.setAttribute('download', `shows-${date}.json`)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  async function handleImportFile(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setError('')
+
+    try {
+      const text = await file.text()
+      const extension = (file.name.split('.').pop() || '').toLowerCase()
+      let imported = []
+
+      if (extension === 'csv') {
+        imported = mapCsvToShows(parseCsv(text))
+      } else if (extension === 'json') {
+        imported = mapJsonToShows(JSON.parse(text))
+      } else {
+        throw new Error(t('admin_shows_page.import_format', { defaultValue: 'Formats acceptes: CSV, JSON.' }))
+      }
+
+      if (!imported.length) {
+        throw new Error(t('admin_shows_page.import_empty', { defaultValue: 'Aucune donnee a importer.' }))
+      }
+
+      setShows(sortByNewestId(imported))
+    } catch (err) {
+      setError(err.message || t('admin_shows_page.import_error', { defaultValue: 'Impossible d importer ce fichier.' }))
+    } finally {
+      event.target.value = ''
+    }
+  }
+
   return (
     <div className="admin-users">
       <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
-        <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
+        <Link to={`/${i18n.language}/admin/dashboard`} className="admin-luminous-action-btn">
           ← {t('back_to_dashboard')}
         </Link>
-        <button type="button" onClick={refreshShows} style={topActionStyle}>
+        <button type="button" onClick={refreshShows} className="admin-luminous-action-btn">
           {t('refresh_button')}
         </button>
       </div>
@@ -269,6 +433,30 @@ export default function AdminShows() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+      {!loading && (
+        <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+          <button type="button" className="admin-luminous-action-btn" onClick={() => importInputRef.current?.click()}>
+            Importer
+          </button>
+          {shows.length > 0 && (
+            <button type="button" className="admin-luminous-action-btn" onClick={handleExportCsv}>
+              {t('export_csv', { defaultValue: 'Export CSV' })}
+            </button>
+          )}
+          {shows.length > 0 && (
+            <button type="button" className="admin-luminous-action-btn" onClick={handleExportJson}>
+              {t('export_json', { defaultValue: 'Export JSON' })}
+            </button>
+          )}
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".csv,.json,application/json,text/csv"
+            onChange={handleImportFile}
+            style={{ display: 'none' }}
+          />
         </div>
       )}
     </div>
