@@ -1,8 +1,29 @@
+/* Force le fond sombre même lors de l'auto-complétion du navigateur (Chrome/Edge/Safari) */
+.psf-input:-webkit-autofill,
+.psf-input:-webkit-autofill:hover, 
+.psf-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e0e0e0 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #252525 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Force la priorité du style sur l'input et le textarea */
+.psf-input.psf-textarea {
+  background-color: #252525 !important; /* On ajoute !important pour gagner contre les styles tiers */
+  color: #e0e0e0 !important;
+}
+
+/* Si le champ est considéré comme "invalide" par le navigateur, on garde le fond sombre */
+.psf-input:invalid {
+  background-color: #252525;
+  box-shadow: none;
+}
 .psf-page {
   max-width: 720px;
   margin: 0 auto;
   padding: 32px 24px 80px;
   color: #e0e0e0;
+  background: #1a1d21;
 }
 
 /* Breadcrumb */

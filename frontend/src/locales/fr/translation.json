@@ -384,6 +384,7 @@
     "status_rejected": "Rejeté",
     "title_label": "Titre",
     "description_label": "Description",
+    "description_placeholder": "Présentation du spectacle...",
     "duration_label": "Durée (min)",
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -394,7 +395,13 @@
     "no_sessions": "Aucune séance pour le moment.",
     "stats_reservations": "Réservations",
     "stats_revenue": "Revenus",
-    "stats_occupancy": "Taux d'occupation"
+    "stats_occupancy": "Taux d'occupation",
+    "translation_description_subtitle": "Traductions de la description",
+    "language_fr": "Français",
+    "language_en": "Anglais",
+    "language_nl": "Néerlandais",
+    "select_language_placeholder": "Choisir la langue",
+    "select_language_label": "Langue de la traduction"
   },
   "admin": {
     "users_title": "Gestion des utilisateurs",
