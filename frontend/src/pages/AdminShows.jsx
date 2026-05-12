@@ -12,18 +12,32 @@ function getCookie(name) {
 }
 
 async function fetchShows() {
-  const response = await fetch('/api/shows/', {
-    credentials: 'include',
-    headers: { Accept: 'application/json' },
-  })
+  const collected = []
+  let nextUrl = '/api/shows/?ordering=-created_at'
 
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}))
-    throw new Error(data?.detail || 'Impossible de charger les spectacles.')
+  while (nextUrl) {
+    const response = await fetch(nextUrl, {
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+    })
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}))
+      throw new Error(data?.detail || 'Impossible de charger les spectacles.')
+    }
+
+    const data = await response.json()
+
+    if (Array.isArray(data)) {
+      collected.push(...data)
+      nextUrl = null
+    } else {
+      collected.push(...(Array.isArray(data?.results) ? data.results : []))
+      nextUrl = data?.next || null
+    }
   }
 
-  const data = await response.json()
-  return Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : [])
+  return collected
 }
 
 async function updateShowStatus(showId, status) {
@@ -350,7 +364,10 @@ export default function AdminShows() {
               {shows.map((show) => {
                 const workflowStatus = getWorkflowStatus(show)
                 const isWorking = workingId === show.id
-                const badgeClass = workflowStatus === 'validated' || workflowStatus === 'published' ? 'active' : 'inactive'
+                const badgeClass =
+                  workflowStatus === 'validated' || workflowStatus === 'published'
+                    ? 'active'
+                    : 'inactive'
                 const badgeLabel =
                   workflowStatus === 'pending'
                     ? t('producer.status_pending', { defaultValue: 'En attente' })
@@ -377,7 +394,9 @@ export default function AdminShows() {
                             disabled={isWorking}
                             onClick={() => handleStatus(show.id, 'validated')}
                           >
-                            {isWorking ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' }) : 'Valider'}
+                            {isWorking
+                              ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' })
+                              : 'Valider'}
                           </button>
                         )}
                         {(workflowStatus === 'pending' || workflowStatus === 'validated') && (
@@ -388,7 +407,9 @@ export default function AdminShows() {
                             onClick={() => handleStatus(show.id, 'rejected')}
                             style={{ backgroundColor: '#fee2e2', borderColor: '#ef4444', color: '#991b1b' }}
                           >
-                            {isWorking ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' }) : 'Refuser'}
+                            {isWorking
+                              ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' })
+                              : 'Refuser'}
                           </button>
                         )}
                       </div>

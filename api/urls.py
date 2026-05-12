@@ -132,6 +132,11 @@ urlpatterns = [
          name='producer-shows'),
     path('producer/shows/<slug:slug>/', producer.ProducerShowDetailView.as_view(),
          name='producer-shows-detail'),
+    path(
+        'producer/shows/<slug:slug>/sessions/',
+        producer.ProducerShowSessionsView.as_view(),
+        name='producer-shows-sessions',
+    ),
     path('producer/shows/<int:id>/stats/',
          producer.ProducerShowsStatsView.as_view(), name='producer-shows-stats'),
     path('producer/comments/', producer.ProducerCommentsView.as_view(),
@@ -150,7 +155,18 @@ urlpatterns = [
          producer.ProducerReviewsRejectView.as_view(), name='producer-reviews-reject'),
 
     # ADMIN
+    path('admin/stats/', admin_api.AdminStatsView.as_view(), name='admin-stats'),
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
+    path('admin/users/<int:id>/status/', admin_api.AdminApiUserStatusView.as_view(), name='admin-user-status'),
+    path('admin/producers/', admin_api.AdminPendingProducersView.as_view(), name='admin-producers'),
+    path('admin/producers/<int:id>/', admin_api.AdminPendingProducerDetailView.as_view(), name='admin-producer-detail'),
+    path('admin/shows/<int:id>/', admin_api.AdminShowDetailView.as_view(), name='admin-show-detail'),
+    path('admin/reservations/', reservations.AdminReservationsView.as_view(), name='admin-reservations'),
+    path(
+        'admin/reservations/<int:id>/',
+        reservations.AdminReservationsDetailView.as_view(),
+        name='admin-reservation-detail',
+    ),
     path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
     path(
         'admin/comments/<int:id>/moderate/',
