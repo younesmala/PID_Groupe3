@@ -1,45 +1,70 @@
 const BASE = '/api'
+const CACHE_PREFIX = 'show_representations_'
 
-async function fetchJson(url, errorMessage) {
-  const res = await fetch(url)
-  if (!res.ok) {
-    throw new Error(errorMessage)
+const inMemoryRepresentations = new Map()
+
+function readCachedRepresentations(showId) {
+  if (inMemoryRepresentations.has(showId)) {
+    return inMemoryRepresentations.get(showId)
   }
-  return res.json()
-}
 
-async function getRepresentationAvailability(representationId) {
   try {
-    return await fetchJson(
-      `${BASE}/representations/${representationId}/availability/`,
-      'Erreur chargement disponibilites'
-    )
+    const rawValue = sessionStorage.getItem(`${CACHE_PREFIX}${showId}`)
+    if (!rawValue) {
+      return null
+    }
+
+    const parsedValue = JSON.parse(rawValue)
+    if (!Array.isArray(parsedValue)) {
+      return null
+    }
+
+    inMemoryRepresentations.set(showId, parsedValue)
+    return parsedValue
   } catch {
     return null
   }
 }
 
-export async function getRepresentationsByShow(showId) {
-  const representations = await fetchJson(
-    `${BASE}/representations/?show=${showId}`,
-    'Erreur chargement representations'
-  )
+function persistRepresentations(showId, representations) {
+  inMemoryRepresentations.set(showId, representations)
 
-  if (!Array.isArray(representations) || representations.length === 0) {
+  try {
+    sessionStorage.setItem(`${CACHE_PREFIX}${showId}`, JSON.stringify(representations))
+  } catch {
+    // ignore cache storage issues
+  }
+}
+
+function normalizeRepresentations(payload) {
+  if (!Array.isArray(payload)) {
     return []
   }
 
-  const availabilities = await Promise.all(
-    representations.map((representation) => getRepresentationAvailability(representation.id))
-  )
+  return payload.map((representation) => ({
+    ...representation,
+    available_seats: Number(representation.available_seats ?? 0),
+    location: representation.location ?? null,
+  }))
+}
 
-  return representations.map((representation, index) => {
-    const availability = availabilities[index]
+export async function getRepresentationsByShow(showId) {
+  const cachedRepresentations = readCachedRepresentations(showId)
+  if (cachedRepresentations) {
+    return cachedRepresentations
+  }
 
-    return {
-      ...representation,
-      available_seats: availability?.available_seats ?? 0,
-      location: availability?.location ?? representation.location ?? null,
+  try {
+    const response = await fetch(`${BASE}/representations/?show=${showId}`)
+    if (!response.ok) {
+      throw new Error('Erreur chargement representations')
     }
-  })
+
+    const payload = await response.json()
+    const normalizedRepresentations = normalizeRepresentations(payload)
+    persistRepresentations(showId, normalizedRepresentations)
+    return normalizedRepresentations
+  } catch {
+    return cachedRepresentations || []
+  }
 }

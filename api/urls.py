@@ -126,6 +126,8 @@ urlpatterns = [
          name='producer-shows'),
     path('producer/shows/<slug:slug>/', producer.ProducerShowDetailView.as_view(),
          name='producer-shows-detail'),
+    path('producer/shows/<slug:slug>/sessions/', producer.ProducerShowSessionsView.as_view(),
+         name='producer-shows-sessions'),
     path('producer/shows/<int:id>/stats/',
          producer.ProducerShowsStatsView.as_view(), name='producer-shows-stats'),
     path('producer/comments/', producer.ProducerCommentsView.as_view(),
@@ -145,6 +147,7 @@ urlpatterns = [
 
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
+    path('admin/shows/<int:id>/', admin_api.AdminShowDetailView.as_view(), name='admin-shows-detail'),
     path('admin/stats/', admin_api.AdminStatsView.as_view(), name='admin-stats'),
     path('admin/users/<int:id>/status/', admin_api.AdminApiUserStatusView.as_view(), name='admin-users-status'),
     path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),

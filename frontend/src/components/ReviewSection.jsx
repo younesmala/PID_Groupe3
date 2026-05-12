@@ -98,7 +98,10 @@ const ReviewSection = ({ showId }) => {
       const data = await getReviews(showId);
       setReviews(data);
     } catch (error) {
-      setStatusMsg({ type: 'error', text: t('show.review_load_error') });
+      setReviews([]);
+      if (isLoggedIn) {
+        setStatusMsg({ type: 'error', text: t('show.review_load_error') });
+      }
     } finally {
       setIsLoading(false);
     }

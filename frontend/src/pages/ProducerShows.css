@@ -187,6 +187,11 @@
   color: #ffa500;
 }
 
+.ps-badge--blue {
+  background: rgba(74, 158, 255, 0.16);
+  color: #4a9eff;
+}
+
 .ps-badge--red {
   background: rgba(255, 107, 107, 0.15);
   color: #ff6b6b;

@@ -11,6 +11,7 @@ class ShowSerializer(serializers.ModelSerializer):
     next_schedule = serializers.SerializerMethodField()
     next_location_name = serializers.SerializerMethodField()
     artist_name = serializers.SerializerMethodField()
+    sessions_count = serializers.SerializerMethodField()
     prices = ShowPriceSerializer(many=True, read_only=True)
 
     class Meta:
@@ -22,7 +23,7 @@ class ShowSerializer(serializers.ModelSerializer):
             "poster_url", "duration", "spoken_language",
             "created_in", "artist", "artist_name", "location", "location_name", "bookable",
             "publication_status", "created_at", "updated_at", "artist_types",
-            "rating", "next_schedule", "next_location_name", "prices",
+            "rating", "next_schedule", "next_location_name", "sessions_count", "prices",
         ]
 
     def get_artist_name(self, obj):
@@ -59,3 +60,6 @@ class ShowSerializer(serializers.ModelSerializer):
         if obj.location:
             return obj.location.designation
         return None
+
+    def get_sessions_count(self, obj):
+        return obj.representations.count()

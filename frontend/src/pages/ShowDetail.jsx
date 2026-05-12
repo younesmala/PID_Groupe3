@@ -23,7 +23,7 @@ function getPosterSrc(show) {
 
   if (!posterUrl) return null;
 
-  return `/show-posters/${posterUrl.replace(/\.[^.]+$/, ".png")}`;
+  return `/show-posters/${posterUrl}`;
 }
 
 function RepresentationForm({ rep, prices, isLoggedIn, onLoginRequired }) {
@@ -185,26 +185,32 @@ function ShowDetail() {
       return;
     }
 
-    Promise.all([
-      getShowByIdentifier(identifier),
-      fetch("/api/prices/").then((r) => r.json()),
-    ])
-      .then(async ([showData, pricesData]) => {
-        const repsData = await getRepresentationsByShow(showData.id);
-
+    async function loadShowPage() {
+      try {
+        const showData = await getShowByIdentifier(identifier);
         setShow(showData);
-        setRepresentations(repsData);
-        setPrices(pricesData);
 
-        const firstAvailableRep = repsData.find(
+        const pricesResponse = await fetch("/api/prices/");
+        const pricesData = pricesResponse.ok ? await pricesResponse.json() : [];
+        setPrices(Array.isArray(pricesData) ? pricesData : []);
+
+        const repsData = await getRepresentationsByShow(showData.id);
+        setRepresentations(Array.isArray(repsData) ? repsData : []);
+
+        const firstAvailableRep = (Array.isArray(repsData) ? repsData : []).find(
           (rep) => (rep.available_seats ?? 0) > 0
         );
 
         setSelectedRepId(firstAvailableRep?.id ? String(firstAvailableRep.id) : "");
-        setSelectedPriceId(pricesData[0]?.id ? String(pricesData[0].id) : "");
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+        setSelectedPriceId(Array.isArray(pricesData) && pricesData[0]?.id ? String(pricesData[0].id) : "");
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadShowPage();
   }, [id, slug]);
 
   if (loading) return <div>{t("show.loading")}</div>;

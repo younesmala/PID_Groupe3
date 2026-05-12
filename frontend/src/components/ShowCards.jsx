@@ -29,7 +29,7 @@ function getPosterSrc(show) {
 
   if (!posterUrl) return null
 
-  const resolved = POSTER_OVERRIDES[posterUrl] ?? posterUrl.replace(/\.[^.]+$/, '.png')
+  const resolved = POSTER_OVERRIDES[posterUrl] ?? posterUrl
   return `/show-posters/${resolved}`
 }
 
