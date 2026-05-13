@@ -18,7 +18,7 @@ function HeroSection() {
           <a href="#shows" className="home-hero__cta">
             {t('hero.cta')}
           </a>
-          <span className="home-hero__note">Nouveautes mises a jour en temps reel</span>
+          <span className="home-hero__note">{t('hero.note')}</span>
         </div>
       </div>
 
