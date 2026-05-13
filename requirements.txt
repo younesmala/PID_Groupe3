@@ -12,3 +12,5 @@ django-cors-headers==4.9.0
 requests==2.32.3
 django-filter==23.5
 django-autoslug==1.9.9
+gunicorn==23.0.0
+whitenoise==6.9.0

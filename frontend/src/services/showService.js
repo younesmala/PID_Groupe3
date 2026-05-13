@@ -1,4 +1,6 @@
-const BASE = '/api'
+import { API_ROOT } from './api'
+
+const BASE = API_ROOT
 const PUBLIC_SHOWS_CACHE_KEY = 'public_shows_cache'
 
 function readCachedPublicShows() {

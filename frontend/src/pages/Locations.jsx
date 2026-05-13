@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { apiUrl } from '../services/api'
 import './Locations.css'
 
 export default function Locations() {
@@ -14,7 +15,7 @@ export default function Locations() {
   const fetchLocations = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/locations/?include_shows=true')
+      const response = await fetch(apiUrl('/locations/?include_shows=true'))
       if (!response.ok) throw new Error('Erreur lors du chargement des lieux')
       const data = await response.json()
       setLocations(data)

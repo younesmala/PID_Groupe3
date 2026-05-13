@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --configLoader native",
     "build": "vite build --configLoader native",
+    "start": "serve -s dist -l ${PORT:-4173}",
     "lint": "eslint .",
     "preview": "vite preview --configLoader native"
   },
@@ -17,7 +18,8 @@
     "react-dom": "^19.2.4",
     "react-i18next": "^17.0.4",
     "react-router-dom": "^7.13.2",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

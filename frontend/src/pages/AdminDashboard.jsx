@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getPendingReviews } from '../services/reviewService'
+import { API_ROOT } from '../services/api'
 import './ProducerDashboard.css'
 import './AdminDashboard.css'
 import './AccountPages.css'
 
-const BASE = '/api'
+const BASE = API_ROOT
 const ADMIN_SECTIONS = [
   { path: '/admin/producers', labelKey: 'navbar.admin_producers' },
   { path: '/admin/shows', labelKey: 'navbar.admin_shows' },

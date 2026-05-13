@@ -4,9 +4,10 @@ import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
+import { API_ROOT } from '../services/api'
 import './ProducerDashboard.css'
 
-const BASE = '/api'
+const BASE = API_ROOT
 
 async function fetchStats() {
   const response = await fetch(`${BASE}/stats/shows/`, {

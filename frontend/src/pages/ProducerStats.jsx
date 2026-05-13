@@ -4,9 +4,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
 } from 'recharts'
+import { API_ROOT } from '../services/api'
 import './ProducerStats.css'
 
-const BASE = '/api'
+const BASE = API_ROOT
 
 function StatCard({ label, value, sub }) {
   return (

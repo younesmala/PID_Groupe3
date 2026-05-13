@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { apiUrl } from '../services/api'
 import './Footer.css'
 
 function NewsletterForm() {
@@ -15,7 +16,7 @@ function NewsletterForm() {
     setLoading(true)
     setStatus(null)
     try {
-      const res = await fetch('/api/newsletter/subscribe/', {
+      const res = await fetch(apiUrl('/newsletter/subscribe/'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

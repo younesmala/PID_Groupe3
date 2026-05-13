@@ -1,4 +1,6 @@
-const BASE = '/api'
+import { API_ROOT } from './api'
+
+const BASE = API_ROOT
 
 function getCookie(name) {
   const value = `; ${document.cookie}`

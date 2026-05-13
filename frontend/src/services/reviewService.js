@@ -2,6 +2,8 @@
  * Service pour gérer les avis (Reviews) via l'API Django
  */
 
+import { apiUrl } from './api';
+
 function normalizeReviewsPayload(payload) {
   if (Array.isArray(payload)) {
     return payload;
@@ -15,7 +17,7 @@ function normalizeReviewsPayload(payload) {
 }
 
 export async function getReviews(showId) {
-  const url = showId ? `/api/reviews/?show_id=${showId}` : '/api/reviews/';
+  const url = showId ? apiUrl(`/reviews/?show_id=${showId}`) : apiUrl('/reviews/');
   const response = await fetch(url, {
     credentials: 'include',
   });
@@ -29,7 +31,7 @@ export async function getReviews(showId) {
 }
 
 export async function getPendingReviews() {
-  const response = await fetch('/api/reviews/?status=pending', {
+  const response = await fetch(apiUrl('/reviews/?status=pending'), {
     credentials: 'include',
   });
 
@@ -42,7 +44,7 @@ export async function getPendingReviews() {
 }
 
 export async function getAllReviews() {
-  const response = await fetch('/api/reviews/', {
+  const response = await fetch(apiUrl('/reviews/'), {
     credentials: 'include',
   });
 
@@ -64,7 +66,7 @@ function getCookie(name) {
 export async function createReview(reviewData) {
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
 
-  const response = await fetch('/api/reviews/', {
+  const response = await fetch(apiUrl('/reviews/'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -81,7 +83,7 @@ export async function createReview(reviewData) {
 export async function moderateReview(reviewId, status) {
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
 
-  const response = await fetch(`/api/reviews/${reviewId}/`, {
+  const response = await fetch(apiUrl(`/reviews/${reviewId}/`), {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { API_ROOT } from '../services/api'
 import './ProducerSessions.css'
 
-const BASE = '/api'
+const BASE = API_ROOT
 
 async function apiFetch(path, options = {}) {
   const { headers: optHeaders = {}, ...rest } = options
