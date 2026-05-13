@@ -191,7 +191,8 @@
     "spoken_language_label": "Spectacle joué en",
     "spoken_language_fr": "Français",
     "spoken_language_nl": "Néerlandais",
-    "spoken_language_en": "Anglais"
+    "spoken_language_en": "Anglais",
+    "login_to_book": "Connectez-vous pour réserver"
   },
   "cart": {
     "title": "Mon panier",

@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import './ProducerShowForm.css'
-import DescriptionTranslationFields from '../components/DescriptionTranslationFields'
 
 const BASE = '/api'
 
@@ -34,8 +33,7 @@ function flattenErrors(data) {
 
 export default function ProducerShowForm() {
   const navigate = useNavigate()
-  const { t, i18n } = useTranslation()
-  const currentUILang = i18n.language
+  const { t } = useTranslation()
   const { slug } = useParams()
   const isEdit = !!slug
   const fileRef = useRef(null)
@@ -51,8 +49,12 @@ export default function ProducerShowForm() {
   const [posterFile, setPosterFile] = useState(null)
   const [posterPreview, setPosterPreview] = useState(null)
   const [form, setForm] = useState({
-    title: '', // Title will still be managed by the main UI language
-    descriptions: { fr: '', en: '', nl: '' }, // New structure for descriptions
+    title: '',
+    title_nl: '',
+    title_en: '',
+    description: '',
+    description_nl: '',
+    description_en: '',
     artist: '',
     genre: '',
     duration: '',
@@ -93,11 +95,11 @@ export default function ProducerShowForm() {
       .then((data) => {
         setForm({
           title: data.title ?? '',
-          descriptions: { // Populate all description languages
-            fr: data.description_fr ?? '',
-            en: data.description_en ?? '',
-            nl: data.description_nl ?? '',
-          },
+          title_nl: data.title_nl ?? '',
+          title_en: data.title_en ?? '',
+          description: data.description ?? '',
+          description_nl: data.description_nl ?? '',
+          description_en: data.description_en ?? '',
           artist: data.artist ? String(data.artist) : '',
           genre: data.artist_types?.[0] ? String(data.artist_types[0]) : '',
           duration: data.duration ? String(data.duration) : '',
@@ -126,17 +128,6 @@ export default function ProducerShowForm() {
     }
   }
 
-  // New handler for descriptions
-  const handleDescriptionChange = useCallback((lang, value) => {
-    setForm(prev => ({
-      ...prev,
-      descriptions: {
-        ...prev.descriptions,
-        [lang]: value,
-      },
-    }));
-  }, []);
-
   function handleFile(event) {
     const file = event.target.files?.[0] ?? null
     setPosterFile(file)
@@ -153,14 +144,14 @@ export default function ProducerShowForm() {
     }
 
     setSubmitting(true)
-    const allLanguages = ['fr', 'en', 'nl']; // Define all languages here for iteration
 
     const payload = new FormData()
     payload.append('title', form.title.trim())
-    // Append all description languages
-    for (const lang of allLanguages) {
-      payload.append(`description_${lang}`, form.descriptions[lang].trim());
-    }
+    if (form.title_nl.trim()) payload.append('title_nl', form.title_nl.trim())
+    if (form.title_en.trim()) payload.append('title_en', form.title_en.trim())
+    payload.append('description', form.description.trim())
+    if (form.description_nl.trim()) payload.append('description_nl', form.description_nl.trim())
+    if (form.description_en.trim()) payload.append('description_en', form.description_en.trim())
     payload.append('created_in', form.created_in || String(new Date().getFullYear()))
     payload.append('spoken_language', form.spoken_language || 'fr')
 
@@ -210,7 +201,7 @@ export default function ProducerShowForm() {
         <h1 className="psf-title">
           {isEdit
             ? t('producer.edit_show_title', { defaultValue: 'Modifier le spectacle' })
-            : t('producer.create_show_title', { defaultValue: 'Créer un spectacle' })}
+            : t('producer.create_show_title', { defaultValue: 'Creer un spectacle' })}
         </h1>
       </header>
 
@@ -233,27 +224,83 @@ export default function ProducerShowForm() {
           {errors.title && <span className="psf-field-error">{errors.title}</span>}
         </div>
 
+        <div className="psf-row">
+          <div className="psf-field">
+            <label className="psf-label" htmlFor="title_nl">
+              {t('producer.title_nl_label', { defaultValue: 'Titre (NL)' })}
+            </label>
+            <input
+              id="title_nl"
+              name="title_nl"
+              type="text"
+              className="psf-input"
+              value={form.title_nl}
+              onChange={handleChange}
+              placeholder={t('producer.title_nl_placeholder', { defaultValue: 'Titel in het Nederlands' })}
+            />
+          </div>
+          <div className="psf-field">
+            <label className="psf-label" htmlFor="title_en">
+              {t('producer.title_en_label', { defaultValue: 'Titre (EN)' })}
+            </label>
+            <input
+              id="title_en"
+              name="title_en"
+              type="text"
+              className="psf-input"
+              value={form.title_en}
+              onChange={handleChange}
+              placeholder={t('producer.title_en_placeholder', { defaultValue: 'Title in English' })}
+            />
+          </div>
+        </div>
+
         <div className="psf-field">
           <label className="psf-label" htmlFor="description">
-            {t('producer.description_label', { defaultValue: 'Description' })} ({t(`producer.language_${currentUILang}`)})
+            {t('producer.description_label', { defaultValue: 'Description' })}
           </label>
           <textarea
             id="description"
-            name={`description_${currentUILang}`}
+            name="description"
             className={`psf-input psf-textarea${errors.description ? ' psf-input--error' : ''}`}
-            value={form.descriptions[currentUILang]}
-            onChange={(e) => handleDescriptionChange(currentUILang, e.target.value)}
+            value={form.description}
+            onChange={handleChange}
             rows={5}
-            placeholder={t('producer.description_placeholder', { defaultValue: 'Présentation du spectacle...' })}
+            placeholder={t('producer.description_placeholder', { defaultValue: 'Presentation du spectacle...' })}
           />
           {errors.description && <span className="psf-field-error">{errors.description}</span>}
         </div>
 
-        {/* C'est ici que tes champs de traduction s'affichent ! */}
-        <DescriptionTranslationFields
-          descriptions={form.descriptions}
-          onDescriptionChange={handleDescriptionChange}
-        />
+        <div className="psf-row">
+          <div className="psf-field">
+            <label className="psf-label" htmlFor="description_nl">
+              {t('producer.description_nl_label', { defaultValue: 'Description (NL)' })}
+            </label>
+            <textarea
+              id="description_nl"
+              name="description_nl"
+              className="psf-input psf-textarea"
+              value={form.description_nl}
+              onChange={handleChange}
+              rows={3}
+              placeholder={t('producer.description_nl_placeholder', { defaultValue: 'Beschrijving in het Nederlands...' })}
+            />
+          </div>
+          <div className="psf-field">
+            <label className="psf-label" htmlFor="description_en">
+              {t('producer.description_en_label', { defaultValue: 'Description (EN)' })}
+            </label>
+            <textarea
+              id="description_en"
+              name="description_en"
+              className="psf-input psf-textarea"
+              value={form.description_en}
+              onChange={handleChange}
+              rows={3}
+              placeholder={t('producer.description_en_placeholder', { defaultValue: 'Description in English...' })}
+            />
+          </div>
+        </div>
 
         <div className="psf-row">
           <div className="psf-field">
@@ -267,7 +314,7 @@ export default function ProducerShowForm() {
               value={form.artist}
               onChange={handleChange}
             >
-              <option value="">{t('producer.artist_placeholder', { defaultValue: 'Sélectionner un artiste' })}</option>
+              <option value="">{t('producer.artist_placeholder', { defaultValue: 'Selectionner un artiste' })}</option>
               {artists.map((artist) => (
                 <option key={artist.id} value={artist.id}>
                   {artist.stage_name || artist.name || `${artist.firstname || ''} ${artist.lastname || ''}`.trim() || `Artiste #${artist.id}`}
@@ -288,7 +335,7 @@ export default function ProducerShowForm() {
               value={form.genre}
               onChange={handleChange}
             >
-              <option value="">{t('producer.genre_placeholder', { defaultValue: 'Sélectionner un genre' })}</option>
+              <option value="">{t('producer.genre_placeholder', { defaultValue: 'Selectionner un genre' })}</option>
               {genres.map((genre) => (
                 <option key={genre.id} value={genre.id}>
                   {genre.type || genre.name || `Genre #${genre.id}`}
@@ -302,7 +349,7 @@ export default function ProducerShowForm() {
         <div className="psf-row">
           <div className="psf-field">
             <label className="psf-label" htmlFor="duration">
-              {t('producer.duration_label', { defaultValue: 'Durée (minutes)' })}
+              {t('producer.duration_label', { defaultValue: 'Duree (minutes)' })}
             </label>
             <input
               id="duration"
@@ -328,8 +375,8 @@ export default function ProducerShowForm() {
               value={form.spoken_language}
               onChange={handleChange}
             >
-              <option value="fr">Français</option>
-              <option value="nl">Néerlandais</option>
+              <option value="fr">Francais</option>
+              <option value="nl">Neerlandais</option>
               <option value="en">Anglais</option>
             </select>
             {errors.spoken_language && <span className="psf-field-error">{errors.spoken_language}</span>}
@@ -338,7 +385,7 @@ export default function ProducerShowForm() {
 
         <div className="psf-field">
           <label className="psf-label" htmlFor="created_in">
-            {t('producer.created_in_label', { defaultValue: 'Année de création' })}
+            {t('producer.created_in_label', { defaultValue: 'Annee de creation' })}
           </label>
           <input
             id="created_in"
@@ -362,7 +409,7 @@ export default function ProducerShowForm() {
             onClick={() => fileRef.current?.click()}
           >
             {posterPreview ? (
-              <img src={posterPreview} alt={form.title || 'Aperçu'} className="psf-preview" />
+              <img src={posterPreview} alt={form.title || 'Apercu'} className="psf-preview" />
             ) : (
               <div className="psf-file-placeholder">
                 <span className="psf-file-icon">IMG</span>
@@ -388,7 +435,7 @@ export default function ProducerShowForm() {
                 if (fileRef.current) fileRef.current.value = ''
               }}
             >
-              {t('producer.remove_image', { defaultValue: "Supprimer l'image" })}
+              {t('producer.remove_image', { defaultValue: 'Supprimer l image' })}
             </button>
           )}
           {errors.poster_url && <span className="psf-field-error">{errors.poster_url}</span>}
@@ -402,8 +449,8 @@ export default function ProducerShowForm() {
             {submitting
               ? t('producer.saving', { defaultValue: 'Enregistrement...' })
               : isEdit
-                ? t('producer.save_show', { defaultValue: 'Mettre à jour' })
-                : t('producer.create_show_cta', { defaultValue: 'Créer le spectacle' })}
+                ? t('producer.save_show', { defaultValue: 'Mettre a jour' })
+                : t('producer.create_show_cta', { defaultValue: 'Creer le spectacle' })}
           </button>
         </div>
       </form>
