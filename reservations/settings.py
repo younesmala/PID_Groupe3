@@ -9,8 +9,9 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Force loading the project .env and override inherited shell variables.
-load_dotenv(BASE_DIR / ".env", override=True)
+# Load local .env defaults without overriding real environment variables
+# (important for Railway and other deployed environments).
+load_dotenv(BASE_DIR / ".env", override=False)
 
 
 def env_flag(name, default=False):
