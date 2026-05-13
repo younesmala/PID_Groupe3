@@ -9,6 +9,8 @@
   "back_to_dashboard": "Back to Dashboard",
   "refresh_button": "Refresh",
   "import_button": "Import",
+  "export_csv": "Export CSV",
+  "export_json": "Export JSON",
   "navbar": {
     "producer_space": "Producer Space",
     "admin": "Administrator",
@@ -81,7 +83,13 @@
     "col_actions": "Actions",
     "pending": "Pending",
     "approved": "Approved",
-    "rejected": "Rejected"
+    "rejected": "Rejected",
+    "back_dashboard": "Back to dashboard",
+    "view_details": "View details",
+    "hide_details": "Hide details",
+    "validate": "Validate",
+    "reject": "Reject",
+    "full_description": "Full description"
   },
   "admin_reviews_page": {
     "title": "Pending reviews",
@@ -150,7 +158,8 @@
     "title": "Discover the best shows in Brussels",
     "description": "A vibrant selection of cultural events, reserved in just a few clicks.",
     "cta": "View shows",
-    "tonight": "Tonight"
+    "tonight": "Tonight",
+    "note": "Updates in real time"
   },
   "show": {
     "representations": "Representations",
@@ -385,6 +394,8 @@
     "col_actions": "Actions",
     "status_approved": "Published",
     "status_pending": "Pending",
+    "status_validated": "Validated",
+    "status_published": "Published",
     "status_rejected": "Rejected",
     "sessions_btn": "Sessions",
     "edit_btn": "Edit",

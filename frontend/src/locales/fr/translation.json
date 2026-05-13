@@ -83,7 +83,13 @@
     "col_actions": "Actions",
     "pending": "En attente",
     "approved": "Approuvé",
-    "rejected": "Refusé"
+    "rejected": "Refusé",
+    "back_dashboard": "Retour dashboard",
+    "view_details": "Voir les détails",
+    "hide_details": "Masquer les détails",
+    "validate": "Valider",
+    "reject": "Refuser",
+    "full_description": "Description complète"
   },
   "admin_reviews_page": {
     "title": "Avis en attente",
@@ -152,7 +158,8 @@
     "title": "Découvrez les meilleurs spectacles à Bruxelles",
     "description": "Une sélection vibrante d'événements culturels, réservée en quelques clics.",
     "cta": "Voir les spectacles",
-    "tonight": "Ce soir"
+    "tonight": "Ce soir",
+    "note": "Nouveautés mises à jour en temps réel"
   },
   "show": {
     "representations": "Représentations",
@@ -382,6 +389,8 @@
     "no_shows": "Aucun spectacle pour le moment.",
     "status_pending": "En attente",
     "status_approved": "Approuvé",
+    "status_validated": "Validé",
+    "status_published": "Publié",
     "status_rejected": "Rejeté",
     "title_label": "Titre",
     "description_label": "Description",
