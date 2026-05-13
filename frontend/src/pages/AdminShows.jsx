@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { apiUrl } from '../services/api'
@@ -68,12 +68,20 @@ function getWorkflowStatus(show) {
   return 'pending'
 }
 
+function truncateText(value, maxLength = 140) {
+  const text = String(value || '').trim()
+  if (!text) return ''
+  if (text.length <= maxLength) return text
+  return `${text.slice(0, maxLength - 1).trimEnd()}…`
+}
+
 export default function AdminShows() {
   const { t, i18n } = useTranslation()
   const [shows, setShows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [workingId, setWorkingId] = useState(null)
+  const [expandedShowId, setExpandedShowId] = useState(null)
   const importInputRef = useRef(null)
 
   const topActionStyle = {
@@ -324,6 +332,10 @@ export default function AdminShows() {
     }
   }
 
+  function toggleExpandedShow(showId) {
+    setExpandedShowId((current) => (current === showId ? null : showId))
+  }
+
   if (loading) {
     return (
       <div className="admin-users">
@@ -365,6 +377,10 @@ export default function AdminShows() {
               {shows.map((show) => {
                 const workflowStatus = getWorkflowStatus(show)
                 const isWorking = workingId === show.id
+                const title = tField(show, 'title', lang) || show.title || show.slug || 'Sans titre'
+                const description = truncateText(tField(show, 'description', lang) || show.description || '')
+                const fullDescription = tField(show, 'description', lang) || show.description || 'Aucune description.'
+                const isExpanded = expandedShowId === show.id
                 const badgeClass =
                   workflowStatus === 'validated' || workflowStatus === 'published'
                     ? 'active'
@@ -379,9 +395,40 @@ export default function AdminShows() {
                         : t('producer.status_rejected', { defaultValue: 'Refuse' })
 
                 return (
-                  <tr key={show.id}>
+                  <Fragment key={show.id}>
+                    <tr>
                     <td>{show.id}</td>
-                    <td>{tField(show, 'title', lang) || show.title || '-'}</td>
+                    <td>
+                      <button
+                        type="button"
+                        onClick={() => toggleExpandedShow(show.id)}
+                        style={{
+                          display: 'grid',
+                          gap: '4px',
+                          background: 'transparent',
+                          border: 'none',
+                          padding: 0,
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          width: '100%',
+                        }}
+                      >
+                        <strong>{title}</strong>
+                        {show.slug && (
+                          <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
+                            /shows/{show.slug}
+                          </span>
+                        )}
+                        {description && (
+                          <span style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.35 }}>
+                            {description}
+                          </span>
+                        )}
+                        <span style={{ fontSize: '0.82rem', color: '#d9911d', fontWeight: 700 }}>
+                          {isExpanded ? 'Masquer les details' : 'Voir les details'}
+                        </span>
+                      </button>
+                    </td>
                     <td>{show.artist_name || '-'}</td>
                     <td>
                       <span className={`status-badge ${badgeClass}`}>{badgeLabel}</span>
@@ -415,7 +462,39 @@ export default function AdminShows() {
                         )}
                       </div>
                     </td>
-                  </tr>
+                    </tr>
+                    {isExpanded && (
+                      <tr>
+                        <td colSpan={5} style={{ background: '#fffaf0' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gap: '10px',
+                              padding: '14px 8px',
+                            }}
+                          >
+                            <div>
+                              <strong>Description complete</strong>
+                              <p style={{ margin: '8px 0 0', lineHeight: 1.6, color: '#1f2937' }}>
+                                {fullDescription}
+                              </p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap', color: '#475569' }}>
+                              <span>
+                                <strong>Slug :</strong> {show.slug || '-'}
+                              </span>
+                              <span>
+                                <strong>Producteur / artiste :</strong> {show.artist_name || '-'}
+                              </span>
+                              <span>
+                                <strong>Statut :</strong> {badgeLabel}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 )
               })}
             </tbody>
