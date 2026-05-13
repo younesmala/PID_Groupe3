@@ -49,3 +49,14 @@ class AffiliateProfile(models.Model):
 
     class Meta:
         db_table = 'affiliate_profiles'
+
+
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        db_table = 'newsletter_subscribers'

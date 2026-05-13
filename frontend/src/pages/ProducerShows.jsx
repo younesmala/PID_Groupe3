@@ -4,12 +4,50 @@ import { useTranslation } from 'react-i18next'
 import './ProducerShows.css'
 
 const BASE = '/api'
+const DJANGO_BASE_URL = `http://${window.location.hostname}:8000`
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+  return ''
+}
+
+async function ensureCsrfToken() {
+  const storedToken = localStorage.getItem('csrf_token')
+  if (storedToken) {
+    return storedToken
+  }
+
+  const existingToken = getCookie('csrftoken')
+  if (existingToken) {
+    return existingToken
+  }
+
+  await fetch(`${DJANGO_BASE_URL}/accounts/login/`, {
+    method: 'GET',
+    credentials: 'include',
+  })
+
+  return localStorage.getItem('csrf_token') || getCookie('csrftoken') || ''
+}
 
 async function apiFetch(path, options = {}) {
+  const method = String(options.method || 'GET').toUpperCase()
+  const { headers: optionHeaders = {}, ...restOptions } = options
+  const headers = { Accept: 'application/json', ...optionHeaders }
+
+  if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+    const csrfToken = await ensureCsrfToken()
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken
+    }
+  }
+
   const response = await fetch(`${BASE}${path}`, {
     credentials: 'include',
-    headers: { Accept: 'application/json', ...options.headers },
-    ...options,
+    headers,
+    ...restOptions,
   })
   return response
 }

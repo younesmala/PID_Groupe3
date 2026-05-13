@@ -407,7 +407,14 @@
     "at": "at",
     "confirm_session_msg": "Do you want to delete the session on {{date}} at {{time}}? This action is irreversible.",
     "tarif_one": "rate",
-    "tarif_many": "rates"
+    "tarif_many": "rates",
+    "translation_description_subtitle": "Description Translations",
+    "language_fr": "French",
+    "language_en": "English",
+    "language_nl": "Dutch",
+    "select_language_placeholder": "Select language",
+    "select_language_label": "Translation language",
+    "description_placeholder": "Show presentation..."
   },
   "admin": {
     "users_title": "User management",

@@ -407,7 +407,14 @@
     "at": "om",
     "confirm_session_msg": "Wilt u de sessie van {{date}} om {{time}} verwijderen? Deze actie is onomkeerbaar.",
     "tarif_one": "tarief",
-    "tarif_many": "tarieven"
+    "tarif_many": "tarieven",
+    "translation_description_subtitle": "Vertalingen van de beschrijving",
+    "language_fr": "Frans",
+    "language_en": "Engels",
+    "language_nl": "Nederlands",
+    "select_language_placeholder": "Kies de taal",
+    "select_language_label": "Taal van de vertaling",
+    "description_placeholder": "Presentatie van de voorstelling..."
   },
   "admin": {
     "users_title": "Gebruikersbeheer",
