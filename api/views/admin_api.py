@@ -15,8 +15,8 @@ class AdminStatsView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
-        total_users = User.objects.count()
-        total_shows = Show.objects.count()
+        total_users = User.objects.filter(is_active=True, profile__is_deleted=False).count()
+        total_shows = Show.objects.filter(bookable=True).count()
         pending_shows = Show.objects.filter(publication_status=Show.PublicationStatus.PENDING).count()
         total_reservations = Reservation.objects.count()
         pending_reservations = Reservation.objects.filter(payment_status='pending').count()
