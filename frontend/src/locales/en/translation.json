@@ -187,7 +187,8 @@
     "spoken_language_label": "Show performed in",
     "spoken_language_fr": "French",
     "spoken_language_nl": "Dutch",
-    "spoken_language_en": "English"
+    "spoken_language_en": "English",
+    "login_to_book": "Log in to book"
   },
   "cart": {
     "title": "My cart",

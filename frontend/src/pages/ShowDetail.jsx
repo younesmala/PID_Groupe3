@@ -54,7 +54,7 @@ function RepresentationForm({ rep, prices, isLoggedIn, onLoginRequired }) {
             padding: "0 18px",
           }}
         >
-          Connecte-toi pour reserver
+          {t("show.login_to_book")}
         </button>
       </div>
     );
@@ -373,7 +373,7 @@ function ShowDetail() {
                   .filter((rep) => (rep.available_seats ?? 0) > 0)
                   .map((rep) => (
                     <option key={rep.id} value={rep.id}>
-                      {new Date(rep.schedule).toLocaleString("fr-FR")} - {rep.available_seats} place(s) dispo
+                      {new Date(rep.schedule).toLocaleString("fr-FR")} - {rep.available_seats} {t("show.seats_remaining")}
                     </option>
                   ))}
               </select>
@@ -453,7 +453,7 @@ function ShowDetail() {
                   padding: "0 24px",
                 }}
               >
-                Connecte-toi pour reserver
+                {t("show.login_to_book")}
               </button>
             )}
 
