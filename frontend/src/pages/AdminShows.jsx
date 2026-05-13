@@ -348,7 +348,7 @@ export default function AdminShows() {
     <div className="admin-users">
       <div style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
         <Link to={`/${i18n.language}/admin/dashboard`} style={topActionStyle}>
-          Retour dashboard
+          {t('admin_shows_page.back_dashboard', { defaultValue: 'Retour dashboard' })}
         </Link>
         <button type="button" onClick={refreshShows} style={topActionStyle}>
           {t('refresh_button', { defaultValue: 'Rafraichir' })}
@@ -425,7 +425,7 @@ export default function AdminShows() {
                           </span>
                         )}
                         <span style={{ fontSize: '0.82rem', color: '#d9911d', fontWeight: 700 }}>
-                          {isExpanded ? 'Masquer les details' : 'Voir les details'}
+                          {isExpanded ? t('admin_shows_page.hide_details', { defaultValue: 'Masquer les details' }) : t('admin_shows_page.view_details', { defaultValue: 'Voir les details' })}
                         </span>
                       </button>
                     </td>
@@ -444,7 +444,7 @@ export default function AdminShows() {
                           >
                             {isWorking
                               ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' })
-                              : 'Valider'}
+                              : t('admin_shows_page.validate', { defaultValue: 'Valider' })}
                           </button>
                         )}
                         {(workflowStatus === 'pending' || workflowStatus === 'validated') && (
@@ -457,7 +457,7 @@ export default function AdminShows() {
                           >
                             {isWorking
                               ? t('admin_shows_page.processing', { defaultValue: 'Traitement...' })
-                              : 'Refuser'}
+                              : t('admin_shows_page.reject', { defaultValue: 'Refuser' })}
                           </button>
                         )}
                       </div>
@@ -474,7 +474,7 @@ export default function AdminShows() {
                             }}
                           >
                             <div>
-                              <strong>Description complete</strong>
+                              <strong>{t('admin_shows_page.full_description', { defaultValue: 'Description complete' })}</strong>
                               <p style={{ margin: '8px 0 0', lineHeight: 1.6, color: '#1f2937' }}>
                                 {fullDescription}
                               </p>
@@ -484,10 +484,10 @@ export default function AdminShows() {
                                 <strong>Slug :</strong> {show.slug || '-'}
                               </span>
                               <span>
-                                <strong>Producteur / artiste :</strong> {show.artist_name || '-'}
+                                <strong>{t('admin_shows_page.col_artist', { defaultValue: 'Producteur / artiste' })} :</strong> {show.artist_name || '-'}
                               </span>
                               <span>
-                                <strong>Statut :</strong> {badgeLabel}
+                                <strong>{t('admin_shows_page.col_status', { defaultValue: 'Statut' })} :</strong> {badgeLabel}
                               </span>
                             </div>
                           </div>

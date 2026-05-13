@@ -9,6 +9,8 @@
   "back_to_dashboard": "Terug naar Dashboard",
   "refresh_button": "Vernieuwen",
   "import_button": "Importeren",
+  "export_csv": "CSV exporteren",
+  "export_json": "JSON exporteren",
   "navbar": {
     "producer_space": "Producentenruimte",
     "admin": "Beheerder",
@@ -81,7 +83,13 @@
     "col_actions": "Acties",
     "pending": "In afwachting",
     "approved": "Goedgekeurd",
-    "rejected": "Geweigerd"
+    "rejected": "Geweigerd",
+    "back_dashboard": "Terug naar dashboard",
+    "view_details": "Details bekijken",
+    "hide_details": "Details verbergen",
+    "validate": "Valideren",
+    "reject": "Weigeren",
+    "full_description": "Volledige beschrijving"
   },
   "admin_reviews_page": {
     "title": "Wachtende beoordelingen",
@@ -150,7 +158,8 @@
     "title": "Ontdek de beste voorstellingen in Brussel",
     "description": "Een levendige selectie culturele evenementen, in een paar klikken gereserveerd.",
     "cta": "Bekijk de voorstellingen",
-    "tonight": "Vanavond"
+    "tonight": "Vanavond",
+    "note": "Nieuws real-time bijgewerkt"
   },
   "show": {
     "representations": "Voorstellingen",
@@ -385,6 +394,8 @@
     "col_actions": "Acties",
     "status_approved": "Gepubliceerd",
     "status_pending": "In behandeling",
+    "status_validated": "Gevalideerd",
+    "status_published": "Gepubliceerd",
     "status_rejected": "Geweigerd",
     "sessions_btn": "Sessies",
     "edit_btn": "Bewerken",
