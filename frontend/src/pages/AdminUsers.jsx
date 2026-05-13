@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { apiUrl } from '../services/api'
 import './AdminUsers.css'
 
 function getCookie(name) {
@@ -14,7 +15,7 @@ async function apiFetch(path, options = {}) {
   const method = (options.method || 'GET').toUpperCase()
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
 
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(apiUrl(path), {
     credentials: 'include',
     headers: {
       Accept: 'application/json',

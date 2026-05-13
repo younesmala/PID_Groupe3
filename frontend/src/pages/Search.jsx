@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { apiUrl } from '../services/api';
 import './Search.css';
 
 const Search = () => {
@@ -13,7 +14,7 @@ const Search = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/public/shows/')
+    fetch(apiUrl('/public/shows/'))
       .then(res => res.json())
       .then(data => {
         setShows(data);

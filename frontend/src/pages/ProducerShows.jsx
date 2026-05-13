@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { API_ROOT, absoluteUrl } from '../services/api'
 import './ProducerShows.css'
 
-const BASE = '/api'
-const DJANGO_BASE_URL = `http://${window.location.hostname}:8000`
+const BASE = API_ROOT
+const DJANGO_BASE_URL = absoluteUrl('')
 
 function getCookie(name) {
   const value = `; ${document.cookie}`

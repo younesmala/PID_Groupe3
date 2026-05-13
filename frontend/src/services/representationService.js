@@ -1,4 +1,6 @@
-const BASE = '/api'
+import { API_ROOT } from './api'
+
+const BASE = API_ROOT
 const CACHE_PREFIX = 'show_representations_'
 
 const inMemoryRepresentations = new Map()

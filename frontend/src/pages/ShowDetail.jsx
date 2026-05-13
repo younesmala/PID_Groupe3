@@ -6,6 +6,7 @@ import { getShowByIdentifier } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
 import { getStoredUsername } from "../services/authService";
+import { apiUrl } from "../services/api";
 import ReviewSection from '../components/ReviewSection';
 
 
@@ -190,7 +191,7 @@ function ShowDetail() {
         const showData = await getShowByIdentifier(identifier);
         setShow(showData);
 
-        const pricesResponse = await fetch("/api/prices/");
+        const pricesResponse = await fetch(apiUrl("/prices/"));
         const pricesData = pricesResponse.ok ? await pricesResponse.json() : [];
         setPrices(Array.isArray(pricesData) ? pricesData : []);
 

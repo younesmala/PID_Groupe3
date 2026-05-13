@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { API_ROOT } from '../services/api'
 import './ProducerShowForm.css'
 import DescriptionTranslationFields from '../components/DescriptionTranslationFields'
 
-const BASE = '/api'
+const BASE = API_ROOT
 
 function getCookie(name) {
   const value = `; ${document.cookie}`

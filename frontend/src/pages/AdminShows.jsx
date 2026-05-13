@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { apiUrl } from '../services/api'
 import { tField } from '../utils/locale'
 import './AdminUsers.css'
 
@@ -13,7 +14,7 @@ function getCookie(name) {
 
 async function fetchShows() {
   const collected = []
-  let nextUrl = '/api/shows/?ordering=-created_at'
+  let nextUrl = apiUrl('/shows/?ordering=-created_at')
 
   while (nextUrl) {
     const response = await fetch(nextUrl, {
@@ -42,7 +43,7 @@ async function fetchShows() {
 
 async function updateShowStatus(showId, status) {
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-  const response = await fetch(`/api/admin/shows/${showId}/`, {
+  const response = await fetch(apiUrl(`/admin/shows/${showId}/`), {
     method: 'PATCH',
     credentials: 'include',
     headers: {

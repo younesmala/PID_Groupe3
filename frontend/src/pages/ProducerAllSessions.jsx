@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_ROOT } from '../services/api'
 import './ProducerAllSessions.css'
 
-const BASE = '/api'
+const BASE = API_ROOT
 
 async function apiFetch(path) {
   const res = await fetch(`${BASE}${path}`, {

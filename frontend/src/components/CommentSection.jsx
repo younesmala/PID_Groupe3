@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getStoredUsername } from '../services/authService';
+import { apiUrl } from '../services/api';
 import './ReviewSection.css';
 
 async function fetchApprovedComments(slug) {
-  const res = await fetch(`/api/shows/${slug}/comments/`, { credentials: 'include' });
+  const res = await fetch(apiUrl(`/shows/${slug}/comments/`), { credentials: 'include' });
   if (!res.ok) throw new Error('Erreur chargement commentaires');
   const data = await res.json();
   return Array.isArray(data) ? data : (data.results ?? []);
@@ -15,7 +16,7 @@ function getCookie(name) {
 }
 
 async function postComment(slug, content) {
-  const res = await fetch(`/api/shows/${slug}/comments/`, {
+  const res = await fetch(apiUrl(`/shows/${slug}/comments/`), {
     method: 'POST',
     credentials: 'include',
     headers: {

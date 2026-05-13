@@ -12,6 +12,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env", override=True)
 
 
+def env_flag(name, default=False):
+    return os.getenv(name, str(default)).strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def env_list(name, default=''):
+    raw_value = os.getenv(name, default)
+    return [item.strip() for item in raw_value.split(',') if item.strip()]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -20,9 +29,14 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_flag('DEBUG', True)
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+PRODUCTION = env_flag('PRODUCTION', False) or os.environ.get('DJANGO_ENV') == 'production'
+
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', '127.0.0.1,localhost')
+
+if railway_domain := os.getenv('RAILWAY_PUBLIC_DOMAIN'):
+    ALLOWED_HOSTS.append(railway_domain)
 
 
 # Application definition
@@ -54,6 +68,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -89,10 +104,11 @@ WSGI_APPLICATION = "reservations.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-DB_NAME = os.getenv("DB_NAME", "reservation")
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_HOST = os.getenv("DB_HOST") or os.getenv("MYSQLHOST", "127.0.0.1")
+DB_NAME = os.getenv("DB_NAME") or os.getenv("MYSQLDATABASE", "reservation")
+DB_USER = os.getenv("DB_USER") or os.getenv("MYSQLUSER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD") or os.getenv("MYSQLPASSWORD", "")
+DB_PORT = os.getenv("DB_PORT") or os.getenv("MYSQLPORT", "3306")
 
 DATABASES = {
     "default": {
@@ -101,7 +117,7 @@ DATABASES = {
         "USER": DB_USER,
         "PASSWORD": DB_PASSWORD,
         "HOST": DB_HOST,
-        "PORT": os.getenv("DB_PORT", "3306"),
+        "PORT": DB_PORT,
         "OPTIONS": {
             "charset": "utf8mb4",
         },
@@ -152,7 +168,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -165,10 +183,10 @@ LOGIN_URL = "login"
 
 CART_SESSION_ID = 'cart'
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-]
+CSRF_TRUSTED_ORIGINS = env_list(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:5173,http://127.0.0.1:5173',
+)
 
 # ============================================
 # EMAIL CONFIGURATION
@@ -293,11 +311,10 @@ REST_FRAMEWORK = {
 # ============================================
 # CORS — Configuration
 # ============================================
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-]
+CORS_ALLOWED_ORIGINS = env_list(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000",
+)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -325,9 +342,6 @@ CORS_ALLOW_HEADERS = [
 # ============================================
 # HTTPS — Configuration production
 # ============================================
-
-# En production, mettre DEBUG = False et configurer ces paramètres
-PRODUCTION = os.environ.get('DJANGO_ENV') == 'production'
 
 if PRODUCTION:
     # HTTPS obligatoire

@@ -1,4 +1,6 @@
-const PUBLIC_SHOWS_URL = '/api/public/shows/'
+import { apiUrl } from './api'
+
+const PUBLIC_SHOWS_URL = apiUrl('/public/shows/')
 const CACHE_KEY = 'public_shows_cache'
 
 let inMemoryShows = null
