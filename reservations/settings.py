@@ -1,4 +1,5 @@
 
+import importlib.util
 from django.utils.translation import gettext_lazy as _
 import os
 import sys
@@ -32,6 +33,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
 DEBUG = env_flag('DEBUG', True)
 
 PRODUCTION = env_flag('PRODUCTION', False) or os.environ.get('DJANGO_ENV') == 'production'
+HAS_WHITENOISE = importlib.util.find_spec("whitenoise") is not None
 
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', '127.0.0.1,localhost')
 
@@ -68,7 +70,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -77,6 +78,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if HAS_WHITENOISE:
+    MIDDLEWARE.insert(2, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 ROOT_URLCONF = "reservations.urls"
 
@@ -170,7 +174,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+if HAS_WHITENOISE:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
