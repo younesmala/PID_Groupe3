@@ -35,6 +35,7 @@ import ProducerShows from "./pages/ProducerShows"
 import ProducerSessions from "./pages/ProducerSessions"
 import ProducerAllSessions from "./pages/ProducerAllSessions"
 import ProducerStats from "./pages/ProducerStats"
+import ProducerReviews from "./pages/ProducerReviews"
 import ProducerShowForm from "./pages/ProducerShowForm"
 import AdminDashboard from "./pages/AdminDashboard"
 import AdminProducers from "./pages/AdminProducers"
@@ -468,6 +469,23 @@ function AppContent() {
           element={
             <ProtectedRoute user={user}>
               <ProducerStats />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/producer/reviews"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerReviews />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/producer/reviews"
+          element={
+            <ProtectedRoute user={user}>
+              <ProducerReviews />
             </ProtectedRoute>
           }
         />

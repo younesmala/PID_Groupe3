@@ -80,6 +80,40 @@ export async function createReview(reviewData) {
   return response.json();
 }
 
+export async function getProducerReviews() {
+  const response = await fetch(apiUrl('/producer/reviews/'), {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Erreur lors du chargement des avis');
+  }
+
+  const data = await response.json();
+  return normalizeReviewsPayload(data);
+}
+
+export async function moderateProducerReview(reviewId, newStatus) {
+  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
+
+  const response = await fetch(apiUrl(`/producer/reviews/${reviewId}/moderate/`), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: JSON.stringify({ status: newStatus }),
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || "Erreur lors de la modération de l'avis");
+  }
+
+  return response.json();
+}
+
 export async function moderateReview(reviewId, status) {
   const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token');
 
