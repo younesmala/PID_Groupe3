@@ -29,7 +29,6 @@
     "admin_locations": "Venues",
     "admin_producers": "Producers",
     "admin_shows": "Shows",
-    "admin_reviews": "Reviews",
     "admin_artists": "Artists",
     "toggle_menu": "Toggle menu",
     "language": "Language",
@@ -111,25 +110,6 @@
     "col_actions": "Actions",
     "approve": "Approve",
     "reject": "Reject"
-  },
-  "admin_reviews_page": {
-    "title": "Pending reviews",
-    "refresh": "Refresh",
-    "loading": "Loading reviews...",
-    "empty": "No pending reviews.",
-    "load_error": "Unable to load reviews.",
-    "approve_error": "Unable to approve this review.",
-    "reject_error": "Unable to reject this review.",
-    "col_id": "ID",
-    "col_show": "Show",
-    "col_user": "User",
-    "col_rating": "Rating",
-    "col_review": "Review",
-    "col_actions": "Actions",
-    "approve": "Approve",
-    "reject": "Reject",
-    "view_show": "View show",
-    "slug_unavailable": "Slug unavailable"
   },
   "admin_reservations_page": {
     "title": "Reservation management",

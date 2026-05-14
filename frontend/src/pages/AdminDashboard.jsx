@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getPendingReviews } from '../services/reviewService'
 import { API_ROOT } from '../services/api'
 import './ProducerDashboard.css'
 import './AdminDashboard.css'
@@ -13,7 +12,6 @@ const ADMIN_SECTIONS = [
   { path: '/admin/shows', labelKey: 'navbar.admin_shows' },
   { path: '/admin/users', labelKey: 'navbar.admin_users' },
   { path: '/admin/reservations', labelKey: 'navbar.admin_reservations' },
-  { path: '/admin/reviews', labelKey: 'navbar.admin_reviews' },
   { path: '/admin/locations', labelKey: 'navbar.admin_locations' },
   { path: '/admin/artists', labelKey: 'navbar.admin_artists' },
 ]
@@ -40,7 +38,6 @@ export default function AdminDashboard() {
   const { t, i18n } = useTranslation()
   const normalizedLang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
   const [pendingCount, setPendingCount] = useState(0)
-  const [pendingReviewsCount, setPendingReviewsCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState(null)
 
@@ -52,12 +49,6 @@ export default function AdminDashboard() {
       })
       .catch(() => setPendingCount(0))
       .finally(() => setLoading(false))
-
-    getPendingReviews()
-      .then((reviews) => {
-        setPendingReviewsCount(Array.isArray(reviews) ? reviews.length : 0)
-      })
-      .catch(() => setPendingReviewsCount(0))
 
     fetchAdminStats()
       .then((data) => setStats(data))
@@ -110,10 +101,7 @@ export default function AdminDashboard() {
               {section.labelKey === 'navbar.admin_producers' && pendingCount > 0 && (
                 <span className="admin-link-count">{pendingCount}</span>
               )}
-              {section.labelKey === 'navbar.admin_reviews' && pendingReviewsCount > 0 && (
-                <span className="admin-link-count">{pendingReviewsCount}</span>
-              )}
-              {section.labelKey === 'navbar.admin_shows' && pendingShowsCount > 0 && (
+{section.labelKey === 'navbar.admin_shows' && pendingShowsCount > 0 && (
                 <span className="admin-link-count">{pendingShowsCount}</span>
               )}
             </span>
