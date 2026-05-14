@@ -414,13 +414,29 @@ class ProducerReviewsValidateView(APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+    def post(self, request, id):
+        guard = _producer_guard(request)
+        if guard is not None:
+            return guard
+        review = get_object_or_404(Review.objects.select_related("show__producer"), pk=id)
+        if review.show.producer != request.user and not request.user.is_staff:
+            return Response({"error": "Vous n'etes pas le producteur de ce show."}, status=status.HTTP_403_FORBIDDEN)
+        review.status = Review.STATUS_APPROVED
+        review.save(update_fields=["status"])
+        return Response({"id": review.pk, "status": review.status})
 
 
 class ProducerReviewsRejectView(APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        return Response({"detail": "Placeholder"}, status=501)
+    def post(self, request, id):
+        guard = _producer_guard(request)
+        if guard is not None:
+            return guard
+        review = get_object_or_404(Review.objects.select_related("show__producer"), pk=id)
+        if review.show.producer != request.user and not request.user.is_staff:
+            return Response({"error": "Vous n'etes pas le producteur de ce show."}, status=status.HTTP_403_FORBIDDEN)
+        review.status = Review.STATUS_REJECTED
+        review.save(update_fields=["status"])
+        return Response({"id": review.pk, "status": review.status})
