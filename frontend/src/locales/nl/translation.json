@@ -29,7 +29,6 @@
     "admin_locations": "Locaties",
     "admin_producers": "Producenten",
     "admin_shows": "Voorstellingen",
-    "admin_reviews": "Beoordelingen",
     "admin_artists": "Artiesten",
     "toggle_menu": "Menu wisselen",
     "language": "Taal",
@@ -111,25 +110,6 @@
     "col_actions": "Acties",
     "approve": "Goedkeuren",
     "reject": "Weigeren"
-  },
-  "admin_reviews_page": {
-    "title": "Wachtende beoordelingen",
-    "refresh": "Vernieuwen",
-    "loading": "Beoordelingen laden...",
-    "empty": "Geen wachtende beoordelingen.",
-    "load_error": "Kan beoordelingen niet laden.",
-    "approve_error": "Kan deze beoordeling niet goedkeuren.",
-    "reject_error": "Kan deze beoordeling niet weigeren.",
-    "col_id": "ID",
-    "col_show": "Voorstelling",
-    "col_user": "Gebruiker",
-    "col_rating": "Score",
-    "col_review": "Beoordeling",
-    "col_actions": "Acties",
-    "approve": "Goedkeuren",
-    "reject": "Weigeren",
-    "view_show": "Voorstelling bekijken",
-    "slug_unavailable": "Slug niet beschikbaar"
   },
   "admin_reservations_page": {
     "title": "Reserveringsbeheer",

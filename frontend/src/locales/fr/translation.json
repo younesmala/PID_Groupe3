@@ -29,7 +29,6 @@
     "admin_locations": "Lieux",
     "admin_producers": "Producteurs",
     "admin_shows": "Spectacles",
-    "admin_reviews": "Avis",
     "admin_artists": "Artistes",
     "toggle_menu": "Basculer le menu",
     "language": "Langue",
@@ -111,25 +110,6 @@
     "col_actions": "Actions",
     "approve": "Valider",
     "reject": "Rejeter"
-  },
-  "admin_reviews_page": {
-    "title": "Avis en attente",
-    "refresh": "Actualiser",
-    "loading": "Chargement des avis...",
-    "empty": "Aucun avis en attente.",
-    "load_error": "Impossible de charger les avis.",
-    "approve_error": "Validation impossible.",
-    "reject_error": "Rejet impossible.",
-    "col_id": "ID",
-    "col_show": "Spectacle",
-    "col_user": "Utilisateur",
-    "col_rating": "Note",
-    "col_review": "Avis",
-    "col_actions": "Actions",
-    "approve": "Valider",
-    "reject": "Rejeter",
-    "view_show": "Voir spectacle",
-    "slug_unavailable": "Slug indisponible"
   },
   "admin_reservations_page": {
     "title": "Gestion des réservations",
