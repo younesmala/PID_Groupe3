@@ -42,13 +42,15 @@ async function translateTextDirect(text, targetLang) {
   throw new Error('Translation unavailable');
 }
 
-const ReviewSection = ({ showId }) => {
+const ReviewSection = ({ showId, producerUsername }) => {
   const { t, i18n } = useTranslation();
   const [reviews, setReviews] = useState([]);
   const [translatedReviews, setTranslatedReviews] = useState({});
   const [translationUnavailable, setTranslationUnavailable] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const isLoggedIn = !!getStoredUsername();
+  const currentUsername = getStoredUsername();
+  const isLoggedIn = !!currentUsername;
+  const isOwnShow = !!producerUsername && producerUsername === currentUsername;
   const [showForm, setShowForm] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [rating, setRating] = useState(0);
@@ -173,9 +175,9 @@ const ReviewSection = ({ showId }) => {
       </div>
 
       {/* Bouton ou Formulaire */}
-      {!showForm && !showLoginPrompt && !statusMsg.text && (
+      {!isOwnShow && !showForm && !showLoginPrompt && !statusMsg.text && (
         <div className="review-actions" style={{ marginTop: '30px', textAlign: 'center' }}>
-          <button 
+          <button
             className="btn-write-review"
             onClick={() => isLoggedIn ? setShowForm(true) : openLoginFlow(i18n.resolvedLanguage || i18n.language)}
           >

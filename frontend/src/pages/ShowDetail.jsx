@@ -468,7 +468,7 @@ function ShowDetail() {
         )}
 
         {/* Intégration de la section des avis en bas de page */}
-        {show?.id && <ReviewSection showId={show.id} />}
+        {show?.id && <ReviewSection showId={show.id} producerUsername={show.producer_username} />}
       </div>
     </div>
   );

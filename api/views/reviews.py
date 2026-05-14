@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -38,14 +38,41 @@ class ShowReviewsView(APIView):
 
 class ReviewsView(APIView):
     def get(self, request, *args, **kwargs):
-        # Récupère tous les avis approuvés pour tous les spectacles
-        reviews = (
+        queryset = (
             Review.objects.filter(status=Review.STATUS_APPROVED)
             .select_related('user', 'show')
             .order_by('-created_at')
         )
-        serializer = ReviewSerializer(reviews, many=True)
+        show_id = request.query_params.get('show_id')
+        if show_id:
+            queryset = queryset.filter(show_id=show_id)
+        serializer = ReviewSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentification requise.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        show_id = request.data.get('show')
+        show = get_object_or_404(Show, pk=show_id)
+
+        if show.producer == request.user:
+            return Response(
+                {'detail': 'Vous ne pouvez pas laisser un avis sur votre propre spectacle.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if Review.objects.filter(show=show, user=request.user).exists():
+            return Response(
+                {'detail': 'Vous avez déjà posté un avis pour ce spectacle.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ReviewCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(show=show, user=request.user, status=Review.STATUS_PENDING)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReviewsDetailView(APIView):
