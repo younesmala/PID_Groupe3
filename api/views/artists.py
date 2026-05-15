@@ -8,10 +8,17 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from catalogue.models import Artist
+from api.models import UserProfile
 from api.serializers.artists import ArtistSerializer
 
 
 ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+
+
+def _is_producer(request):
+    if not request.user.is_authenticated or request.user.is_staff:
+        return False
+    return UserProfile.objects.filter(user=request.user, role='PRODUCER').exists()
 
 
 def build_artist_payload(request):
@@ -42,9 +49,10 @@ def build_artist_payload(request):
 
 
 class ArtistsView(APIView):
-
     def get(self, request):
         qs = Artist.objects.all()
+        if _is_producer(request):
+            qs = qs.filter(producer=request.user)
         serializer = ArtistSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -56,28 +64,42 @@ class ArtistsView(APIView):
         serializer = ArtistSerializer(data=payload)
 
         if serializer.is_valid():
-            serializer.save()
+            if _is_producer(request):
+                serializer.save(producer=request.user)
+            else:
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ArtistsDetailView(APIView):
-
-    def get(self, request, pk):
+    def _get_artist(self, request, pk):
         try:
             artist = Artist.objects.get(pk=pk)
         except Artist.DoesNotExist:
-            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+            return None, Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if _is_producer(request) and artist.producer_id != request.user.id:
+            return None, Response(
+                {"detail": "Vous n'etes pas autorise a acceder a cet artiste."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        return artist, None
+
+    def get(self, request, pk):
+        artist, error_response = self._get_artist(request, pk)
+        if error_response:
+            return error_response
 
         serializer = ArtistSerializer(artist)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
-        try:
-            artist = Artist.objects.get(pk=pk)
-        except Artist.DoesNotExist:
-            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        artist, error_response = self._get_artist(request, pk)
+        if error_response:
+            return error_response
 
         payload, errors = build_artist_payload(request)
         if errors:
@@ -92,10 +114,9 @@ class ArtistsDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        try:
-            artist = Artist.objects.get(pk=pk)
-        except Artist.DoesNotExist:
-            return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+        artist, error_response = self._get_artist(request, pk)
+        if error_response:
+            return error_response
 
         artist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

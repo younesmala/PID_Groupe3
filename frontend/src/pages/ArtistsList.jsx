@@ -30,12 +30,15 @@ function getCookie(name) {
   return ''
 }
 
-async function ensureCsrfToken() {
-  const storedToken = localStorage.getItem('csrf_token')
-  if (storedToken) return storedToken
-
+async function ensureCsrfToken(forceRefresh = false) {
   const cookieToken = getCookie('csrftoken')
-  if (cookieToken) return cookieToken
+  if (!forceRefresh && cookieToken) {
+    localStorage.setItem('csrf_token', cookieToken)
+    return cookieToken
+  }
+
+  const storedToken = localStorage.getItem('csrf_token')
+  if (!forceRefresh && storedToken) return storedToken
 
   const response = await fetch('/api/auth/csrf/', {
     method: 'GET',
@@ -59,7 +62,7 @@ async function apiFetch(path, options = {}) {
   const method = (options.method || 'GET').toUpperCase()
   const csrfToken = method === 'GET' ? '' : await ensureCsrfToken()
 
-  const response = await fetch(`/api${path}`, {
+  const requestOptions = {
     credentials: 'include',
     headers: {
       Accept: 'application/json',
@@ -67,7 +70,25 @@ async function apiFetch(path, options = {}) {
       ...(options.headers || {}),
     },
     ...options,
-  })
+  }
+
+  let response = await fetch(`/api${path}`, requestOptions)
+
+  if (method !== 'GET' && response.status === 403) {
+    const responseText = await response.clone().text().catch(() => '')
+    const looksLikeCsrfError = /csrf/i.test(responseText)
+
+    if (looksLikeCsrfError) {
+      const refreshedToken = await ensureCsrfToken(true)
+      response = await fetch(`/api${path}`, {
+        ...requestOptions,
+        headers: {
+          ...(requestOptions.headers || {}),
+          'X-CSRFToken': refreshedToken,
+        },
+      })
+    }
+  }
 
   return response
 }
@@ -93,6 +114,20 @@ function ArtistsList() {
     phone: '',
     email: '',
   })
+  const [editingArtistId, setEditingArtistId] = useState(null)
+  const [editFormData, setEditFormData] = useState({
+    firstname: '',
+    lastname: '',
+    photoFile: null,
+    photoName: '',
+    address: '',
+    locality: '',
+    phone: '',
+    email: '',
+  })
+  const [editLoading, setEditLoading] = useState(false)
+  const [editError, setEditError] = useState('')
+  const [editSuccess, setEditSuccess] = useState('')
   const importInputRef = useRef(null)
 
   const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
@@ -183,6 +218,101 @@ function ArtistsList() {
       setError(err?.message || t('artists_page.delete_error', { defaultValue: 'Impossible de supprimer cet artiste.' }))
     } finally {
       setDeletingArtistId(null)
+    }
+  }
+
+  function handleEditArtist(artist) {
+    setEditingArtistId(artist.id)
+    setEditFormData({
+      firstname: artist.firstname || '',
+      lastname: artist.lastname || '',
+      photoFile: null,
+      photoName: '',
+      address: artist.address || '',
+      locality: artist.locality || '',
+      phone: artist.phone || '',
+      email: artist.email || '',
+    })
+    setEditError('')
+    setEditSuccess('')
+  }
+
+  function toggleEditForm() {
+    setEditingArtistId(null)
+    setEditFormData({
+      firstname: '',
+      lastname: '',
+      photoFile: null,
+      photoName: '',
+      address: '',
+      locality: '',
+      phone: '',
+      email: '',
+    })
+    setEditError('')
+    setEditSuccess('')
+  }
+
+  function handleEditInputChange(event) {
+    const { name, value, files, type } = event.target
+
+    if (type === 'file') {
+      const file = files?.[0] || null
+      setEditFormData((prev) => ({
+        ...prev,
+        [name]: file,
+        photoName: file?.name || '',
+      }))
+      return
+    }
+
+    setEditFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  async function handleUpdateArtist(event) {
+    event.preventDefault()
+    setEditError('')
+    setEditSuccess('')
+
+    if (!editFormData.firstname.trim() || !editFormData.lastname.trim()) {
+      setEditError(t('artists_page.create_required', { defaultValue: 'Veuillez completer au moins le prenom et le nom.' }))
+      return
+    }
+
+    setEditLoading(true)
+    try {
+      const payload = new FormData()
+      payload.append('firstname', editFormData.firstname.trim())
+      payload.append('lastname', editFormData.lastname.trim())
+
+      if (editFormData.photoFile) {
+        payload.append('photo_file', editFormData.photoFile)
+      }
+
+      if (editFormData.address.trim()) payload.append('address', editFormData.address.trim())
+      if (editFormData.locality) payload.append('locality', String(Number(editFormData.locality)))
+      if (editFormData.phone.trim()) payload.append('phone', editFormData.phone.trim())
+      if (editFormData.email.trim()) payload.append('email', editFormData.email.trim())
+
+      const res = await apiFetch(`/artists/${editingArtistId}/`, {
+        method: 'PUT',
+        body: payload,
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        const detail = data?.detail || Object.values(data || {}).flat?.().join(' ') || t('artists_page.update_error', { defaultValue: 'Impossible de modifier cet artiste.' })
+        throw new Error(detail)
+      }
+
+      setArtists((prev) => prev.map((item) => (item.id === editingArtistId ? data : item)))
+      toggleEditForm()
+        setCreateSuccess(t('artists_page.update_success', { defaultValue: 'Artiste modifié avec succès.' }))
+    } catch (err) {
+      setEditError(err?.message || t('artists_page.update_error', { defaultValue: 'Impossible de modifier cet artiste.' }))
+    } finally {
+      setEditLoading(false)
     }
   }
 
@@ -524,6 +654,133 @@ function ArtistsList() {
 
         {createSuccess && <p className="admin-locations-state admin-locations-state--success">{createSuccess}</p>}
 
+        {editingArtistId && (
+          <form className="location-form-card" onSubmit={handleUpdateArtist}>
+            <div className="location-form-header">
+              <h2>{t('artists_page.edit_title', { defaultValue: 'Modifier l artiste' })}</h2>
+              <p>{t('artists_page.edit_subtitle', { defaultValue: 'Mettez a jour les informations de l artiste.' })}</p>
+            </div>
+
+            <div className="location-form-grid">
+              <label className="location-form-field">
+                <span>{t('artists_page.form_firstname', { defaultValue: 'Prenom *' })}</span>
+                <input
+                  type="text"
+                  name="firstname"
+                  value={editFormData.firstname}
+                  onChange={handleEditInputChange}
+                  placeholder={t('artists_page.form_firstname_placeholder', { defaultValue: 'Ex: Jean' })}
+                  autoComplete="given-name"
+                  required
+                />
+              </label>
+
+              <label className="location-form-field">
+                <span>{t('artists_page.form_lastname', { defaultValue: 'Nom *' })}</span>
+                <input
+                  type="text"
+                  name="lastname"
+                  value={editFormData.lastname}
+                  onChange={handleEditInputChange}
+                  placeholder={t('artists_page.form_lastname_placeholder', { defaultValue: 'Ex: Dupont' })}
+                  autoComplete="family-name"
+                  required
+                />
+              </label>
+
+              <div className="location-form-field">
+                <span>{t('artists_page.form_photo', { defaultValue: 'Photo' })}</span>
+                <div className="location-form-file-picker">
+                  <label htmlFor="artist-edit-photo" className="location-form-btn location-form-btn--secondary">
+                    {t('artists_page.form_choose_file', { defaultValue: 'Choose file' })}
+                  </label>
+                  <input
+                    id="artist-edit-photo"
+                    className="location-form-file-input"
+                    type="file"
+                    name="photoFile"
+                    accept="image/*"
+                    onChange={handleEditInputChange}
+                  />
+                  <small className="location-form-file-name">
+                    {editFormData.photoName || t('artists_page.form_no_file', { defaultValue: 'No file selected' })}
+                  </small>
+                </div>
+              </div>
+
+              <label className="location-form-field">
+                <span>{t('artists_page.form_address', { defaultValue: 'Adresse' })}</span>
+                <input
+                  type="text"
+                  name="address"
+                  value={editFormData.address}
+                  onChange={handleEditInputChange}
+                  placeholder={t('artists_page.form_address_placeholder', { defaultValue: 'Ex: 123 Rue de Berlin' })}
+                  autoComplete="street-address"
+                />
+              </label>
+
+              <label className="location-form-field">
+                <span>{t('artists_page.form_locality', { defaultValue: 'Localite' })}</span>
+                <select
+                  name="locality"
+                  value={editFormData.locality}
+                  onChange={handleEditInputChange}
+                >
+                  <option value="">{t('artists_page.form_locality_select', { defaultValue: 'Choisir une localite...' })}</option>
+                  {localities.map((locality) => (
+                    <option key={locality.id} value={locality.id}>
+                      {locality.postal_code} {locality.locality}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="location-form-field">
+                <span>{t('artists_page.form_phone', { defaultValue: 'Telephone' })}</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={editFormData.phone}
+                  onChange={handleEditInputChange}
+                  placeholder={t('artists_page.form_phone_placeholder', { defaultValue: '+32 2 1234 5678' })}
+                  autoComplete="tel"
+                />
+              </label>
+
+              <label className="location-form-field">
+                <span>{t('artists_page.form_email', { defaultValue: 'Email' })}</span>
+                <input
+                  type="email"
+                  name="email"
+                  value={editFormData.email}
+                  onChange={handleEditInputChange}
+                  placeholder={t('artists_page.form_email_placeholder', { defaultValue: 'artiste@example.com' })}
+                  autoComplete="email"
+                />
+              </label>
+            </div>
+
+            {editError && <p className="admin-locations-state admin-locations-state--error">{editError}</p>}
+
+            <div className="location-form-actions">
+              <button
+                type="button"
+                className="location-form-btn location-form-btn--secondary"
+                onClick={toggleEditForm}
+                disabled={editLoading}
+              >
+                {t('artists_page.form_cancel', { defaultValue: 'Annuler' })}
+              </button>
+              <button type="submit" className="location-form-btn location-form-btn--primary" disabled={editLoading}>
+                {editLoading
+                  ? t('artists_page.form_submitting', { defaultValue: 'Enregistrement...' })
+                  : t('artists_page.form_update', { defaultValue: 'Enregistrer les modifications' })}
+              </button>
+            </div>
+          </form>
+        )}
+
         {showCreateForm && (
           <form className="location-form-card" onSubmit={handleCreateArtist}>
             <div className="location-form-header">
@@ -558,16 +815,25 @@ function ArtistsList() {
                 />
               </label>
 
-              <label className="location-form-field">
+              <div className="location-form-field">
                 <span>{t('artists_page.form_photo', { defaultValue: 'Photo' })}</span>
-                <input
-                  type="file"
-                  name="photoFile"
-                  accept="image/*"
-                  onChange={handleInputChange}
-                />
-                {formData.photoName && <small>{formData.photoName}</small>}
-              </label>
+                <div className="location-form-file-picker">
+                  <label htmlFor="artist-create-photo" className="location-form-btn location-form-btn--secondary">
+                    {t('artists_page.form_choose_file', { defaultValue: 'Choose file' })}
+                  </label>
+                  <input
+                    id="artist-create-photo"
+                    className="location-form-file-input"
+                    type="file"
+                    name="photoFile"
+                    accept="image/*"
+                    onChange={handleInputChange}
+                  />
+                  <small className="location-form-file-name">
+                    {formData.photoName || t('artists_page.form_no_file', { defaultValue: 'No file selected' })}
+                  </small>
+                </div>
+              </div>
 
               <label className="location-form-field">
                 <span>{t('artists_page.form_address', { defaultValue: 'Adresse' })}</span>
@@ -690,6 +956,14 @@ function ArtistsList() {
                       <td>{artist?.email || artist?.mail || '-'}</td>
                       <td>
                         <div className="table-actions-row table-actions-row--nowrap">
+                          <button
+                            type="button"
+                            className="status-toggle-btn status-toggle-btn--info"
+                            onClick={() => handleEditArtist(artist)}
+                            disabled={editingArtistId !== null}
+                          >
+                            {t('artists_page.edit', { defaultValue: 'Modifier' })}
+                          </button>
                           <button
                             type="button"
                             className="status-toggle-btn status-toggle-btn--danger"

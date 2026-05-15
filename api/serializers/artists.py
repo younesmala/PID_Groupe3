@@ -6,3 +6,4 @@ class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
         fields = '__all__'
+        read_only_fields = ('producer',)

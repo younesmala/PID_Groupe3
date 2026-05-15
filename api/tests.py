@@ -114,6 +114,46 @@ class ArtistsApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Not found")
 
+    def test_authenticated_producer_sees_only_own_artists_and_create_assigns_owner(self):
+        producer_one = User.objects.create_user(
+            username="producer-one",
+            email="producer-one@example.com",
+            password="testpass123",
+        )
+        producer_two = User.objects.create_user(
+            username="producer-two",
+            email="producer-two@example.com",
+            password="testpass123",
+        )
+
+        profile_one, _ = UserProfile.objects.get_or_create(user=producer_one)
+        profile_one.role = "PRODUCER"
+        profile_one.save(update_fields=["role"])
+
+        profile_two, _ = UserProfile.objects.get_or_create(user=producer_two)
+        profile_two.role = "PRODUCER"
+        profile_two.save(update_fields=["role"])
+
+        artist_one = Artist.objects.create(firstname="Alice", lastname="Owner", producer=producer_one)
+        Artist.objects.create(firstname="Bob", lastname="Other", producer=producer_two)
+
+        self.client.force_authenticate(user=producer_one)
+
+        list_url = reverse("api:artists-list-create")
+        list_response = self.client.get(list_url)
+        self.assertEqual(list_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(list_response.data), 1)
+        self.assertEqual(list_response.data[0]["id"], artist_one.id)
+
+        create_response = self.client.post(
+            list_url,
+            {"firstname": "Charlie", "lastname": "New"},
+            format="json",
+        )
+        self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
+        created_artist = Artist.objects.get(id=create_response.data["id"])
+        self.assertEqual(created_artist.producer_id, producer_one.id)
+
 
 class AdminUsersApiTests(APITestCase):
     def setUp(self):

@@ -451,6 +451,30 @@
   outline-offset: 0;
 }
 
+.location-form-file-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.location-form-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.location-form-file-name {
+  color: #475569;
+  font-size: 0.86rem;
+}
+
 .location-form-field--full {
   grid-column: 1 / -1;
 }
