@@ -1,0 +1,403 @@
+﻿PID_Groupe3-main/
+
+=== .github ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\.GITHUB
+\---workflows
+        main.yml
+        
+
+=== accounts ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\ACCOUNTS
+|   apps.py
+|   models.py
+|   signals.py
+|   tests.py
+|   urls.py
+|   views.py
+|   __init__.py
+|   
++---forms
+|       UserSignUpForm.py
+|       UserUpdateForm.py
+|       __init__.py
+|       
++---management
+|   |   __init__.py
+|   |   
+|   \---commands
+|           create_default_groups.py
+|           __init__.py
+|           
++---migrations
+|       __init__.py
+|       
+\---templates
+    +---registration
+    |       login.html
+    |       signup.html
+    |       
+    \---user
+            profile.html
+            update.html
+            
+
+=== api ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\API
+|   apps.py
+|   tests.py
+|   urls.py
+|   views.py
+|   __init__.py
+|   
++---migrations
+|       __init__.py
+|       
++---serializers
+|       admin_api.py
+|       affiliate.py
+|       artists.py
+|       artist_types.py
+|       auth.py
+|       cart.py
+|       localities.py
+|       locations.py
+|       prices.py
+|       producer.py
+|       representations.py
+|       reservations.py
+|       reviews.py
+|       shows.py
+|       types.py
+|       users.py
+|       __init__.py
+|       
+\---views
+        admin_api.py
+        affiliate.py
+        artists.py
+        artist_types.py
+        auth.py
+        cart.py
+        checkout.py
+        localities.py
+        locations.py
+        prices.py
+        producer.py
+        public_api.py
+        representations.py
+        reservations.py
+        reviews.py
+        rss.py
+        shows.py
+        tickets.py
+        types.py
+        users.py
+        __init__.py
+        
+
+=== cart ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\CART
+|   admin.py
+|   apps.py
+|   cart.py
+|   context_processors.py
+|   models.py
+|   tests.py
+|   urls.py
+|   views.py
+|   __init__.py
+|   
++---migrations
+|       __init__.py
+|       
+\---templates
+    \---cart
+            checkout.html
+            detail.html
+            payment_simulation.html
+            reservation_detail.html
+            
+
+=== catalogue ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\CATALOGUE
+|   admin.py
+|   apps.py
+|   models.py
+|   tests.py
+|   translation.py
+|   urls.py
+|   __init__.py
+|   
++---fixtures
+|       ArtistFixtures.json
+|       artist_type.json
+|       auth_user.json
+|       groups.json
+|       localities.json
+|       locations.json
+|       prices.json
+|       representations.json
+|       representation_reservations.json
+|       reservations.json
+|       reviews.json
+|       shows.json
+|       show_prices.json
+|       types.json
+|       user_meta.json
+|       
++---forms
+|       ArtistForm.py
+|       LocalityForm.py
+|       LocationForm.py
+|       PriceForm.py
+|       RepresentationForm.py
+|       ReviewForm.py
+|       ShowForm.py
+|       TypeForm.py
+|       __init__.py
+|       
++---management
+|   |   __init__.py
+|   |   
+|   \---commands
+|           load_all_fixtures.py
+|           __init__.py
+|           
++---migrations
+|       0001_initial.py
+|       0002_usermeta.py
+|       0003_type.py
+|       0004_price.py
+|       0005_price_description.py
+|       0006_locality.py
+|       0007_rename_postcode_locality_postal_code_location.py
+|       0008_reservation.py
+|       0009_show_alter_locality_locality_and_more.py
+|       0010_alter_show_created_in_location_unique_slug_website.py
+|       0011_representation.py
+|       0012_show_unique_slug_created_in.py
+|       0013_review.py
+|       0014_artist_types.py
+|       0015_artist_unique_firstname_lastname.py
+|       0016_remove_artist_unique_firstname_lastname_and_more.py
+|       0017_artisttype.py
+|       0018_artisttypeshow.py
+|       0019_show_artist_types.py
+|       0020_artist_unique_firstname_lastname.py
+|       0021_remove_artist_unique_firstname_lastname.py
+|       0022_representation_available_seats_and_more.py
+|       0022_reservation_quantity_reservation_representation.py
+|       0023_artist_firstname_en_artist_firstname_fr_and_more.py
+|       0023_representation_available_seats.py
+|       0024_reservation_payment_status.py
+|       0025_merge_20260415_1035.py
+|       __init__.py
+|       
++---models
+|       artist.py
+|       artist_type.py
+|       artist_type_show.py
+|       locality.py
+|       location.py
+|       price.py
+|       representation.py
+|       reservation.py
+|       review.py
+|       show.py
+|       type.py
+|       user_meta.py
+|       __init__.py
+|       
++---static
+|   \---catalogue
+|       |   style.css
+|       |   
+|       \---css
+|               components.css
+|               
++---templates
+|   +---admin
+|   |   |   dashboard.html
+|   |   |   
+|   |   \---user
+|   |           edit.html
+|   |           index.html
+|   |           
+|   +---artist
+|   |       create.html
+|   |       delete.html
+|   |       edit.html
+|   |       index.html
+|   |       show.html
+|   |       
+|   +---catalogue
+|   |       home.html
+|   |       
+|   +---layouts
+|   |       base.html
+|   |       
+|   +---registration
+|   |       login.html
+|   |       signup.html
+|   |       
+|   \---show
+|           create.html
+|           edit.html
+|           index.html
+|           show.html
+|           
+\---views
+        admin_dashboard.py
+        artist.py
+        home.py
+        show_.py
+        __init__.py
+        
+
+=== frontend ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\FRONTEND
+|   .gitignore
+|   eslint.config.js
+|   index.html
+|   package-lock.json
+|   package.json
+|   README.md
+|   vite.config.js
+|   
++---public
+|       favicon.svg
+|       icons.svg
+|       
+\---src
+    |   App.css
+    |   App.jsx
+    |   index.css
+    |   main.jsx
+    |   
+    +---assets
+    |       hero.png
+    |       react.svg
+    |       vite.svg
+    |       
+    +---components
+    |   |   ArtistCard.jsx
+    |   |   
+    |   \---button
+    |           button.css
+    |           button.jsx
+    |           
+    +---data
+    |       artists.js
+    |       
+    +---pages
+    |       ArtistDetail.jsx
+    |       ArtistEdit.jsx
+    |       ArtistsList.jsx
+    |       Cart.jsx
+    |       ShowDetail.jsx
+    |       ShowsList.jsx
+    |       
+    \---services
+            artistService.js
+            cartService.js
+            representationService.js
+            showService.js
+            
+
+=== member ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\MEMBER
+\---templates
+    \---registration
+            login.html
+            
+
+=== reservations ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\RESERVATIONS
+    asgi.py
+    settings.py
+    urls.py
+    wsgi.py
+    __init__.py
+    
+Aucun sous-dossier existant 
+
+
+=== Templates ===
+Structure du dossier pour le volume OS
+Le numÚro de sÚrie du volume est B6A4-C121
+C:\USERS\LIERN\ONEDRIVE\BUREAU\PID_GROUPE3-MAIN (5)\PID_GROUPE3-MAIN\TEMPLATES
+|   home.html
+|   
+\---Layouts
+        base.html
+        
+
+=== env (top-level) ===
+
+Name       Mode  
+----       ----  
+Lib        d-----
+Scripts    d-----
+pyvenv.cfg -a----
+
+
+
+
+=== node_modules (top-level) ===
+
+Name               Mode  
+----               ----  
+cookie             d-----
+react              d-----
+react-dom          d-----
+react-router       d-----
+react-router-dom   d-----
+scheduler          d-----
+set-cookie-parser  d-----
+.package-lock.json -a----
+
+
+
+
+=== root ===
+
+Name                       Mode  
+----                       ----  
+.github                    d-----
+accounts                   d-----
+api                        d-----
+cart                       d-----
+catalogue                  d-----
+env                        d-----
+frontend                   d-----
+member                     d-----
+node_modules               d-----
+reservations               d-----
+Templates                  d-----
+.gitignore                 -a----
+ARBORESCENCE_DETAILLEE.txt -a----
+LOGBOOK_GROUPE.md          -a----
+manage.py                  -a----
+package-lock.json          -a----
+package.json               -a----
+README.md                  -a----
+requirements.txt           -a----
+
+
+

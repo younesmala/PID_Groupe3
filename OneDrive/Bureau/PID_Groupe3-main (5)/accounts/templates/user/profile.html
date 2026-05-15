@@ -1,0 +1,49 @@
+{% extends "layouts/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Profil" %}{% endblock title %}
+
+{% block content %}
+    <div>
+        <h2>{{user.first_name}} {{user.last_name}}</h2>
+        <p>{% trans "Login" %} : {{user.username}}</p>
+        <p>{% trans "Email" %} : {{user.email}}</p>
+        <p>{% trans "Langue" %} : {{user_language}}</p>
+    </div>
+
+    <ul>
+        <li><a href="{% url 'accounts:user-update' request.user.id %}">{% trans "Modifier" %}</a></li>
+        <li><a href="{% url 'password_change' %}">{% trans "Modifier le mot de passe" %}</a></li>
+        <li>
+            <form method="post" action="{% url 'accounts:user-delete' request.user.id %}"
+                onsubmit="return confirm('{% trans "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." %}')">
+                {% csrf_token %}
+                <input type="submit" value="{% trans 'Supprimer son compte' %}">
+            </form>
+        </li>
+    </ul>
+
+    <h3>{% trans "Mes réservations" %}</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>{% trans "Id" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Statut" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservation in user.reservations.all %}
+            <tr>
+                <td>{{ reservation.id }}</td>
+                <td>{{ reservation.booking_date|date:"d/m/Y" }}</td>
+                <td>{{ reservation.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p><code>{{ user.reservations.all }}</code></p>
+
+{% endblock content %}
