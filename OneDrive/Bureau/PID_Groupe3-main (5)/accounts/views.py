@@ -1,14 +1,14 @@
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView, UpdateView
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import Group, User
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView, UpdateView
+
 from .forms.UserSignUpForm import UserSignUpForm
 from .forms.UserUpdateForm import UserUpdateForm
-
 
 
 class UserUpdateView(UserPassesTestMixin, UpdateView):
@@ -18,13 +18,18 @@ class UserUpdateView(UserPassesTestMixin, UpdateView):
     template_name = "user/update.html"
 
     def test_func(self):
-        pkInURL = self.kwargs['pk']
-        return self.request.user.is_authenticated and self.request.user.id==pkInURL or self.request.user.is_superuser
+        pkInURL = self.kwargs["pk"]
+        return (
+            self.request.user.is_authenticated
+            and self.request.user.id == pkInURL
+            or self.request.user.is_superuser
+        )
 
     def handle_no_permission(self):
-        messages.error(self.request, "Vous n'avez pas l'autorisation d'accéder à cette page!")
-        return redirect('accounts:user-profile')
-
+        messages.error(
+            self.request, "Vous n'avez pas l'autorisation d'accéder à cette page!"
+        )
+        return redirect("accounts:user-profile")
 
 
 class UserSignUpView(UserPassesTestMixin, CreateView):
@@ -32,12 +37,11 @@ class UserSignUpView(UserPassesTestMixin, CreateView):
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
-
     def form_valid(self, form):
         response = super().form_valid(form)
         user = self.object
         try:
-            member_group = Group.objects.get(name='MEMBER')
+            member_group = Group.objects.get(name="MEMBER")
             user.groups.add(member_group)
         except Group.DoesNotExist:
             pass
@@ -48,7 +52,8 @@ class UserSignUpView(UserPassesTestMixin, CreateView):
 
     def handle_no_permission(self):
         messages.error(self.request, "Vous êtes déjà inscrit!")
-        return redirect('home')
+        return redirect("home")
+
 
 @login_required
 def profile(request):
@@ -58,17 +63,21 @@ def profile(request):
         "nl": "Nederlands",
     }
 
-    return render(request, 'user/profile.html', {
-        "user_language" : languages[request.user.usermeta.langue],
-    })
+    return render(
+        request,
+        "user/profile.html",
+        {
+            "user_language": languages[request.user.usermeta.langue],
+        },
+    )
 
 
 @login_required
 def delete(request, pk):
-    if request.method == 'POST':
-        method = request.POST.get('_method', '').upper()
+    if request.method == "POST":
+        method = request.POST.get("_method", "").upper()
 
-        if method == 'DELETE':
+        if method == "DELETE":
             if request.user and request.user.id == pk:
                 user = User.objects.get(id=request.user.id)
                 user.delete()
@@ -76,11 +85,10 @@ def delete(request, pk):
                 messages.success(request, "Utilisateur supprimé avec succès.")
                 logout(request)
             else:
-                messages.error(request,
-                               "Suppression d'un autre compte interdite!")
+                messages.error(request, "Suppression d'un autre compte interdite!")
 
-            return redirect('home')
+            return redirect("home")
 
     messages.error(request, "Suppression interdite (méthode incorrecte)!")
 
-    return redirect('home')
+    return redirect("home")

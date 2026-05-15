@@ -1,9 +1,10 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from catalogue.models import Show
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from api.serializers.shows import ShowSerializer
+from catalogue.models import Show
 
 
 class ShowsView(APIView):
@@ -11,6 +12,7 @@ class ShowsView(APIView):
     GET: Récupère tous les spectacles
     POST: Crée un nouveau spectacle
     """
+
     def get(self, request, *args, **kwargs):
         shows = Show.objects.all()
         serializer = ShowSerializer(shows, many=True)
@@ -30,13 +32,13 @@ class ShowsDetailView(APIView):
     PUT: Met à jour un spectacle
     DELETE: Supprime un spectacle
     """
+
     def get(self, request, id, *args, **kwargs):
         try:
             show = Show.objects.get(id=id)
         except Show.DoesNotExist:
             return Response(
-                {"detail": "Spectacle non trouvé"},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "Spectacle non trouvé"}, status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = ShowSerializer(show)
@@ -47,8 +49,7 @@ class ShowsDetailView(APIView):
             show = Show.objects.get(id=id)
         except Show.DoesNotExist:
             return Response(
-                {"detail": "Spectacle non trouvé"},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "Spectacle non trouvé"}, status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = ShowSerializer(show, data=request.data, partial=True)
@@ -62,8 +63,7 @@ class ShowsDetailView(APIView):
             show = Show.objects.get(id=id)
         except Show.DoesNotExist:
             return Response(
-                {"detail": "Spectacle non trouvé"},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "Spectacle non trouvé"}, status=status.HTTP_404_NOT_FOUND
             )
 
         show.delete()
@@ -74,9 +74,10 @@ class ShowsSearchView(APIView):
     """
     GET: Recherche des spectacles
     """
+
     def get(self, request, *args, **kwargs):
         # Implémentation basique de recherche - peut être étendue
-        query = request.query_params.get('q', '')
+        query = request.query_params.get("q", "")
         if query:
             shows = Show.objects.filter(title__icontains=query)
         else:

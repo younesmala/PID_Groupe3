@@ -7,22 +7,49 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogue', '0021_remove_artist_unique_firstname_lastname'),
+        ("catalogue", "0021_remove_artist_unique_firstname_lastname"),
     ]
 
     operations = [
-
         migrations.CreateModel(
-            name='RepresentationReservation',
+            name="RepresentationReservation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.IntegerField(default=1)),
-                ('price', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='catalogue.price')),
-                ('representation', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='representation_reservations', to='catalogue.representation')),
-                ('reservation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='representation_reservations', to='catalogue.reservation')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.IntegerField(default=1)),
+                (
+                    "price",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        to="catalogue.price",
+                    ),
+                ),
+                (
+                    "representation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        related_name="representation_reservations",
+                        to="catalogue.representation",
+                    ),
+                ),
+                (
+                    "reservation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="representation_reservations",
+                        to="catalogue.reservation",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'representation_reservations',
+                "db_table": "representation_reservations",
             },
         ),
     ]

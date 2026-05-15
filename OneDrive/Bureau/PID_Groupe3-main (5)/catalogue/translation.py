@@ -1,17 +1,18 @@
-from modeltranslation.translator import register, TranslationOptions
-from catalogue.models import Show, Artist, Type
+from modeltranslation.translator import TranslationOptions, register
+
+from catalogue.models import Artist, Show, Type
 
 
 @register(Show)
 class ShowTranslationOptions(TranslationOptions):
-    fields = ('title', 'description')
+    fields = ("title", "description")
 
 
 @register(Artist)
 class ArtistTranslationOptions(TranslationOptions):
-    fields = ('firstname', 'lastname')
+    fields = ("firstname", "lastname")
 
 
 @register(Type)
 class TypeTranslationOptions(TranslationOptions):
-    fields = ('type',)
+    fields = ("type",)

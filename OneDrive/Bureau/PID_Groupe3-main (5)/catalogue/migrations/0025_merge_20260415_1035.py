@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogue', '0023_artist_firstname_en_artist_firstname_fr_and_more'),
-        ('catalogue', '0024_reservation_payment_status'),
+        ("catalogue", "0023_artist_firstname_en_artist_firstname_fr_and_more"),
+        ("catalogue", "0024_reservation_payment_status"),
     ]
 
-    operations = [
-    ]
+    operations = []

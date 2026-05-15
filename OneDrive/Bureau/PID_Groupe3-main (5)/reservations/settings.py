@@ -1,8 +1,8 @@
-
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+
 from django.utils.translation import gettext_lazy as _
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -33,14 +33,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # ajout de catalogue
     "catalogue",
-
     # ajout de api
     "api",
     # ajout de rest_framework
-    'rest_framework',
+    "rest_framework",
     # ajout de accounts
     "accounts",
     # ajout de cart
@@ -125,14 +123,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 LANGUAGES = [
-    ('fr', _('French')),
-    ('nl', _('Dutch')),
-    ('en', _('English')),
+    ("fr", _("French")),
+    ("nl", _("Dutch")),
+    ("en", _("English")),
 ]
 
-LANGUAGE_CODE = 'fr'
+LANGUAGE_CODE = "fr"
 
-LOCALE_PATHS = [BASE_DIR / 'locale']
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
 TIME_ZONE = "UTC"
 
@@ -155,6 +153,4 @@ LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
-CART_SESSION_ID = 'cart'
-
-
+CART_SESSION_ID = "cart"

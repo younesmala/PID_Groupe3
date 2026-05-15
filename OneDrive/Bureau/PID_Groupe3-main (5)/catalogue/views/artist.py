@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect, render
 
 from catalogue.forms.ArtistForm import ArtistForm
 from catalogue.models import Artist
@@ -9,16 +9,24 @@ from catalogue.models import Artist
 
 def index(request):
     artists = Artist.objects.all()
-    return render(request, "artist/index.html", {
-        "artists": artists,
-    })
+    return render(
+        request,
+        "artist/index.html",
+        {
+            "artists": artists,
+        },
+    )
 
 
 def show(request, artist_id):
     artist = get_object_or_404(Artist, id=artist_id)
-    return render(request, "artist/show.html", {
-        "artist": artist,
-    })
+    return render(
+        request,
+        "artist/show.html",
+        {
+            "artist": artist,
+        },
+    )
 
 
 # ---- Permissions helpers ----
@@ -35,11 +43,18 @@ def create(request):
         messages.success(request, "L'artiste a été ajouté avec succès.")
         return redirect("catalogue:artist-index")
     elif request.method == "POST" and not form.is_valid():
-        messages.error(request, "Erreur lors de l'ajout de l'artiste. Veuillez vérifier les informations saisies.")
+        messages.error(
+            request,
+            "Erreur lors de l'ajout de l'artiste. Veuillez vérifier les informations saisies.",
+        )
 
-    return render(request, "artist/create.html", {
-        "form": form,
-    })
+    return render(
+        request,
+        "artist/create.html",
+        {
+            "form": form,
+        },
+    )
 
 
 @user_passes_test(is_staff_user)
@@ -53,10 +68,14 @@ def edit(request, artist_id):
             form.save()
             return redirect("catalogue:artist-show", artist_id=artist.id)
 
-    return render(request, "artist/edit.html", {
-        "form": form,
-        "artist": artist,
-    })
+    return render(
+        request,
+        "artist/edit.html",
+        {
+            "form": form,
+            "artist": artist,
+        },
+    )
 
 
 @user_passes_test(is_staff_user)
@@ -73,7 +92,10 @@ def delete(request, artist_id):
             artist.delete()
             return redirect("catalogue:artist-index")
 
-    return render(request, "artist/delete.html", {
-        "artist": artist,
-    })
-
+    return render(
+        request,
+        "artist/delete.html",
+        {
+            "artist": artist,
+        },
+    )

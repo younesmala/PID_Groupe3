@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class ProducerSerializer(serializers.Serializer):
     # Placeholder pour les données du producteur
     id = serializers.IntegerField(read_only=True)

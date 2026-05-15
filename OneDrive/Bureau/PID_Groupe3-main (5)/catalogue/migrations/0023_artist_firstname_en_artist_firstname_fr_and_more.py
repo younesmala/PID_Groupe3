@@ -6,83 +6,83 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogue', '0022_representation_available_seats_and_more'),
+        ("catalogue", "0022_representation_available_seats_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='artist',
-            name='firstname_en',
+            model_name="artist",
+            name="firstname_en",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='artist',
-            name='firstname_fr',
+            model_name="artist",
+            name="firstname_fr",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='artist',
-            name='firstname_nl',
+            model_name="artist",
+            name="firstname_nl",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='artist',
-            name='lastname_en',
+            model_name="artist",
+            name="lastname_en",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='artist',
-            name='lastname_fr',
+            model_name="artist",
+            name="lastname_fr",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='artist',
-            name='lastname_nl',
+            model_name="artist",
+            name="lastname_nl",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='show',
-            name='description_en',
+            model_name="show",
+            name="description_en",
             field=models.TextField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='show',
-            name='description_fr',
+            model_name="show",
+            name="description_fr",
             field=models.TextField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='show',
-            name='description_nl',
+            model_name="show",
+            name="description_nl",
             field=models.TextField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='show',
-            name='title_en',
+            model_name="show",
+            name="title_en",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='show',
-            name='title_fr',
+            model_name="show",
+            name="title_fr",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='show',
-            name='title_nl',
+            model_name="show",
+            name="title_nl",
             field=models.CharField(max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='type',
-            name='type_en',
+            model_name="type",
+            name="type_en",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='type',
-            name='type_fr',
+            model_name="type",
+            name="type_fr",
             field=models.CharField(max_length=60, null=True),
         ),
         migrations.AddField(
-            model_name='type',
-            name='type_nl',
+            model_name="type",
+            name="type_nl",
             field=models.CharField(max_length=60, null=True),
         ),
     ]

@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogue', '0023_representation_available_seats'),
+        ("catalogue", "0023_representation_available_seats"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reservation',
-            name='payment_status',
-            field=models.CharField(choices=[('pending', 'Pending'), ('paid', 'Paid'), ('failed', 'Failed'), ('refunded', 'Refunded')], default='pending', max_length=20),
+            model_name="reservation",
+            name="payment_status",
+            field=models.CharField(
+                choices=[
+                    ("pending", "Pending"),
+                    ("paid", "Paid"),
+                    ("failed", "Failed"),
+                    ("refunded", "Refunded"),
+                ],
+                default="pending",
+                max_length=20,
+            ),
         ),
     ]

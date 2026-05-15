@@ -1,9 +1,10 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from catalogue.models import Location
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from api.serializers.locations import LocationSerializer
+from catalogue.models import Location
 
 
 class LocationsView(APIView):
@@ -11,6 +12,7 @@ class LocationsView(APIView):
     GET: Récupère tous les lieux
     POST: Crée un nouveau lieu
     """
+
     def get(self, request, *args, **kwargs):
         locations = Location.objects.all()
         serializer = LocationSerializer(locations, many=True)
@@ -30,13 +32,13 @@ class LocationsDetailView(APIView):
     PUT: Met à jour un lieu
     DELETE: Supprime un lieu
     """
+
     def get(self, request, id, *args, **kwargs):
         try:
             location = Location.objects.get(id=id)
         except Location.DoesNotExist:
             return Response(
-                {"detail": "Lieu non trouvé"},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "Lieu non trouvé"}, status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = LocationSerializer(location)
@@ -47,8 +49,7 @@ class LocationsDetailView(APIView):
             location = Location.objects.get(id=id)
         except Location.DoesNotExist:
             return Response(
-                {"detail": "Lieu non trouvé"},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "Lieu non trouvé"}, status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = LocationSerializer(location, data=request.data, partial=True)
@@ -62,8 +63,7 @@ class LocationsDetailView(APIView):
             location = Location.objects.get(id=id)
         except Location.DoesNotExist:
             return Response(
-                {"detail": "Lieu non trouvé"},
-                status=status.HTTP_404_NOT_FOUND
+                {"detail": "Lieu non trouvé"}, status=status.HTTP_404_NOT_FOUND
             )
 
         location.delete()

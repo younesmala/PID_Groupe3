@@ -7,19 +7,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalogue', '0021_remove_artist_unique_firstname_lastname'),
+        ("catalogue", "0021_remove_artist_unique_firstname_lastname"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reservation',
-            name='quantity',
+            model_name="reservation",
+            name="quantity",
             field=models.PositiveIntegerField(default=1),
         ),
         migrations.AddField(
-            model_name='reservation',
-            name='representation',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.RESTRICT, related_name='reservations', to='catalogue.representation'),
+            model_name="reservation",
+            name="representation",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.RESTRICT,
+                related_name="reservations",
+                to="catalogue.representation",
+            ),
             preserve_default=False,
         ),
     ]

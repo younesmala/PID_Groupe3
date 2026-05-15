@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from catalogue.models import Artist, Show, Representation
+from catalogue.models import Artist, Representation, Show
 
 
 class ArtistsApiTests(APITestCase):
@@ -111,6 +111,7 @@ class ArtistsApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Not found")
+
 
 class ShowsApiTests(APITestCase):
     def setUp(self):
@@ -225,6 +226,7 @@ class ShowsApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Spectacle non trouvé")
 
+
 class RepresentationsApiTests(APITestCase):
     def setUp(self):
         self.show = Show.objects.create(
@@ -332,10 +334,13 @@ class RepresentationsApiTests(APITestCase):
 
     def test_get_representations_calendar_returns_200(self):
         url = reverse("api:representations-calendar")
-        response = self.client.get(url, {
-            "start": "2026-05-01",
-            "end": "2026-05-31",
-        })
+        response = self.client.get(
+            url,
+            {
+                "start": "2026-05-01",
+                "end": "2026-05-31",
+            },
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

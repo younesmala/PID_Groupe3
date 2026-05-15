@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
-from catalogue.models import UserMeta
+from django.contrib.auth.models import Group, User
 from django.db import models
+
+from catalogue.models import UserMeta
 
 
 class UserSignUpForm(UserCreationForm):
@@ -20,40 +20,36 @@ class UserSignUpForm(UserCreationForm):
     email = forms.EmailField()
 
     # Ajout des champs de données personnelles supplémentaires
-    langue = forms.ChoiceField(
-        choices=Language.choices,
-        required=False
-    )
+    langue = forms.ChoiceField(choices=Language.choices, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].label = 'Pseudo'
-        self.fields['last_name'].label = 'Nom'
-        self.fields['first_name'].label = 'Prénom'
-        self.fields['email'].label = 'Adresse e-mail'
-        self.fields['password1'].label = 'Mot de passe'
-        self.fields['password2'].label = 'Confirmation du mot de passe'
+        self.fields["username"].label = "Pseudo"
+        self.fields["last_name"].label = "Nom"
+        self.fields["first_name"].label = "Prénom"
+        self.fields["email"].label = "Adresse e-mail"
+        self.fields["password1"].label = "Mot de passe"
+        self.fields["password2"].label = "Confirmation du mot de passe"
 
-
-        self.fields['username'].help_text = None
-        self.fields['password1'].help_text = None
-        self.fields['password2'].help_text = None
+        self.fields["username"].help_text = None
+        self.fields["password1"].help_text = None
+        self.fields["password2"].help_text = None
 
         # Appliquer la classe 'form-control' à tous les champs pour le style Bootstrap
         for field in self.fields.values():
-            field.widget.attrs.update({'class': 'form-control'})
+            field.widget.attrs.update({"class": "form-control"})
 
     class Meta:
         model = User
 
         fields = [
-            'username',
-            'last_name',
-            'first_name',
-            'email',
-            'password1',
-            'password2',
-            'langue',
+            "username",
+            "last_name",
+            "first_name",
+            "email",
+            "password1",
+            "password2",
+            "langue",
         ]
 
     def save(self, commit=True):
@@ -63,8 +59,7 @@ class UserSignUpForm(UserCreationForm):
         user.first_name = self.cleaned_data.get("first_name", "")
         user.email = self.cleaned_data.get("email", "")
 
-
-     # Ajout de l'utilisateur au groupe MEMBER => rôle de membre
+        # Ajout de l'utilisateur au groupe MEMBER => rôle de membre
         if commit:
             user.save()
             memberGroup, _ = Group.objects.get_or_create(name="MEMBER")

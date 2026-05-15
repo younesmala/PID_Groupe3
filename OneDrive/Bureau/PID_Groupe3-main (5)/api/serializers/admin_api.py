@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class AdminSerializer(serializers.Serializer):
     # Placeholder pour les données d'administration
     id = serializers.IntegerField(read_only=True)
