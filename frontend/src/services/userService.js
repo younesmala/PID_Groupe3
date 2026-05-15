@@ -17,6 +17,31 @@ function parseJsonResponse(res) {
   return res.json().catch(() => ({}))
 }
 
+async function ensureCsrfToken() {
+  const storedToken = localStorage.getItem('csrf_token')
+  if (storedToken) return storedToken
+
+  const cookieToken = getCookie('csrftoken')
+  if (cookieToken) return cookieToken
+
+  const res = await fetch(`${BASE}/auth/csrf/`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+  })
+
+  const data = await parseJsonResponse(res)
+  const csrfToken = data.csrf_token || getCookie('csrftoken') || ''
+
+  if (csrfToken) {
+    localStorage.setItem('csrf_token', csrfToken)
+  }
+
+  return csrfToken
+}
+
 function getAuthHeaders() {
   const token =
     localStorage.getItem('access_token') ||
@@ -66,12 +91,13 @@ export async function getCurrentUser() {
 }
 
 export async function updateProfile(profileData) {
+  const csrfToken = await ensureCsrfToken()
   const res = await fetch(`${BASE}/profile/update/`, {
     method: 'PUT',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': getCookie('csrftoken'),
+      'X-CSRFToken': csrfToken,
     },
     body: JSON.stringify(profileData),
   })

@@ -1,32 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { apiUrl } from '../services/api'
+import { adminApiFetch, parseAdminResponse } from '../services/adminApi'
 import './AdminUsers.css'
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`
-  const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop().split(';').shift()
-  return ''
-}
-
-async function apiFetch(path, options = {}) {
-  const method = (options.method || 'GET').toUpperCase()
-  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-
-  const response = await fetch(apiUrl(path), {
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(method !== 'GET' ? { 'X-CSRFToken': csrfToken } : {}),
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
-
-  return response
-}
 
 export default function AdminReservations() {
   const { t, i18n } = useTranslation()
@@ -78,14 +54,13 @@ export default function AdminReservations() {
   const fetchReservations = async () => {
     try {
       setLoading(true)
-      const response = await apiFetch('/admin/reservations/')
-      if (!response.ok) throw new Error(t('admin_reservations_page.load_error'))
-      const data = await response.json()
-      setReservations(sortByMostRecent(Array.isArray(data) ? data : []))
       setError(null)
+      const response = await adminApiFetch('/admin/reservations/')
+      const data = await parseAdminResponse(response, t('admin_reservations_page.load_error'))
+      setReservations(sortByMostRecent(Array.isArray(data) ? data : []))
     } catch (err) {
       setError(err.message)
-      console.error(err)
+      console.error('[AdminReservations] Failed to load reservations:', err)
     } finally {
       setLoading(false)
     }

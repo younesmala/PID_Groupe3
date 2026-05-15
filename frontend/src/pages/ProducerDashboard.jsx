@@ -110,7 +110,7 @@ export default function ProducerDashboard({ user }) {
     <div className="pd-page">
       <header className="pd-header">
         <div>
-          <h1 className="pd-title">{t('producer.title', { defaultValue: 'Espace producteur' })}</h1>
+          <h1 className="pd-title">{t('producer.title', { defaultValue: 'Tableau de bord' })}</h1>
           <p className="pd-subtitle">
             {t('producer.greeting', {
               username: user?.username || '',

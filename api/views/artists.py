@@ -1,9 +1,44 @@
+from pathlib import Path
+from uuid import uuid4
+
+from django.conf import settings
+from django.core.files.storage import default_storage
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 from catalogue.models import Artist
 from api.serializers.artists import ArtistSerializer
+
+
+ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
+
+
+def build_artist_payload(request):
+    payload = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+    uploaded_photo = request.FILES.get('photo_file') or request.FILES.get('photo')
+
+    if uploaded_photo:
+        extension = Path(uploaded_photo.name or '').suffix.lower()
+        if extension not in ALLOWED_IMAGE_EXTENSIONS:
+            return None, {
+                'photo_file': ['Formats acceptes: .jpg, .jpeg, .png, .gif, .webp.']
+            }
+
+        storage_path = default_storage.save(
+            f"artists/{uuid4().hex}{extension}",
+            uploaded_photo,
+        )
+        payload['photo'] = request.build_absolute_uri(f"{settings.MEDIA_URL}{storage_path}")
+
+    if 'photo_file' in payload:
+        del payload['photo_file']
+
+    for optional_field in ('photo', 'address', 'phone', 'email', 'locality'):
+        if payload.get(optional_field) == '':
+            payload[optional_field] = None
+
+    return payload, None
 
 
 class ArtistsView(APIView):
@@ -14,7 +49,11 @@ class ArtistsView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = ArtistSerializer(data=request.data)
+        payload, errors = build_artist_payload(request)
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ArtistSerializer(data=payload)
 
         if serializer.is_valid():
             serializer.save()
@@ -40,7 +79,11 @@ class ArtistsDetailView(APIView):
         except Artist.DoesNotExist:
             return Response({"detail": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ArtistSerializer(artist, data=request.data)
+        payload, errors = build_artist_payload(request)
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ArtistSerializer(artist, data=payload)
 
         if serializer.is_valid():
             serializer.save()

@@ -1,32 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { apiUrl } from '../services/api'
+import { adminApiFetch, parseAdminResponse } from '../services/adminApi'
 import './AdminUsers.css'
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`
-  const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop().split(';').shift()
-  return ''
-}
-
-async function apiFetch(path, options = {}) {
-  const method = (options.method || 'GET').toUpperCase()
-  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-
-  const response = await fetch(apiUrl(path), {
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(method !== 'GET' ? { 'X-CSRFToken': csrfToken } : {}),
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
-
-  return response
-}
 
 export default function AdminUsers() {
   const { t, i18n } = useTranslation()
@@ -61,17 +37,13 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      const response = await apiFetch('/admin/users/')
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}))
-        throw new Error(data?.detail || t('admin_users_page.load_error'))
-      }
-      const data = await response.json()
-      setUsers(sortByNewestId(Array.isArray(data) ? data : []))
       setError(null)
+      const response = await adminApiFetch('/admin/users/')
+      const data = await parseAdminResponse(response, t('admin_users_page.load_error'))
+      setUsers(sortByNewestId(Array.isArray(data) ? data : []))
     } catch (err) {
       setError(err.message)
-      console.error(err)
+      console.error('[AdminUsers] Failed to load users:', err)
     } finally {
       setLoading(false)
     }
@@ -264,21 +236,19 @@ export default function AdminUsers() {
   const handleToggleStatus = async (userId) => {
     try {
       setUpdatingUserId(userId)
-      const response = await apiFetch(`/admin/users/${userId}/status/`, {
+      const response = await adminApiFetch(`/admin/users/${userId}/status/`, {
         method: 'PATCH',
       })
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}))
-        throw new Error(data?.detail || t('admin_users_page.status_update_error'))
-      }
-      const updatedUser = await response.json()
+      const updatedUser = await parseAdminResponse(response, t('admin_users_page.status_update_error'))
       setUsers((currentUsers) =>
         sortByNewestId(
           currentUsers.map((user) => (user.id === updatedUser.id ? { ...user, ...updatedUser } : user))
         )
       )
+      setError(null)
     } catch (err) {
       setError(err.message)
+      console.error('[AdminUsers] Failed to toggle user status:', err)
     } finally {
       setUpdatingUserId(null)
     }

@@ -134,6 +134,7 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
   const producerLinks = [
     { to: localizedPath('/producer/dashboard'), label: t('navbar.producer_dashboard') },
     { to: localizedPath('/producer/shows'), label: t('navbar.producer_shows') },
+    { to: localizedPath('/artists'), label: t('navbar.producer_artists') },
     { to: localizedPath('/producer/sessions'), label: t('navbar.producer_sessions') },
     { to: localizedPath('/producer/reviews'), label: t('navbar.producer_reviews') },
   ]

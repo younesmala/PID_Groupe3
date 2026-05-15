@@ -1,32 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { apiUrl } from '../services/api'
+import { adminApiFetch, parseAdminResponse } from '../services/adminApi'
 import './AdminUsers.css'
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`
-  const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop().split(';').shift()
-  return ''
-}
-
-async function apiFetch(path, options = {}) {
-  const method = (options.method || 'GET').toUpperCase()
-  const csrfToken = getCookie('csrftoken') || localStorage.getItem('csrf_token') || ''
-
-  const response = await fetch(apiUrl(path), {
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      ...(method !== 'GET' ? { 'X-CSRFToken': csrfToken } : {}),
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
-
-  return response
-}
 
 export default function AdminProducers() {
   const { t, i18n } = useTranslation()
@@ -68,16 +44,13 @@ export default function AdminProducers() {
     setError('')
 
     try {
-      const res = await apiFetch('/admin/producers/')
-      const data = await res.json().catch(() => [])
-
-      if (!res.ok) {
-        throw new Error(data?.detail || t('admin.producers_error_load'))
-      }
+      const res = await adminApiFetch('/admin/producers/')
+      const data = await parseAdminResponse(res, t('admin.producers_error_load'))
 
       setProducers(sortByNewestId(Array.isArray(data) ? data : []))
     } catch (err) {
       setError(err.message || t('admin.producers_error_load'))
+      console.error('[AdminProducers] Failed to load producers:', err)
     } finally {
       setLoading(false)
     }
@@ -88,14 +61,10 @@ export default function AdminProducers() {
     setError('')
 
     try {
-      const res = await apiFetch(`/admin/producers/${producerId}/`, {
+      const res = await adminApiFetch(`/admin/producers/${producerId}/`, {
         method: 'PATCH',
       })
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        throw new Error(data?.detail || t('admin.producers_error_approve'))
-      }
+      const data = await parseAdminResponse(res, t('admin.producers_error_approve'))
 
       setProducers((prev) =>
         sortByNewestId(
@@ -106,6 +75,7 @@ export default function AdminProducers() {
       )
     } catch (err) {
       setError(err.message || t('admin.producers_error_approve'))
+      console.error('[AdminProducers] Failed to approve producer:', err)
     } finally {
       setWorkingId(null)
     }
@@ -116,15 +86,11 @@ export default function AdminProducers() {
     setError('')
 
     try {
-      const res = await apiFetch(`/admin/producers/${producerId}/`, {
+      const res = await adminApiFetch(`/admin/producers/${producerId}/`, {
         method: 'DELETE',
       })
 
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        throw new Error(data?.detail || t('admin.producers_error_delete'))
-      }
+      const data = await parseAdminResponse(res, t('admin.producers_error_delete'))
 
       setProducers((prev) =>
         sortByNewestId(
@@ -135,6 +101,7 @@ export default function AdminProducers() {
       )
     } catch (err) {
       setError(err.message || t('admin.producers_error_delete'))
+      console.error('[AdminProducers] Failed to delete producer:', err)
     } finally {
       setWorkingId(null)
     }

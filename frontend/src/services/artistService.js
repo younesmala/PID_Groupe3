@@ -12,6 +12,16 @@ export async function getArtistById(id) {
   return res.json();
 }
 
+export async function createArtist(data) {
+  const res = await fetch(apiUrl('/artists/'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to create artist');
+  return res.json();
+}
+
 export async function updateArtist(id, data) {
   const res = await fetch(apiUrl(`/artists/${id}/`), {
     method: 'PUT',

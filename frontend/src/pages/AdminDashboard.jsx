@@ -13,7 +13,6 @@ const ADMIN_SECTIONS = [
   { path: '/admin/users', labelKey: 'navbar.admin_users' },
   { path: '/admin/reservations', labelKey: 'navbar.admin_reservations' },
   { path: '/admin/locations', labelKey: 'navbar.admin_locations' },
-  { path: '/admin/artists', labelKey: 'navbar.admin_artists' },
 ]
 
 async function fetchPendingProducers() {

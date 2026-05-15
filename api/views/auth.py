@@ -148,6 +148,12 @@ class AuthLogoutView(APIView):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def csrf_token(request):
+    return Response({"csrf_token": get_token(request)})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def check_username(request):
     username = request.GET.get('username', '').strip()
     if not username:

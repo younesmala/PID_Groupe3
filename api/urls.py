@@ -22,6 +22,7 @@ app_name = 'api'
 
 urlpatterns = [
     # AUTH
+    path('auth/csrf/', auth.csrf_token, name='auth-csrf'),
     path('auth/signup/', auth.AuthSignupView.as_view(), name='auth-signup'),
     path('auth/login/', auth.AuthLoginView.as_view(), name='auth-login'),
     path('auth/logout/', auth.AuthLogoutView.as_view(), name='auth-logout'),
@@ -35,7 +36,7 @@ urlpatterns = [
         'artist-types/',
         artist_types.ArtistTypesView.as_view(),
         name='artist-types-list'
-    ),
+    ),  # noqa: E122
     # ARTISTS
     path('artists/', artists.ArtistsView.as_view()),
     path('artists/<int:pk>/', artists.ArtistsDetailView.as_view()),
@@ -137,7 +138,7 @@ urlpatterns = [
         producer.ProducerShowSessionsView.as_view(),
         name='producer-shows-sessions',
     ),
-    path('producer/shows/<int:id>/stats/',
+    path('producer/shows/<int:id>/stats/',  # noqa: E122
          producer.ProducerShowsStatsView.as_view(), name='producer-shows-stats'),
     path('producer/comments/', producer.ProducerCommentsView.as_view(),
          name='producer-comments'),
@@ -167,13 +168,13 @@ urlpatterns = [
         reservations.AdminReservationsDetailView.as_view(),
         name='admin-reservation-detail',
     ),
-    path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),
+    path('admin/comments/', admin_api.AdminCommentsView.as_view(), name='admin-comments'),  # noqa: E122
     path(
         'admin/comments/<int:id>/moderate/',
         admin_api.AdminCommentModerateView.as_view(),
         name='admin-comments-moderate',
     ),
-    path('admin/catalog/import/', admin_api.AdminCatalogImportView.as_view(),
+    path('admin/catalog/import/', admin_api.AdminCatalogImportView.as_view(),  # noqa: E122
          name='admin-catalog-import'),
     path('admin/catalog/export/', admin_api.AdminCatalogExportView.as_view(),
          name='admin-catalog-export'),
