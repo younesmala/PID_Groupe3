@@ -6,25 +6,25 @@ from django.contrib.auth.decorators import login_required, permission_required
 from catalogue.models import Show
 from catalogue.forms.ShowForm import ShowForm
 
-def index(request):
-    shows = Show.objects.all()
-    title = 'Liste des spectacles'
-    return render(request, 'show/index.html', {'shows': shows, 'title': title})
+def index(request): 
+    shows = Show.objects.all() 
+    title = 'Liste des spectacles' 
+    return render(request, 'show/index.html', {'shows': shows, 'title': title}) 
 
-def show(request, show_id):
-    from catalogue.models import Price
-    try:
-        show = Show.objects.get(id=show_id)
-    except Show.DoesNotExist:
-        raise Http404('Spectacle inexistant')
-        
-    prices = Price.objects.all()
-    title = "Fiche d'un spectacle"
-    return render(request, 'show/show.html', {
+def show(request, show_id): 
+    from catalogue.models import Price 
+    try: 
+        show = Show.objects.get(id=show_id) 
+    except Show.DoesNotExist: 
+        raise Http404('Spectacle inexistant') 
+ 
+    prices = Price.objects.all() 
+    title = "Fiche d'un spectacle" 
+    return render(request, 'show/show.html', { 
         'show': show, 
-        'title': title,
-        'prices': prices
-    })
+        'title': title, 
+        'prices': prices 
+    }) 
 
 @login_required
 @permission_required('catalogue.add_show', raise_exception=True)
