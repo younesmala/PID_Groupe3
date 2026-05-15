@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">Bienvenue sur Réservations</h1>
+
+  <p>
+    Cette application est une <strong>version alpha (MVP)</strong>.
+    Vous pouvez consulter le catalogue des artistes et vous connecter pour accéder aux fonctions d’administration.
+  </p>
+
+  <a class="btn btn-primary" href="{% url 'catalogue:home' %}">
+    Aller au catalogue
+  </a>
+{% endblock %}

@@ -1,0 +1,8 @@
+[
+  {"model": "catalogue.showprice", "pk": 1, "fields": {"show": 1, "price": 1, "price_type": "standard"}},
+  {"model": "catalogue.showprice", "pk": 2, "fields": {"show": 1, "price": 2, "price_type": "reduit"}},
+  {"model": "catalogue.showprice", "pk": 3, "fields": {"show": 2, "price": 1, "price_type": "standard"}},
+  {"model": "catalogue.showprice", "pk": 4, "fields": {"show": 2, "price": 2, "price_type": "reduit"}},
+  {"model": "catalogue.showprice", "pk": 5, "fields": {"show": 3, "price": 1, "price_type": "standard"}},
+  {"model": "catalogue.showprice", "pk": 6, "fields": {"show": 4, "price": 1, "price_type": "standard"}}
+]
