@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.utils.translation import gettext_lazy as _
 
 load_dotenv()
 
@@ -33,7 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-     # ajout de catalogue
+    # ajout de catalogue
     "catalogue",
 
     # ajout de api
@@ -122,8 +123,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-
-from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ('fr', _('French')),
