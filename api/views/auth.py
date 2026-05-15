@@ -65,7 +65,7 @@ class AuthSignupView(APIView):
             return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
         role = data.get('role', 'USER')
-        if role not in ('USER', 'PRODUCER'):
+        if role not in ('USER', 'PRODUCER', 'PRESS_CRITIC'):
             role = 'USER'
 
         user = User.objects.create_user(
@@ -76,7 +76,7 @@ class AuthSignupView(APIView):
             last_name=last_name,
         )
 
-        if role == 'PRODUCER':
+        if role in ('PRODUCER', 'PRESS_CRITIC'):
             user.is_active = False
             user.save(update_fields=['is_active'])
 

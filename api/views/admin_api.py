@@ -187,41 +187,47 @@ class AdminCommentModerateView(APIView):
 class AdminPendingProducersView(APIView):
     permission_classes = [IsAdminUser]
 
+    REQUEST_ROLES = ('PRODUCER', 'PRESS_CRITIC')
+
+    @staticmethod
+    def _serialize_profile(profile):
+        return {
+            'id': profile.user.id,
+            'name': (
+                f"{profile.user.first_name} {profile.user.last_name}".strip()
+                or profile.user.username
+            ),
+            'email': profile.user.email,
+            'role': profile.role,
+            'status': (
+                'deleted'
+                if profile.is_deleted
+                else ('approved' if profile.user.is_active else 'pending')
+            ),
+        }
+
     def get(self, request):
         profiles = (
             UserProfile.objects
             .select_related('user')
-            .filter(role='PRODUCER')
+            .filter(role__in=self.REQUEST_ROLES)
             .order_by('user__id')
         )
 
-        data = [
-            {
-                'id': profile.user.id,
-                'name': (
-                    f"{profile.user.first_name} {profile.user.last_name}".strip()
-                    or profile.user.username
-                ),
-                'email': profile.user.email,
-                'status': (
-                    'deleted'
-                    if profile.is_deleted
-                    else ('approved' if profile.user.is_active else 'pending')
-                ),
-            }
-            for profile in profiles
-        ]
+        data = [self._serialize_profile(profile) for profile in profiles]
         return Response(data)
 
 
 class AdminPendingProducerDetailView(APIView):
     permission_classes = [IsAdminUser]
 
+    REQUEST_ROLES = AdminPendingProducersView.REQUEST_ROLES
+
     def _get_producer(self, id):
         return get_object_or_404(
             User.objects.select_related('profile'),
             id=id,
-            profile__role='PRODUCER',
+            profile__role__in=self.REQUEST_ROLES,
         )
 
     def patch(self, request, id):
@@ -242,6 +248,7 @@ class AdminPendingProducerDetailView(APIView):
                     or user.username
                 ),
                 'email': user.email,
+                'role': user.profile.role,
                 'status': 'approved',
             }
         )
@@ -268,6 +275,7 @@ class AdminPendingProducerDetailView(APIView):
                     or user.username
                 ),
                 'email': user.email,
+                'role': user.profile.role,
                 'status': 'deleted',
             }
         )

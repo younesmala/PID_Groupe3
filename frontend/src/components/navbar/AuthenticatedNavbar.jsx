@@ -120,15 +120,24 @@ function NavDropdown({ label, links, menuRef, open, onToggle }) {
 
 function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setSelectedLang, normalizedLang, location, navigate, cartCount, t, i18n }) {
   const [producerOpen, setProducerOpen] = useState(false)
+  const [criticOpen, setCriticOpen] = useState(false)
   const [adminHovered, setAdminHovered] = useState(false)
   const [cartHovered, setCartHovered] = useState(false)
   const [profileHovered, setProfileHovered] = useState(false)
   const [logoutHovered, setLogoutHovered] = useState(false)
-  
+
   const producerRef = useRef(null)
+  const criticRef = useRef(null)
 
   const normalizedRole = String(user?.role || '').toUpperCase()
   const isProducer = normalizedRole === 'PRODUCER' || normalizedRole === 'PRODUCTEUR'
+  // Affiche l'espace critique pour tous les rôles critiques connus
+  const isCritic = [
+    'CRITIC',
+    'CRITIQUE',
+    'PRESS_CRITIC',
+    'PRESSE_CRITIQUE',
+  ].includes(normalizedRole)
   const isAdmin = !!user?.is_staff
 
   const producerLinks = [
@@ -139,9 +148,15 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
     { to: localizedPath('/producer/reviews'), label: t('navbar.producer_reviews') },
   ]
 
+  const criticLinks = [
+    { to: localizedPath('/critic/dashboard'), label: t('navbar.critic_space') },
+    // Ajoutez ici d'autres liens spécifiques à l'espace critique si besoin
+  ]
+
   useEffect(() => {
     function handleClickOutside(e) {
       if (producerRef.current && !producerRef.current.contains(e.target)) setProducerOpen(false)
+      if (criticRef.current && !criticRef.current.contains(e.target)) setCriticOpen(false)
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -171,6 +186,16 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
             menuRef={producerRef}
             open={producerOpen}
             onToggle={() => setProducerOpen((o) => !o)}
+          />
+        )}
+        {/* Critic Space Dropdown */}
+        {isCritic && (
+          <NavDropdown
+            label={t('navbar.critic_space')}
+            links={criticLinks}
+            menuRef={criticRef}
+            open={criticOpen}
+            onToggle={() => setCriticOpen((o) => !o)}
           />
         )}
 

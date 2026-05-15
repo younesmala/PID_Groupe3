@@ -13,6 +13,8 @@
   "export_json": "Export JSON",
   "navbar": {
     "producer_space": "Producer Space",
+    "critic_space": "Critic Space",
+    "critic_space": "Critic Space",
     "admin": "Administrator",
     "profile": "My profile",
     "role_indicator_title": "Your account type",
@@ -372,7 +374,10 @@
     "err_confirm_mismatch": "Confirmation must match the password.",
     "err_language_required": "Language is required.",
     "err_username_taken": "This username is already taken.",
-    "err_email_taken": "This email address is already in use."
+    "err_email_taken": "This email address is already in use.",
+    "request_producer": "Apply to become a producer",
+    "request_press_critic": "Apply to become a press critic",
+    "request_critic": "Apply to become a critic"
   },
   "tickets": {
     "title": "My Tickets",

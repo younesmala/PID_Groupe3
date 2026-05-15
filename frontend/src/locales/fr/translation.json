@@ -13,6 +13,8 @@
   "export_json": "Export JSON",
   "navbar": {
     "producer_space": "Espace producteur",
+    "critic_space": "Espace critique",
+    "critic_space": "Espace critique",
     "admin": "Administrateur",
     "profile": "Mon profil",
     "producer_dashboard": "Dashboard",
@@ -372,7 +374,10 @@
     "err_confirm_mismatch": "La confirmation doit correspondre au mot de passe.",
     "err_language_required": "La langue est obligatoire.",
     "err_username_taken": "Ce nom d'utilisateur est déjà pris.",
-    "err_email_taken": "Cette adresse email est déjà utilisée."
+    "err_email_taken": "Cette adresse email est déjà utilisée.",
+    "request_producer": "Faire la demande pour devenir producteur",
+    "request_press_critic": "Faire la demande pour devenir critique de presse",
+    "request_critic": "Faire la demande pour devenir critique"
   },
   "tickets": {
     "title": "Mes Billets",

@@ -43,8 +43,8 @@ function PasswordToggleIcon({ visible }) {
 function Signup() {
   const { t } = useTranslation()
   const [form, setForm] = useState(initialForm)
-  const [isProducer, setIsProducer] = useState(false)
-  const role = isProducer ? 'PRODUCER' : 'USER'
+  const [roleRequest, setRoleRequest] = useState('USER')
+  const role = roleRequest
   const [touched, setTouched] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState('')
@@ -143,6 +143,7 @@ function Signup() {
         role,
       })
       setSuccess(t('signup.success'))
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       setForm(initialForm)
       setTouched({})
       setSubmitted(false)
@@ -178,24 +179,26 @@ function Signup() {
               <span>{t('signup.email')}</span>
               <input type="email" name="email" value={form.email} onChange={updateField} onBlur={handleBlur} required />
               {asyncChecking.email && <span className="account-field-checking">{t('signup.checking')}</span>}
-              {getFieldError('email') && <span className="account-field-error">{getFieldError('email')}</span>}
+              <span className="account-field-error">{getFieldError('email') || '\u00A0'}</span>
             </label>
 
             <label>
               <span>{t('signup.first_name')}</span>
               <input type="text" name="first_name" value={form.first_name} onChange={updateField} onBlur={handleBlur} />
+              <span className="account-field-error">&nbsp;</span>
             </label>
 
             <label>
               <span>{t('signup.last_name')}</span>
               <input type="text" name="last_name" value={form.last_name} onChange={updateField} onBlur={handleBlur} />
+              <span className="account-field-error">&nbsp;</span>
             </label>
 
             <label>
               <span>{t('signup.username')}</span>
               <input type="text" name="username" value={form.username} onChange={updateField} onBlur={handleBlur} required />
               {asyncChecking.username && <span className="account-field-checking">{t('signup.checking')}</span>}
-              {getFieldError('username') && <span className="account-field-error">{getFieldError('username')}</span>}
+              <span className="account-field-error">{getFieldError('username') || '\u00A0'}</span>
             </label>
 
             <label className="account-form-field--full">
@@ -246,7 +249,7 @@ function Signup() {
               {getFieldError('passwordConfirm') && <span className="account-field-error">{getFieldError('passwordConfirm')}</span>}
             </label>
 
-            <label>
+            <label className="account-form-field--full">
               <span>{t('signup.language')}</span>
               <select name="language" value={form.language} onChange={updateField} onBlur={handleBlur} required>
                 <option value="">{t('signup.choose_language')}</option>
@@ -259,15 +262,29 @@ function Signup() {
 
             <div className="account-password-hint">{t('signup.password_hint')}</div>
 
-            <div className={`producer-card${isProducer ? ' producer-card--active' : ''}`} onClick={() => setIsProducer(!isProducer)}>
-              <span className="producer-card-icon">🎭</span>
-              <div>
-                <strong>S&apos;inscrire en tant que Producteur</strong>
-                <p>Gérez vos spectacles, séances et statistiques</p>
-              </div>
-              <span className="producer-card-check">{isProducer ? '✓' : ''}</span>
-            </div>
+            <div className="account-request-options">
+              <label className="account-request-option">
+                <input
+                  type="radio"
+                  name="roleRequest"
+                  value="PRODUCER"
+                  checked={roleRequest === 'PRODUCER'}
+                  onChange={() => setRoleRequest('PRODUCER')}
+                />
+                <span>{t('signup.request_producer')}</span>
+              </label>
 
+              <label className="account-request-option">
+                <input
+                  type="radio"
+                  name="roleRequest"
+                  value="PRESS_CRITIC"
+                  checked={roleRequest === 'PRESS_CRITIC'}
+                  onChange={() => setRoleRequest('PRESS_CRITIC')}
+                />
+                <span>{t('signup.request_press_critic')}</span>
+              </label>
+            </div>
             <button className="account-submit" type="submit" disabled={loading || !isFormValid}>
               {loading ? t('signup.loading') : t('signup.submit')}
             </button>

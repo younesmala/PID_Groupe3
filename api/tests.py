@@ -199,6 +199,81 @@ class AdminUsersApiTests(APITestCase):
         self.assertEqual(response.data["detail"], "Admin users cannot be deactivated.")
 
 
+class AdminPendingRequestsApiTests(APITestCase):
+    def setUp(self):
+        self.admin = User.objects.create_user(
+            username="admin-requests",
+            email="admin-requests@example.com",
+            password="adminpass",
+            is_staff=True,
+        )
+        self.client.force_authenticate(user=self.admin)
+
+    def test_list_includes_pending_producers_and_press_critics(self):
+        producer = User.objects.create_user(
+            username="producer-request",
+            email="producer-request@example.com",
+            password="testpass123",
+            is_active=False,
+        )
+        critic = User.objects.create_user(
+            username="critic-request",
+            email="critic-request@example.com",
+            password="testpass123",
+            is_active=False,
+        )
+        regular = User.objects.create_user(
+            username="regular-user",
+            email="regular-user@example.com",
+            password="testpass123",
+        )
+
+        producer_profile, _ = UserProfile.objects.get_or_create(user=producer)
+        producer_profile.role = "PRODUCER"
+        producer_profile.save(update_fields=["role"])
+
+        critic_profile, _ = UserProfile.objects.get_or_create(user=critic)
+        critic_profile.role = "PRESS_CRITIC"
+        critic_profile.save(update_fields=["role"])
+
+        regular_profile, _ = UserProfile.objects.get_or_create(user=regular)
+        regular_profile.role = "USER"
+        regular_profile.save(update_fields=["role"])
+
+        url = reverse("api:admin-producers")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(
+            {(item["email"], item["role"], item["status"]) for item in response.data},
+            {
+                ("producer-request@example.com", "PRODUCER", "pending"),
+                ("critic-request@example.com", "PRESS_CRITIC", "pending"),
+            },
+        )
+
+    def test_admin_can_approve_press_critic_request(self):
+        critic = User.objects.create_user(
+            username="critic-approve",
+            email="critic-approve@example.com",
+            password="testpass123",
+            is_active=False,
+        )
+        critic_profile, _ = UserProfile.objects.get_or_create(user=critic)
+        critic_profile.role = "PRESS_CRITIC"
+        critic_profile.save(update_fields=["role"])
+
+        url = reverse("api:admin-producer-detail", args=[critic.id])
+        response = self.client.patch(url, {}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        critic.refresh_from_db()
+        self.assertTrue(critic.is_active)
+        self.assertEqual(response.data["role"], "PRESS_CRITIC")
+        self.assertEqual(response.data["status"], "approved")
+
+
 class AdminStatsApiTests(APITestCase):
     def setUp(self):
         self.admin = User.objects.create_user(

@@ -13,6 +13,7 @@
   "export_json": "JSON exporteren",
   "navbar": {
     "producer_space": "Producentenruimte",
+    "critic_space": "Criticusruimte",
     "admin": "Beheerder",
     "profile": "Mijn profiel",
     "role_indicator_title": "Uw accounttype",
@@ -365,7 +366,10 @@
     "err_confirm_mismatch": "De bevestiging moet overeenkomen met het wachtwoord.",
     "err_language_required": "De taal is verplicht.",
     "err_username_taken": "Deze gebruikersnaam is al in gebruik.",
-    "err_email_taken": "Dit e-mailadres is al in gebruik."
+    "err_email_taken": "Dit e-mailadres is al in gebruik.",
+    "request_producer": "Aanvraag indienen om producent te worden",
+    "request_press_critic": "Aanvraag indienen om perscriticus te worden",
+    "request_critic": "Aanvraag indienen om criticus te worden"
   },
   "tickets": {
     "title": "Mijn Tickets",
