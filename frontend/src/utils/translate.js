@@ -26,5 +26,7 @@ export async function translateTextDirect(text, targetLang) {
 
 export function needsTranslation(show, field, lang) {
   if (!AUTO_TRANSLATE_LANGS.has(lang)) return false
-  return !show[`${field}_${lang}`]
+  const translatedValue = show[`${field}_${lang}`]
+  const sourceValue = show[`${field}_fr`] || show[field]
+  return !translatedValue || translatedValue === sourceValue
 }
