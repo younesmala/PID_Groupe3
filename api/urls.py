@@ -153,6 +153,7 @@ urlpatterns = [
     # ADMIN
     path('admin/users/', admin_api.AdminApiUsersView.as_view(), name='admin-users'),
     path('admin/stats/', admin_api.AdminStatsView.as_view(), name='admin-stats'),
+    path('admin/shows/<int:id>/', admin_api.AdminShowDetailView.as_view(), name='admin-show-detail'),
     path('admin/producers/', admin_api.AdminPendingProducersView.as_view(), name='admin-pending-producers'),
     path('admin/reservations/', reservations.AdminReservationsView.as_view(), name='admin-reservations'),
     path(
