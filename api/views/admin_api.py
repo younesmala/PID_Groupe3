@@ -95,6 +95,9 @@ class AdminShowDetailView(APIView):
             show.publication_status = Show.PublicationStatus.APPROVED
             show.bookable = False
             show.save(update_fields=['publication_status', 'bookable'])
+            if show.artist and show.producer and show.artist.producer != show.producer:
+                show.artist.producer = show.producer
+                show.artist.save(update_fields=['producer'])
             return Response({'id': show.id, 'publication_status': show.publication_status, 'bookable': show.bookable})
 
         if requested_status == 'rejected':

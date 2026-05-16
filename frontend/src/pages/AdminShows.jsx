@@ -429,7 +429,12 @@ export default function AdminShows() {
                         </span>
                       </button>
                     </td>
-                    <td>{show.artist_name || '-'}</td>
+                    <td>
+                      <div>{show.producer_name || show.producer_username || '-'}</div>
+                      {show.artist_name && (
+                        <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{show.artist_name}</div>
+                      )}
+                    </td>
                     <td>
                       <span className={`status-badge ${badgeClass}`}>{badgeLabel}</span>
                     </td>
@@ -484,8 +489,13 @@ export default function AdminShows() {
                                 <strong>Slug :</strong> {show.slug || '-'}
                               </span>
                               <span>
-                                <strong>{t('admin_shows_page.col_artist', { defaultValue: 'Producteur / artiste' })} :</strong> {show.artist_name || '-'}
+                                <strong>Producteur :</strong> {show.producer_name || show.producer_username || '-'}
                               </span>
+                              {show.artist_name && (
+                                <span>
+                                  <strong>Artiste :</strong> {show.artist_name}
+                                </span>
+                              )}
                               <span>
                                 <strong>{t('admin_shows_page.col_status', { defaultValue: 'Statut' })} :</strong> {badgeLabel}
                               </span>

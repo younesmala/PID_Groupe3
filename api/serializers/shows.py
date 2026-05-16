@@ -14,6 +14,7 @@ class ShowSerializer(serializers.ModelSerializer):
     sessions_count = serializers.SerializerMethodField()
     prices = ShowPriceSerializer(many=True, read_only=True)
     producer_username = serializers.SerializerMethodField()
+    producer_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Show
@@ -25,7 +26,7 @@ class ShowSerializer(serializers.ModelSerializer):
             "created_in", "artist", "artist_name", "location", "location_name", "bookable",
             "publication_status", "created_at", "updated_at", "artist_types",
             "rating", "next_schedule", "next_location_name", "sessions_count", "prices",
-            "producer_username",
+            "producer_username", "producer_name",
         ]
 
     def get_artist_name(self, obj):
@@ -68,3 +69,9 @@ class ShowSerializer(serializers.ModelSerializer):
 
     def get_producer_username(self, obj):
         return obj.producer.username if obj.producer else None
+
+    def get_producer_name(self, obj):
+        if not obj.producer:
+            return None
+        full_name = f"{obj.producer.first_name} {obj.producer.last_name}".strip()
+        return full_name or obj.producer.username

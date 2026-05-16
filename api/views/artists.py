@@ -51,8 +51,6 @@ def build_artist_payload(request):
 class ArtistsView(APIView):
     def get(self, request):
         qs = Artist.objects.all()
-        if _is_producer(request):
-            qs = qs.filter(producer=request.user)
         serializer = ArtistSerializer(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
