@@ -81,22 +81,11 @@ class ProducerShowsView(APIView):
         if not title:
             return Response({"title": ["Le titre est obligatoire."]}, status=status.HTTP_400_BAD_REQUEST)
 
-        title_fr = str(request.data.get("title_fr", "")).strip() or None
-        title_nl = str(request.data.get("title_nl", "")).strip() or None
-        title_en = str(request.data.get("title_en", "")).strip() or None
-        description_fr = str(request.data.get("description_fr", "")).strip() or None
-        description_nl = str(request.data.get("description_nl", "")).strip() or None
-        description_en = str(request.data.get("description_en", "")).strip() or None
-
         payload = {
             "title": title,
-            "title_fr": title_fr,
-            "title_nl": title_nl,
-            "title_en": title_en,
+            "title_fr": title,
             "description": description or None,
-            "description_fr": description_fr,
-            "description_nl": description_nl,
-            "description_en": description_en,
+            "description_fr": description or None,
             "duration": duration or None,
             "created_in": created_in,
             "artist": artist,
@@ -199,6 +188,15 @@ class ProducerShowDetailView(APIView):
         data.pop("status", None)
         data.pop("publication_status", None)
         data.pop("bookable", None)
+        data.pop("title_nl", None)
+        data.pop("title_en", None)
+        data.pop("description_nl", None)
+        data.pop("description_en", None)
+
+        if "title" in data and data["title"]:
+            data["title_fr"] = data["title"]
+        if "description" in data:
+            data["description_fr"] = data["description"]
 
         serializer = ShowSerializer(show, data=data, partial=True)
         if not serializer.is_valid():

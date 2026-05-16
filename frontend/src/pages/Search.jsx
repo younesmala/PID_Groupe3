@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { apiUrl } from '../services/api';
+import { tField } from '../utils/locale';
+import { translateTextDirect, needsTranslation } from '../utils/translate';
 import './Search.css';
 
 const Search = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split('-')[0] || 'fr';
+  const [translations, setTranslations] = useState({});
   const [shows, setShows] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState('');
@@ -23,6 +27,23 @@ const Search = () => {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    setTranslations({})
+    if (!['en', 'nl'].includes(lang)) return
+    filtered.forEach((show) => {
+      if (needsTranslation(show, 'title', lang)) {
+        translateTextDirect(show.title, lang)
+          .then((text) => setTranslations((prev) => ({ ...prev, [`${show.id}_title`]: text })))
+          .catch(() => {})
+      }
+      if (needsTranslation(show, 'description', lang)) {
+        translateTextDirect(show.description, lang)
+          .then((text) => setTranslations((prev) => ({ ...prev, [`${show.id}_desc`]: text })))
+          .catch(() => {})
+      }
+    })
+  }, [filtered, lang])
 
   useEffect(() => {
     let result = [...shows];
@@ -97,8 +118,8 @@ const Search = () => {
           <div className="search-grid">
             {filtered.map(show => (
               <div key={show.id} className="search-card">
-                <h3>{show.title}</h3>
-                <p>{show.description?.substring(0, 100)}...</p>
+                <h3>{translations[`${show.id}_title`] || tField(show, 'title', lang)}</h3>
+                <p>{(translations[`${show.id}_desc`] || tField(show, 'description', lang))?.substring(0, 100)}...</p>
                 <span className={`badge ${show.bookable ? 'badge--green' : 'badge--red'}`}>
                   {show.bookable ? t('search.bookable') : t('search.not_bookable')}
                 </span>

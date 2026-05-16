@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getReviews, createReview } from '../services/reviewService';
 import { getStoredUsername } from '../services/authService';
+import { translateTextDirect } from '../utils/translate';
 import './ReviewSection.css';
 
 const AUTO_TRANSLATE_LANGS = new Set(['en', 'nl']);
@@ -14,32 +15,6 @@ function openLoginFlow(lang) {
   const normalizedLang = normalizeLang(lang);
   window.history.pushState({}, '', `/${normalizedLang}/login`);
   window.dispatchEvent(new Event('open-login-modal'));
-}
-
-async function translateTextDirect(text, targetLang) {
-  if (!text || !AUTO_TRANSLATE_LANGS.has(targetLang)) {
-    return text;
-  }
-
-  const sourceCandidates = ['fr', 'en', 'nl'].filter((lang) => lang !== targetLang);
-
-  for (const sourceLang of sourceCandidates) {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
-    const res = await fetch(url);
-
-    if (!res.ok) {
-      continue;
-    }
-
-    const payload = await res.json();
-    const translated = payload?.responseData?.translatedText;
-
-    if (translated && !translated.toLowerCase().includes('invalid source language')) {
-      return translated;
-    }
-  }
-
-  throw new Error('Translation unavailable');
 }
 
 const ReviewSection = ({ showId, producerUsername }) => {

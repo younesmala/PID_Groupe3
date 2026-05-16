@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tField } from "../utils/locale";
+import { translateTextDirect, needsTranslation } from "../utils/translate";
 import { getShowByIdentifier } from "../services/showService";
 import { getRepresentationsByShow } from "../services/representationService";
 import { addToCart } from "../services/cartService";
@@ -176,6 +177,20 @@ function ShowDetail() {
   const [reserveStatus, setReserveStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedDescription, setTranslatedDescription] = useState(null);
+
+  useEffect(() => {
+    if (!show) return;
+    setTranslatedTitle(null);
+    setTranslatedDescription(null);
+    if (needsTranslation(show, 'title', lang)) {
+      translateTextDirect(show.title, lang).then(setTranslatedTitle).catch(() => {});
+    }
+    if (needsTranslation(show, 'description', lang)) {
+      translateTextDirect(show.description, lang).then(setTranslatedDescription).catch(() => {});
+    }
+  }, [show, lang]);
 
   useEffect(() => {
     const identifier = slug || id;
@@ -289,7 +304,7 @@ function ShowDetail() {
             }}
           />
         )}
-        <h1 style={{ marginBottom: 10 }}>{tField(show, 'title', lang)}</h1>
+        <h1 style={{ marginBottom: 10 }}>{translatedTitle || tField(show, 'title', lang)}</h1>
         <p style={{ ...subtleText, margin: 0 }}>{show.slug}</p>
         {show.artist_name && (
           <p style={{ marginTop: 8, color: "#fda4af", fontWeight: 700 }}>
@@ -314,7 +329,7 @@ function ShowDetail() {
             boxShadow: "0 12px 28px rgba(0, 0, 0, 0.22)",
           }}
         >
-          {tField(show, 'description', lang) || "Description a venir."}
+          {translatedDescription || tField(show, 'description', lang) || "Description a venir."}
         </p>
 
         <h2 id="representations" style={{ marginTop: 32 }}>{t("show.representations")}</h2>
