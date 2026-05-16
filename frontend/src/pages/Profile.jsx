@@ -275,7 +275,12 @@ function Profile({ isLoggedIn, username }) {
                 </div>
                 <div>
                   <dt>{t('profile.language_label')}</dt>
-                  <dd>{readValue(profile?.language, profile?.lang, profile?.locale, t('profile.not_available'))}</dd>
+                  <dd>{
+                    profile?.language === 'fr' ? 'Français' :
+                    profile?.language === 'nl' ? 'Néerlandais' :
+                    profile?.language === 'en' ? 'English' :
+                    t('profile.not_available')
+                  }</dd>
                 </div>
               </dl>
               <button className="account-submit" style={{ marginTop: '1rem' }} onClick={openEdit}>
