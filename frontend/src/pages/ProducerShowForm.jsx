@@ -52,8 +52,6 @@ export default function ProducerShowForm() {
   const [form, setForm] = useState({
     title: '',
     description: '',
-    description_nl: '',
-    description_en: '',
     artist: '',
     genre: '',
     duration: '',
@@ -95,8 +93,6 @@ export default function ProducerShowForm() {
         setForm({
           title: data.title ?? '',
           description: data.description ?? '',
-          description_nl: data.description_nl ?? '',
-          description_en: data.description_en ?? '',
           artist: data.artist ? String(data.artist) : '',
           genre: data.artist_types?.[0] ? String(data.artist_types[0]) : '',
           duration: data.duration ? String(data.duration) : '',
@@ -145,8 +141,6 @@ export default function ProducerShowForm() {
     const payload = new FormData()
     payload.append('title', form.title.trim())
     payload.append('description', form.description.trim())
-    if (form.description_nl.trim()) payload.append('description_nl', form.description_nl.trim())
-    if (form.description_en.trim()) payload.append('description_en', form.description_en.trim())
     payload.append('created_in', form.created_in || String(new Date().getFullYear()))
     payload.append('spoken_language', form.spoken_language || 'fr')
 
@@ -235,36 +229,7 @@ export default function ProducerShowForm() {
           {errors.description && <span className="psf-field-error">{errors.description}</span>}
         </div>
 
-        <div className="psf-row">
-          <div className="psf-field">
-            <label className="psf-label" htmlFor="description_nl">
-              {t('producer.description_nl_label', { defaultValue: 'Description (NL)' })}
-            </label>
-            <textarea
-              id="description_nl"
-              name="description_nl"
-              className="psf-input psf-textarea"
-              value={form.description_nl}
-              onChange={handleChange}
-              rows={3}
-              placeholder={t('producer.description_nl_placeholder', { defaultValue: 'Beschrijving in het Nederlands...' })}
-            />
-          </div>
-          <div className="psf-field">
-            <label className="psf-label" htmlFor="description_en">
-              {t('producer.description_en_label', { defaultValue: 'Description (EN)' })}
-            </label>
-            <textarea
-              id="description_en"
-              name="description_en"
-              className="psf-input psf-textarea"
-              value={form.description_en}
-              onChange={handleChange}
-              rows={3}
-              placeholder={t('producer.description_en_placeholder', { defaultValue: 'Description in English...' })}
-            />
-          </div>
-        </div>
+
 
         <div className="psf-row">
           <div className="psf-field">
