@@ -133,6 +133,8 @@ urlpatterns = [
          name='producer-shows'),
     path('producer/shows/<slug:slug>/', producer.ProducerShowDetailView.as_view(),
          name='producer-shows-detail'),
+    path('producer/shows/<slug:slug>/sessions/', producer.ProducerShowSessionsView.as_view(),
+         name='producer-shows-sessions'),
     path('producer/shows/<int:id>/stats/',
          producer.ProducerShowsStatsView.as_view(), name='producer-shows-stats'),
     path('producer/comments/', producer.ProducerCommentsView.as_view(),
