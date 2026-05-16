@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { apiUrl } from '../services/api'
 import { tField } from '../utils/locale'
+import { translateTextDirect, needsTranslation } from '../utils/translate'
 import './AdminUsers.css'
 
 function getCookie(name) {
@@ -101,7 +102,25 @@ export default function AdminShows() {
   }
 
   const lang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
+  const [translations, setTranslations] = useState({})
   const sortByNewestId = (items) => [...items].sort((a, b) => (b.id || 0) - (a.id || 0))
+
+  useEffect(() => {
+    setTranslations({})
+    if (!['en', 'nl'].includes(lang)) return
+    shows.forEach((show) => {
+      if (needsTranslation(show, 'title', lang)) {
+        translateTextDirect(show.title_fr || show.title, lang)
+          .then((text) => setTranslations((prev) => ({ ...prev, [`${show.id}_title`]: text })))
+          .catch(() => {})
+      }
+      if (needsTranslation(show, 'description', lang)) {
+        translateTextDirect(show.description_fr || show.description, lang)
+          .then((text) => setTranslations((prev) => ({ ...prev, [`${show.id}_desc`]: text })))
+          .catch(() => {})
+      }
+    })
+  }, [shows, lang])
 
   const escapeCsvValue = (value) => {
     const text = String(value ?? '')
@@ -377,9 +396,9 @@ export default function AdminShows() {
               {shows.map((show) => {
                 const workflowStatus = getWorkflowStatus(show)
                 const isWorking = workingId === show.id
-                const title = tField(show, 'title', lang) || show.title || show.slug || 'Sans titre'
-                const description = truncateText(tField(show, 'description', lang) || show.description || '')
-                const fullDescription = tField(show, 'description', lang) || show.description || 'Aucune description.'
+                const title = translations[`${show.id}_title`] || tField(show, 'title', lang) || show.title || show.slug || 'Sans titre'
+                const description = truncateText(translations[`${show.id}_desc`] || tField(show, 'description', lang) || show.description || '')
+                const fullDescription = translations[`${show.id}_desc`] || tField(show, 'description', lang) || show.description || 'Aucune description.'
                 const isExpanded = expandedShowId === show.id
                 const badgeClass =
                   workflowStatus === 'validated' || workflowStatus === 'published'
