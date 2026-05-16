@@ -51,8 +51,6 @@ export default function ProducerShowForm() {
   const [posterPreview, setPosterPreview] = useState(null)
   const [form, setForm] = useState({
     title: '',
-    title_nl: '',
-    title_en: '',
     description: '',
     description_nl: '',
     description_en: '',
@@ -96,8 +94,6 @@ export default function ProducerShowForm() {
       .then((data) => {
         setForm({
           title: data.title ?? '',
-          title_nl: data.title_nl ?? '',
-          title_en: data.title_en ?? '',
           description: data.description ?? '',
           description_nl: data.description_nl ?? '',
           description_en: data.description_en ?? '',
@@ -148,8 +144,6 @@ export default function ProducerShowForm() {
 
     const payload = new FormData()
     payload.append('title', form.title.trim())
-    if (form.title_nl.trim()) payload.append('title_nl', form.title_nl.trim())
-    if (form.title_en.trim()) payload.append('title_en', form.title_en.trim())
     payload.append('description', form.description.trim())
     if (form.description_nl.trim()) payload.append('description_nl', form.description_nl.trim())
     if (form.description_en.trim()) payload.append('description_en', form.description_en.trim())
@@ -223,37 +217,6 @@ export default function ProducerShowForm() {
             placeholder={t('producer.title_placeholder', { defaultValue: 'Nom du spectacle' })}
           />
           {errors.title && <span className="psf-field-error">{errors.title}</span>}
-        </div>
-
-        <div className="psf-row">
-          <div className="psf-field">
-            <label className="psf-label" htmlFor="title_nl">
-              {t('producer.title_nl_label', { defaultValue: 'Titre (NL)' })}
-            </label>
-            <input
-              id="title_nl"
-              name="title_nl"
-              type="text"
-              className="psf-input"
-              value={form.title_nl}
-              onChange={handleChange}
-              placeholder={t('producer.title_nl_placeholder', { defaultValue: 'Titel in het Nederlands' })}
-            />
-          </div>
-          <div className="psf-field">
-            <label className="psf-label" htmlFor="title_en">
-              {t('producer.title_en_label', { defaultValue: 'Titre (EN)' })}
-            </label>
-            <input
-              id="title_en"
-              name="title_en"
-              type="text"
-              className="psf-input"
-              value={form.title_en}
-              onChange={handleChange}
-              placeholder={t('producer.title_en_placeholder', { defaultValue: 'Title in English' })}
-            />
-          </div>
         </div>
 
         <div className="psf-field">
