@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { tField } from '../utils/locale'
+import { translateTextDirect, needsTranslation } from '../utils/translate'
 
 const CARD_THEMES = [
   'show-card__poster--green',
@@ -36,6 +38,25 @@ function getPosterSrc(show) {
 function ShowCards({ shows = [], loading = false, error = null }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language?.split('-')[0] || 'fr'
+  const [translations, setTranslations] = useState({})
+
+  useEffect(() => {
+    setTranslations({})
+    if (!['en', 'nl'].includes(lang)) return
+    shows.forEach((show) => {
+      if (needsTranslation(show, 'title', lang)) {
+        translateTextDirect(show.title, lang)
+          .then((text) => setTranslations((prev) => ({ ...prev, [`${show.id}_title`]: text })))
+          .catch(() => {})
+      }
+      if (needsTranslation(show, 'description', lang)) {
+        translateTextDirect(show.description, lang)
+          .then((text) => setTranslations((prev) => ({ ...prev, [`${show.id}_desc`]: text })))
+          .catch(() => {})
+      }
+    })
+  }, [shows, lang])
+
   if (loading) {
     return (
       <section className="show-cards-section">
@@ -79,10 +100,10 @@ function ShowCards({ shows = [], loading = false, error = null }) {
             </div>
 
             <div className="show-card__body">
-              <h3>{tField(show, 'title', lang)}</h3>
+              <h3>{translations[`${show.id}_title`] || tField(show, 'title', lang)}</h3>
               <p className="show-card__artist">{t('shows.artist')} : {show.artist_name || t('shows.artist_tbc')}</p>
               <p className="show-card__description">
-                {tField(show, 'description', lang) || t('shows.desc_tbc')}
+                {translations[`${show.id}_desc`] || tField(show, 'description', lang) || t('shows.desc_tbc')}
               </p>
               <div className="show-card__actions">
                 <Link to={`/shows/${show.slug}`} className="show-card__book">

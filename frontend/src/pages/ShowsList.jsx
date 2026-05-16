@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getPublicShows, getPublicLocations } from "../services/showService";
 import { tField } from "../utils/locale";
+import { translateTextDirect, needsTranslation } from "../utils/translate";
 
 function getPosterSrc(posterUrl) {
   if (!posterUrl) return null;
@@ -28,6 +29,15 @@ function StarRating({ rating }) {
 }
 
 function ShowCard({ show, lang, noRepLabel }) {
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+
+  useEffect(() => {
+    setTranslatedTitle(null);
+    if (needsTranslation(show, 'title', lang)) {
+      translateTextDirect(show.title, lang).then(setTranslatedTitle).catch(() => {});
+    }
+  }, [show, lang]);
+
   const nextDate = show.next_schedule
     ? new Date(show.next_schedule).toLocaleDateString("fr-FR", {
         day: "numeric",
@@ -48,7 +58,7 @@ function ShowCard({ show, lang, noRepLabel }) {
         )}
       </div>
       <div className="show-card-body">
-        <h3 className="show-card-title">{tField(show, "title", lang)}</h3>
+        <h3 className="show-card-title">{translatedTitle || tField(show, "title", lang)}</h3>
         <div className="show-card-rating">
           <StarRating rating={show.rating} />
         </div>
