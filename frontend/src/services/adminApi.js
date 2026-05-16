@@ -91,10 +91,8 @@ export async function parseAdminResponse(response, defaultMessage = 'An error oc
 
     return data
   } catch (error) {
-    // If JSON parsing fails, try plain text
     if (error instanceof SyntaxError) {
-      const text = await response.clone().text()
-      throw new Error(`Invalid response: ${text.substring(0, 50)}`)
+      throw new Error(`Invalid response format`)
     }
     throw error
   }
