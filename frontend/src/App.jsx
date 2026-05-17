@@ -40,6 +40,7 @@ import ProducerShowForm from "./pages/ProducerShowForm"
 import AdminDashboard from "./pages/AdminDashboard"
 import AdminProducers from "./pages/AdminProducers"
 import AdminCritics from "./pages/AdminCritics"
+import CriticReviews from "./pages/CriticReviews"
 import AdminUsers from "./pages/AdminUsers"
 import AdminShows from "./pages/AdminShows"
 import AdminReservations from "./pages/AdminReservations"
@@ -486,6 +487,24 @@ function AppContent() {
           element={
             <ProtectedRoute user={user}>
               <ProducerReviews />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ── Espace Critique ── */}
+        <Route
+          path="/critic/reviews"
+          element={
+            <ProtectedRoute user={user}>
+              <CriticReviews />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/critic/reviews"
+          element={
+            <ProtectedRoute user={user}>
+              <CriticReviews />
             </ProtectedRoute>
           }
         />
