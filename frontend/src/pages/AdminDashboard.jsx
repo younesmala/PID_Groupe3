@@ -9,6 +9,7 @@ import './AccountPages.css'
 const BASE = API_ROOT
 const ADMIN_SECTIONS = [
   { path: '/admin/producers', labelKey: 'navbar.admin_producers' },
+  { path: '/admin/critics', labelKey: 'navbar.admin_critics' },
   { path: '/admin/shows', labelKey: 'navbar.admin_shows' },
   { path: '/admin/users', labelKey: 'navbar.admin_users' },
   { path: '/admin/reservations', labelKey: 'navbar.admin_reservations' },
@@ -37,16 +38,17 @@ export default function AdminDashboard() {
   const { t, i18n } = useTranslation()
   const normalizedLang = (i18n.language || 'fr').slice(0, 2).toLowerCase()
   const [pendingCount, setPendingCount] = useState(0)
+  const [pendingCriticsCount, setPendingCriticsCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
     fetchPendingProducers()
-      .then((producers) => {
-        const pending = producers.filter((p) => p.status === 'pending').length
-        setPendingCount(pending)
+      .then((all) => {
+        setPendingCount(all.filter((p) => p.status === 'pending' && p.role === 'PRODUCER').length)
+        setPendingCriticsCount(all.filter((p) => p.status === 'pending' && p.role === 'PRESS_CRITIC').length)
       })
-      .catch(() => setPendingCount(0))
+      .catch(() => { setPendingCount(0); setPendingCriticsCount(0) })
       .finally(() => setLoading(false))
 
     fetchAdminStats()
@@ -99,6 +101,9 @@ export default function AdminDashboard() {
               <span className="pd-card-label">{t(section.labelKey)}</span>
               {section.labelKey === 'navbar.admin_producers' && pendingCount > 0 && (
                 <span className="admin-link-count">{pendingCount}</span>
+              )}
+              {section.labelKey === 'navbar.admin_critics' && pendingCriticsCount > 0 && (
+                <span className="admin-link-count">{pendingCriticsCount}</span>
               )}
 {section.labelKey === 'navbar.admin_shows' && pendingShowsCount > 0 && (
                 <span className="admin-link-count">{pendingShowsCount}</span>
