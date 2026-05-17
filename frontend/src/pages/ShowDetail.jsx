@@ -20,12 +20,12 @@ function getPosterSrc(show) {
   }
 
   if (!posterUrl && fallbackSlug) {
-    return `/show-posters/${fallbackSlug}.png`;
+    return `/show-posters/${fallbackSlug}.png?v=${encodeURIComponent(fallbackSlug)}`;
   }
 
   if (!posterUrl) return null;
 
-  return `/show-posters/${posterUrl}`;
+  return `/show-posters/${posterUrl}?v=${encodeURIComponent(posterUrl)}`;
 }
 
 function RepresentationForm({ rep, prices, isLoggedIn, onLoginRequired }) {
