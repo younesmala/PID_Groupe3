@@ -10,7 +10,7 @@ function getPosterSrc(posterUrl) {
   if (posterUrl.startsWith("http://") || posterUrl.startsWith("https://") || posterUrl.startsWith("/")) {
     return posterUrl;
   }
-  return `/show-posters/${posterUrl}`;
+  return `/show-posters/${posterUrl}?v=${encodeURIComponent(posterUrl)}`;
 }
 
 function StarRating({ rating }) {

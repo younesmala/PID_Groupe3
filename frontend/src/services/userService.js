@@ -112,8 +112,9 @@ export async function updateProfile(profileData) {
 }
 
 export async function fetchMyReservations() {
-  const res = await fetch(`${BASE}/my/reservations/`, {
+  const res = await fetch(`${BASE}/my/reservations/?_=${Date.now()}`, {
     method: 'GET',
+    cache: 'no-store',
     credentials: 'include',
     headers: {
       Accept: 'application/json',

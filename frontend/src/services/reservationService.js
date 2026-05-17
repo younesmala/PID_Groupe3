@@ -50,8 +50,9 @@ function normalizeCollection(data) {
 }
 
 export async function getMyReservations() {
-  const res = await fetch(`${BASE}/my/reservations/`, {
+  const res = await fetch(`${BASE}/my/reservations/?_=${Date.now()}`, {
     method: "GET",
+    cache: "no-store",
     credentials: "include",
     headers: getAuthHeaders(),
   })

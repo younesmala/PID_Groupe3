@@ -26,13 +26,13 @@ function getPosterSrc(show) {
   }
 
   if (!posterUrl && fallbackSlug) {
-    return `/show-posters/${fallbackSlug}.png`
+    return `/show-posters/${fallbackSlug}.png?v=${encodeURIComponent(fallbackSlug)}`
   }
 
   if (!posterUrl) return null
 
   const resolved = POSTER_OVERRIDES[posterUrl] ?? posterUrl
-  return `/show-posters/${resolved}`
+  return `/show-posters/${resolved}?v=${encodeURIComponent(resolved)}`
 }
 
 function ShowCards({ shows = [], loading = false, error = null }) {

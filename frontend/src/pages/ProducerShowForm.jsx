@@ -14,12 +14,12 @@ function getCookie(name) {
 }
 
 function getPosterPreview(posterUrl, slug) {
-  if (!posterUrl && slug) return `/show-posters/${slug}.png`
+  if (!posterUrl && slug) return `/show-posters/${slug}.png?v=${encodeURIComponent(slug)}`
   if (!posterUrl) return null
   if (posterUrl.startsWith('http://') || posterUrl.startsWith('https://') || posterUrl.startsWith('/')) {
     return posterUrl
   }
-  return `/show-posters/${posterUrl}`
+  return `/show-posters/${posterUrl}?v=${encodeURIComponent(posterUrl)}`
 }
 
 function flattenErrors(data) {
