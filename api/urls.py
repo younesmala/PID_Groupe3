@@ -119,6 +119,7 @@ urlpatterns = [
          tickets.TicketsView.as_view(), name='reservations-ticket'),
 
     # REVIEWS
+    path('critic/reviews/', reviews.CriticMyReviewsView.as_view(), name='critic-my-reviews'),
     path('reviews/', reviews.ReviewsView.as_view(), name='reviews-list-create'),
     path('reviews/', reviews.ReviewsView.as_view(), name='reviews-update'),
     path('reviews/<int:id>/', reviews.ReviewsDetailView.as_view(),

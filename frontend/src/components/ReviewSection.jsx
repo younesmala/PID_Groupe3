@@ -136,7 +136,12 @@ const ReviewSection = ({ showId, producerUsername }) => {
           reviews.map(rev => (
             <div key={rev.id} className="review-item">
               <div className="review-header">
-                <strong>{rev.username}</strong>
+                <div>
+                  <strong>{rev.username}</strong>
+                  {rev.user_role === 'PRESS_CRITIC' && (
+                    <span className="review-critic-badge">Critique Presse</span>
+                  )}
+                </div>
                 <span className="stars">{'★'.repeat(rev.stars)}{'☆'.repeat(5-rev.stars)}</span>
               </div>
               <p>{translatedReviews[rev.id] || rev.review}</p>

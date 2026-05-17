@@ -75,6 +75,19 @@ class ReviewsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CriticMyReviewsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        reviews = (
+            Review.objects.filter(user=request.user)
+            .select_related('user', 'show')
+            .order_by('-created_at')
+        )
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+
 class ReviewsDetailView(APIView):
     def get(self, request, id):
         review = get_object_or_404(Review, pk=id)

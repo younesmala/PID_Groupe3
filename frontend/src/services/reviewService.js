@@ -80,6 +80,19 @@ export async function createReview(reviewData) {
   return response.json();
 }
 
+export async function getMyCriticReviews() {
+  const response = await fetch(apiUrl('/critic/reviews/'), {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Erreur lors du chargement de vos avis');
+  }
+
+  const data = await response.json();
+  return normalizeReviewsPayload(data);
+}
+
 export async function getProducerReviews() {
   const response = await fetch(apiUrl('/producer/reviews/'), {
     credentials: 'include',

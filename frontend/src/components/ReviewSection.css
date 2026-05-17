@@ -1,5 +1,18 @@
 .review-section { margin-top: 2rem; padding-top: 1.5rem; }
 
+.review-critic-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: #d9911d;
+  color: #0f172a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 999px;
+  vertical-align: middle;
+  letter-spacing: 0.03em;
+}
+
 .review-section-header {
     display: flex;
     align-items: center;

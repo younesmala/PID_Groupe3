@@ -150,7 +150,7 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
 
   const criticLinks = [
     { to: localizedPath('/critic/dashboard'), label: t('navbar.critic_space') },
-    // Ajoutez ici d'autres liens spécifiques à l'espace critique si besoin
+    { to: localizedPath('/critic/reviews'), label: t('navbar.critic_reviews') },
   ]
 
   useEffect(() => {
