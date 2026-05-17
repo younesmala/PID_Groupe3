@@ -1,7 +1,7 @@
-import { API_ROOT } from './api'
+import { absoluteUrl, API_ROOT } from './api'
 
 const BASE = API_ROOT
-const DJANGO_BASE_URL = `http://${window.location.hostname}:8000`
+const DJANGO_BASE_URL = absoluteUrl('')
 
 function getCookie(name) {
   const value = `; ${document.cookie}`

@@ -1,6 +1,8 @@
 const rawApiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').trim()
 
-const normalizedApiBaseUrl = rawApiBaseUrl.replace(/\/+$/, '')
+const normalizedApiBaseUrl = rawApiBaseUrl
+  .replace(/\/+$/, '')
+  .replace(/\/api$/, '')
 
 export function absoluteUrl(path = '') {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
