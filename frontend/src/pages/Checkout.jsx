@@ -32,6 +32,14 @@ function formatPhoneNumber(value) {
   return value.replace(/[^\d+]/g, "").slice(0, 15)
 }
 
+const inputStyle = {
+  background: "#1e293b",
+  color: "#f8fafc",
+  border: "1px solid #d9911d",
+  borderRadius: "8px",
+  padding: "10px",
+}
+
 function Checkout() {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -366,11 +374,7 @@ function Checkout() {
                   onChange={(e) =>
                     updatePaymentDetail("cardName", e.target.value)
                   }
-                  style={{
-                    width: "400px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                  }}
+                  style={{ ...inputStyle, width: "400px" }}
                 />
               </div>
 
@@ -396,11 +400,7 @@ function Checkout() {
                       formatCardNumber(e.target.value)
                     )
                   }
-                  style={{
-                    width: "400px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                  }}
+                  style={{ ...inputStyle, width: "400px" }}
                 />
               </div>
 
@@ -428,11 +428,7 @@ function Checkout() {
                     onChange={(e) =>
                       updatePaymentDetail("cardExpiry", e.target.value)
                     }
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      borderRadius: "8px",
-                    }}
+                    style={{ ...inputStyle, width: "100%" }}
                   />
                 </div>
 
@@ -454,11 +450,7 @@ function Checkout() {
                     onChange={(e) =>
                       updatePaymentDetail("cardCvc", e.target.value)
                     }
-                    style={{
-                      width: "100%",
-                      padding: "10px",
-                      borderRadius: "8px",
-                    }}
+                    style={{ ...inputStyle, width: "100%" }}
                   />
                 </div>
               </div>
@@ -484,11 +476,7 @@ function Checkout() {
                   onChange={(e) =>
                     updatePaymentDetail("bancontactName", e.target.value)
                   }
-                  style={{
-                    width: "400px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                  }}
+                  style={{ ...inputStyle, width: "400px" }}
                 />
               </div>
 
@@ -526,11 +514,7 @@ function Checkout() {
                   onChange={(e) =>
                     updatePaymentDetail("klarnaEmail", e.target.value)
                   }
-                  style={{
-                    width: "400px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                  }}
+                  style={{ ...inputStyle, width: "400px" }}
                 />
               </div>
 
@@ -554,11 +538,7 @@ function Checkout() {
                       formatPhoneNumber(e.target.value)
                     )
                   }
-                  style={{
-                    width: "400px",
-                    padding: "10px",
-                    borderRadius: "8px",
-                  }}
+                  style={{ ...inputStyle, width: "400px" }}
                 />
               </div>
             </div>

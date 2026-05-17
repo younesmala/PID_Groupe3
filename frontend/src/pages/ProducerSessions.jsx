@@ -174,7 +174,12 @@ export default function ProducerSessions() {
 
     setDeleting(true)
     try {
-      const response = await apiFetch(`/representations/${confirm.id}/`, { method: 'DELETE' })
+      const response = await apiFetch(`/representations/${confirm.id}/`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken') || localStorage.getItem('csrf_token') || '',
+        },
+      })
       if (!response.ok) {
         const body = await response.json().catch(() => ({}))
         throw new Error(body.detail || `Erreur ${response.status}`)

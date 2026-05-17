@@ -50,3 +50,56 @@
 .confirmation-actions {
   margin-top: 40px;
 }
+
+.confirmation-tickets {
+  margin-bottom: 24px;
+}
+
+.confirmation-tickets__title {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #d9911d;
+  text-align: left;
+}
+
+.confirmation-tickets__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.confirmation-ticket {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1a1a1d;
+  border: 1px solid #d9911d;
+  border-radius: 14px;
+  padding: 20px 24px;
+  gap: 16px;
+}
+
+.confirmation-ticket__info {
+  text-align: left;
+  flex: 1;
+}
+
+.confirmation-ticket__show {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 6px;
+}
+
+.confirmation-ticket__date {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 4px;
+}
+
+.confirmation-ticket__num {
+  font-size: 13px;
+  color: #d9911d;
+  font-weight: 600;
+  margin: 0;
+}

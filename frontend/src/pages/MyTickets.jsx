@@ -3,39 +3,8 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { QRCodeSVG } from 'qrcode.react'
 import { getMyReservations } from '../services/reservationService'
+import { formatDate, getTitle, getDate, getLocation, getQuantity, buildQRData } from '../utils/ticketUtils'
 import './MyTickets.css'
-
-function formatDate(value, t) {
-  if (!value) return t('tickets.no_date')
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  return new Intl.DateTimeFormat('fr-BE', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
-}
-
-function getTitle(r) {
-  return r.show_title || r.show?.title || r.representation?.show?.title || r.title || `Billet #${r.id || '?'}`
-}
-
-function getDate(r) {
-  return r.representation_date || r.booking_date || r.date || r.created_at || r.representation?.when
-}
-
-function getLocation(r, t) {
-  return r.location_name || r.location?.name || r.representation?.location?.name || t('tickets.no_location')
-}
-
-function getQuantity(r) {
-  return r.quantity || r.seats || r.tickets_count || 1
-}
-
-function buildQRData(reservation) {
-  return JSON.stringify({
-    id: reservation.id || reservation.pk,
-    title: getTitle(reservation),
-    date: getDate(reservation),
-    quantity: getQuantity(reservation),
-  })
-}
 
 function TicketCard({ reservation }) {
   const { t } = useTranslation()

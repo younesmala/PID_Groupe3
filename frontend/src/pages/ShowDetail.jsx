@@ -403,7 +403,7 @@ function ShowDetail() {
                   <select
                     value={selectedPriceId}
                     onChange={(e) => setSelectedPriceId(e.target.value)}
-                    style={{ minWidth: 150, padding: "8px 10px", borderRadius: 8, border: "1px solid #fdba74" }}
+                    style={{ minWidth: 150, padding: "8px 10px", borderRadius: 8, border: "1px solid #fdba74", background: "#1e293b", color: "#f8fafc" }}
                   >
                     {prices.map((price) => (
                       <option key={price.id} value={price.id}>
@@ -420,7 +420,7 @@ function ShowDetail() {
                       type="button"
                       onClick={() => updateReserveQuantity(reserveQuantity - 1)}
                       disabled={!canReserve || reserveQuantity <= 1}
-                      style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "white", cursor: "pointer" }}
+                      style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "#d9911d", color: "#0f172a", fontWeight: 700, cursor: "pointer" }}
                     >
                       -
                     </button>
@@ -429,7 +429,7 @@ function ShowDetail() {
                       type="button"
                       onClick={() => updateReserveQuantity(reserveQuantity + 1)}
                       disabled={!canReserve || reserveQuantity >= maxReserveQuantity}
-                      style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "white", cursor: "pointer" }}
+                      style={{ width: 34, height: 34, borderRadius: 8, border: "1px solid #fdba74", background: "#d9911d", color: "#0f172a", fontWeight: 700, cursor: "pointer" }}
                     >
                       +
                     </button>
