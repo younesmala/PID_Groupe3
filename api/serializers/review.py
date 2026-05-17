@@ -10,8 +10,14 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['id', 'show', 'show_title', 'show_slug', 'username', 'user_role', 'review', 'stars', 'status', 'created_at']
-        read_only_fields = ['id', 'status', 'username', 'user_role', 'show_title', 'show_slug', 'created_at']
+        fields = [
+            'id', 'show', 'show_title', 'show_slug',
+            'username', 'user_role', 'review', 'stars', 'status', 'created_at',
+        ]
+        read_only_fields = [
+            'id', 'status', 'username', 'user_role',
+            'show_title', 'show_slug', 'created_at',
+        ]
 
     def get_user_role(self, obj):
         profile = getattr(obj.user, 'profile', None)
