@@ -47,7 +47,8 @@ export default function AdminProducers() {
       const res = await adminApiFetch('/admin/producers/')
       const data = await parseAdminResponse(res, t('admin.producers_error_load'))
 
-      setProducers(sortByNewestId(Array.isArray(data) ? data : []))
+      const all = Array.isArray(data) ? data : []
+      setProducers(sortByNewestId(all.filter((p) => p.role === 'PRODUCER')))
     } catch (err) {
       setError(err.message || t('admin.producers_error_load'))
       console.error('[AdminProducers] Failed to load producers:', err)

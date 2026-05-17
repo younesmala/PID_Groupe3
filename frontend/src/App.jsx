@@ -39,6 +39,7 @@ import ProducerReviews from "./pages/ProducerReviews"
 import ProducerShowForm from "./pages/ProducerShowForm"
 import AdminDashboard from "./pages/AdminDashboard"
 import AdminProducers from "./pages/AdminProducers"
+import AdminCritics from "./pages/AdminCritics"
 import AdminUsers from "./pages/AdminUsers"
 import AdminShows from "./pages/AdminShows"
 import AdminReservations from "./pages/AdminReservations"
@@ -571,6 +572,22 @@ function AppContent() {
           element={
             <AdminProtectedRoute user={user}>
               <AdminProducers />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/critics"
+          element={
+            <AdminProtectedRoute user={user}>
+              <AdminCritics />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/admin/critics"
+          element={
+            <AdminProtectedRoute user={user}>
+              <AdminCritics />
             </AdminProtectedRoute>
           }
         />
