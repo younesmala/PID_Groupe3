@@ -313,8 +313,8 @@ function AppContent() {
           path="/:lang/confirmation/:reservationId"
           element={<Confirmation />}
         />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/:lang/signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup onLogin={handleLogin} />} />
+        <Route path="/:lang/signup" element={<Signup onLogin={handleLogin} />} />
         <Route path="/login" element={<Home />} />
         <Route path="/:lang/login" element={<Home />} />
         <Route

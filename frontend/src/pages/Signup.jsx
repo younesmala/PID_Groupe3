@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { signup, checkUsername, checkEmail } from '../services/authService'
+import { signup, login, checkUsername, checkEmail } from '../services/authService'
 import './AccountPages.css'
 
 const initialForm = {
@@ -40,8 +40,9 @@ function PasswordToggleIcon({ visible }) {
   )
 }
 
-function Signup() {
+function Signup({ onLogin }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [form, setForm] = useState(initialForm)
   const [roleRequest, setRoleRequest] = useState('USER')
   const role = roleRequest
@@ -142,11 +143,18 @@ function Signup() {
         language: form.language,
         role,
       })
-      setSuccess(t('signup.success'))
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      setForm(initialForm)
-      setTouched({})
-      setSubmitted(false)
+
+      if (role === 'USER') {
+        const loginData = await login(form.username, form.password)
+        if (onLogin) await onLogin(loginData)
+        navigate('/')
+      } else {
+        setSuccess(t('signup.success_pending', { defaultValue: 'Votre demande a bien été enregistrée. Elle est en attente de validation par un administrateur.' }))
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        setForm(initialForm)
+        setTouched({})
+        setSubmitted(false)
+      }
     } catch (submitError) {
       setServerError(submitError.message)
     } finally {
