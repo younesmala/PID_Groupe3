@@ -27,16 +27,16 @@ def _producer_guard(request):
     return Response({"detail": "Acces reserve aux producteurs."}, status=status.HTTP_403_FORBIDDEN)
 
 
-def _save_uploaded_poster(uploaded_file, title):
+def _save_uploaded_poster(request, uploaded_file, title):
     extension = Path(uploaded_file.name).suffix.lower() or ".jpg"
     filename = f"{slugify(title) or 'show'}-{uuid4().hex[:8]}{extension}"
-    target_dir = settings.BASE_DIR / "frontend" / "public" / "show-posters"
+    target_dir = settings.MEDIA_ROOT / "show-posters"
     target_dir.mkdir(parents=True, exist_ok=True)
     target_path = target_dir / filename
     with target_path.open("wb+") as output:
         for chunk in uploaded_file.chunks():
             output.write(chunk)
-    return filename
+    return request.build_absolute_uri(f"{settings.MEDIA_URL}show-posters/{filename}")
 
 
 def _normalize_artist_types(data):
@@ -98,7 +98,7 @@ class ProducerShowsView(APIView):
             payload["artist_types"] = artist_types
 
         if poster:
-            payload["poster_url"] = _save_uploaded_poster(poster, title)
+            payload["poster_url"] = _save_uploaded_poster(request, poster, title)
 
         serializer = ShowSerializer(data=payload)
         if not serializer.is_valid():
@@ -183,7 +183,7 @@ class ProducerShowDetailView(APIView):
         data = request.data.copy()
         poster = data.get("poster") or data.get("image")
         if poster:
-            data["poster_url"] = _save_uploaded_poster(poster, data.get("title") or show.title)
+            data["poster_url"] = _save_uploaded_poster(request, poster, data.get("title") or show.title)
 
         data.pop("status", None)
         data.pop("publication_status", None)
