@@ -10,7 +10,7 @@ from api.serializers.show_prices import ShowPriceSerializer
 
 
 class ShowSerializer(serializers.ModelSerializer):
-    poster_url = serializers.SerializerMethodField()
+    poster_url = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     rating = serializers.SerializerMethodField()
     location_name = serializers.SerializerMethodField()
     next_schedule = serializers.SerializerMethodField()
@@ -68,6 +68,11 @@ class ShowSerializer(serializers.ModelSerializer):
             return self._absolute_media_url(f"{settings.MEDIA_URL}show-posters/{value}")
 
         return value
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["poster_url"] = self.get_poster_url(instance)
+        return data
 
     def get_rating(self, obj):
         avg = obj.reviews.filter(status=Review.STATUS_APPROVED).aggregate(Avg('stars'))['stars__avg']
