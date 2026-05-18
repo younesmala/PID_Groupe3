@@ -49,28 +49,28 @@ function ShowCard({ show, lang, noRepLabel }) {
   const posterSrc = getPosterSrc(show.poster_url);
 
   return (
-    <div className="show-card">
-      <div className="show-card-image">
+    <div className="public-show-card">
+      <div className="public-show-card-image">
         {posterSrc ? (
           <img src={posterSrc} alt={show.title} />
         ) : (
-          <div className="show-card-placeholder">THEATRE</div>
+          <div className="public-show-card-placeholder">THEATRE</div>
         )}
       </div>
-      <div className="show-card-body">
-        <h3 className="show-card-title">{translatedTitle || tField(show, "title", lang)}</h3>
-        <div className="show-card-rating">
+      <div className="public-show-card-body">
+        <h3 className="public-show-card-title">{translatedTitle || tField(show, "title", lang)}</h3>
+        <div className="public-show-card-rating">
           <StarRating rating={show.rating} />
         </div>
         {show.next_location_name && (
-          <p className="show-card-meta">Lieu : {show.next_location_name}</p>
+          <p className="public-show-card-meta">Lieu : {show.next_location_name}</p>
         )}
         {nextDate ? (
-          <p className="show-card-meta">Date : {nextDate}</p>
+          <p className="public-show-card-meta">Date : {nextDate}</p>
         ) : (
-          <p className="show-card-meta text-muted">{noRepLabel}</p>
+          <p className="public-show-card-meta text-muted">{noRepLabel}</p>
         )}
-        <div className="show-card-actions">
+        <div className="public-show-card-actions">
           <Link to={`/shows/${show.slug}`}>
             <button className="btn primary">Details</button>
           </Link>
@@ -112,6 +112,10 @@ function ShowsList() {
       .then(setShows)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+  }, [activeFilter, selectedLocation, selectedDate]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeFilter, selectedLocation, selectedDate]);
 
   return (
@@ -172,7 +176,7 @@ function ShowsList() {
       )}
 
       {!loading && !error && shows.length > 0 && (
-        <div className="shows-grid">
+        <div className="public-shows-grid">
           {shows.map((show) => (
             <ShowCard key={show.id} show={show} lang={lang} noRepLabel={t("filters.no_rep")} />
           ))}
