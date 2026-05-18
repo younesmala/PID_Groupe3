@@ -2,7 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
 from catalogue.views.home import home as catalogue_home
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -51,6 +52,10 @@ urlpatterns += i18n_patterns(
     # Accounts app (profile, signup...)
     path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
 )
+
+urlpatterns += [
+    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+]
 
 if not getattr(settings, 'PRODUCTION', False):
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
