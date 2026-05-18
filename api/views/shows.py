@@ -38,7 +38,7 @@ class ShowsView(generics.GenericAPIView):
                 show = serializer.save(producer=request.user)
             else:
                 show = serializer.save()
-            return Response(ShowSerializer(show).data, status=status.HTTP_201_CREATED)
+            return Response(ShowSerializer(show, context={"request": request}).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -60,7 +60,7 @@ class ShowsDetailView(generics.GenericAPIView):
                 {"detail": "Spectacle non trouvé"},
                 status=status.HTTP_404_NOT_FOUND
             )
-        serializer = ShowSerializer(show)
+        serializer = ShowSerializer(show, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, slug, *args, **kwargs):
