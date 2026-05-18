@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from django.conf import settings
@@ -38,16 +39,33 @@ class ShowSerializer(serializers.ModelSerializer):
             return str(obj.artist)
         return None
 
+    def _absolute_media_url(self, relative_path):
+        request = self.context.get("request")
+        if request is not None:
+            absolute_url = request.build_absolute_uri(relative_path)
+        elif railway_domain := os.getenv("RAILWAY_PUBLIC_DOMAIN"):
+            absolute_url = f"https://{railway_domain}{relative_path}"
+        else:
+            absolute_url = relative_path
+
+        if settings.PRODUCTION and absolute_url.startswith("http://"):
+            return "https://" + absolute_url[len("http://"):]
+        return absolute_url
+
     def get_poster_url(self, obj):
         value = obj.poster_url
         if not value:
             return value
-        if value.startswith(("http://", "https://", "/")):
+        if value.startswith(("http://", "https://")):
+            if settings.PRODUCTION and value.startswith("http://"):
+                return "https://" + value[len("http://"):]
             return value
+        if value.startswith("/"):
+            return self._absolute_media_url(value)
 
         media_candidate = Path(settings.MEDIA_ROOT) / "show-posters" / value
         if media_candidate.exists():
-            return f"{settings.MEDIA_URL}show-posters/{value}"
+            return self._absolute_media_url(f"{settings.MEDIA_URL}show-posters/{value}")
 
         return value
 
