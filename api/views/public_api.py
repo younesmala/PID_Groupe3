@@ -49,7 +49,7 @@ class PublicShowsView(APIView):
                 pass
 
         shows = shows.order_by('-created_at', 'title')
-        serializer = ShowSerializer(shows, many=True)
+        serializer = ShowSerializer(shows, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):

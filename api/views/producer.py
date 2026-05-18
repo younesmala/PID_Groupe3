@@ -61,7 +61,7 @@ class ProducerShowsView(APIView):
         if guard is not None:
             return guard
         shows = Show.objects.filter(producer=request.user).order_by("-created_at")
-        serializer = ShowSerializer(shows, many=True)
+        serializer = ShowSerializer(shows, many=True, context={"request": request})
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
@@ -109,7 +109,7 @@ class ProducerShowsView(APIView):
             publication_status=Show.PublicationStatus.PENDING,
             bookable=False,
         )
-        return Response(ShowSerializer(show).data, status=status.HTTP_201_CREATED)
+        return Response(ShowSerializer(show, context={"request": request}).data, status=status.HTTP_201_CREATED)
 
     def put(self, request, *args, **kwargs):
         return Response(
@@ -140,7 +140,7 @@ class ProducerShowDetailView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        return Response(ShowSerializer(show).data)
+        return Response(ShowSerializer(show, context={"request": request}).data)
 
     def patch(self, request, slug, *args, **kwargs):
         guard = _producer_guard(request)
@@ -160,7 +160,7 @@ class ProducerShowDetailView(APIView):
                 show.bookable = False
                 show.updated_at = timezone.now()
                 show.save(update_fields=["bookable", "updated_at"])
-                return Response(ShowSerializer(show).data)
+                return Response(ShowSerializer(show, context={"request": request}).data)
 
             if requested_status == "published":
                 if show.publication_status != Show.PublicationStatus.APPROVED:
@@ -176,7 +176,7 @@ class ProducerShowDetailView(APIView):
                 show.bookable = True
                 show.updated_at = timezone.now()
                 show.save(update_fields=["bookable", "updated_at"])
-                return Response(ShowSerializer(show).data)
+                return Response(ShowSerializer(show, context={"request": request}).data)
 
             return Response({"detail": "Statut invalide pour le producteur."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -203,7 +203,7 @@ class ProducerShowDetailView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         updated_show = serializer.save(updated_at=timezone.now())
-        return Response(ShowSerializer(updated_show).data)
+        return Response(ShowSerializer(updated_show, context={"request": request}).data)
 
     def delete(self, request, slug, *args, **kwargs):
         guard = _producer_guard(request)
