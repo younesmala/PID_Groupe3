@@ -22,19 +22,9 @@ function getCookie(name) {
 }
 
 function getAuthHeaders() {
-  const token =
-    localStorage.getItem("access_token") ||
-    localStorage.getItem("authToken") ||
-    localStorage.getItem("token")
-
-  return token
-    ? {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    : {
-        Accept: "application/json",
-      }
+  return {
+    Accept: "application/json",
+  }
 }
 
 function normalizeCollection(data) {
@@ -81,8 +71,8 @@ export async function checkout(paymentData = {}) {
   const csrfToken = getCookie("csrftoken")
 
   const headers = {
-    ...getAuthHeaders(),
     "Content-Type": "application/json",
+    Accept: "application/json",
   }
 
   if (csrfToken) {

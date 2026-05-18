@@ -65,8 +65,9 @@ export async function addToCart(representationId, quantity, priceId) {
 }
 
 export async function getCart() {
-  const res = await fetch(`${BASE}/cart/`, {
+  const res = await fetch(`${BASE}/cart/?_=${Date.now()}`, {
     credentials: 'include',
+    cache: 'no-store',
   })
   if (!res.ok) throw new Error('Erreur chargement panier')
   return res.json()

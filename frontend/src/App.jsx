@@ -52,6 +52,7 @@ import {
   storeUser,
   logout,
   fetchCurrentUser,
+  clearStoredUser,
 } from "./services/authService"
 
 import { getCart } from "./services/cartService"
@@ -153,6 +154,21 @@ function AdminProtectedRoute({ user, children }) {
   return children
 }
 
+function RoleProtectedRoute({ user, allowedRoles, children }) {
+  if (!user?.username) {
+    return <Navigate to="/" replace />
+  }
+
+  const normalizedRole = String(user?.role || "").toUpperCase()
+  const isAllowed = !!user?.is_staff || allowedRoles.includes(normalizedRole)
+
+  if (!isAllowed) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
+}
+
 function LocalizedNotFoundRedirect() {
   const { lang } = useParams()
   const normalizedLanguage = (lang || "").toLowerCase()
@@ -197,14 +213,18 @@ function AppContent() {
 
       setUser(newUser)
 
-      // Redirection intelligente selon le rôle
       const language = getPreferredLanguage()
-      const normalizedRole = String(newUser.role || '').toUpperCase()
-      const isAdmin = !!newUser.is_staff || normalizedRole === 'ADMIN'
+      const normalizedRole = String(newUser.role || "").toUpperCase()
+      const isAdmin = !!newUser.is_staff || normalizedRole === "ADMIN"
+
       if (isAdmin) {
         navigate(`/${language}/admin/dashboard`)
-      } else if (normalizedRole === 'PRODUCER' || normalizedRole === 'PRODUCTEUR') {
+      } else if (normalizedRole === "PRODUCER" || normalizedRole === "PRODUCTEUR") {
         navigate(`/${language}/producer/dashboard`)
+      } else if (
+        ["CRITIC", "CRITIQUE", "PRESS_CRITIC", "PRESSE_CRITIQUE"].includes(normalizedRole)
+      ) {
+        navigate(`/${language}/critic/reviews`)
       }
     } catch {
       const newUser = {
@@ -216,14 +236,18 @@ function AppContent() {
 
       setUser(newUser)
 
-      // Redirection même si le fetch du profil échoue
       const language = getPreferredLanguage()
-      const normalizedRole = String(newUser.role || '').toUpperCase()
-      const isAdmin = !!newUser.is_staff || normalizedRole === 'ADMIN'
+      const normalizedRole = String(newUser.role || "").toUpperCase()
+      const isAdmin = !!newUser.is_staff || normalizedRole === "ADMIN"
+
       if (isAdmin) {
         navigate(`/${language}/admin/dashboard`)
-      } else if (normalizedRole === 'PRODUCER' || normalizedRole === 'PRODUCTEUR') {
+      } else if (normalizedRole === "PRODUCER" || normalizedRole === "PRODUCTEUR") {
         navigate(`/${language}/producer/dashboard`)
+      } else if (
+        ["CRITIC", "CRITIQUE", "PRESS_CRITIC", "PRESSE_CRITIQUE"].includes(normalizedRole)
+      ) {
+        navigate(`/${language}/critic/reviews`)
       }
     }
   }
@@ -238,6 +262,40 @@ function AppContent() {
     setUser(null)
     setCartCount(0)
   }
+
+  useEffect(() => {
+    let active = true
+
+    async function syncSession() {
+      try {
+        const profile = await fetchCurrentUser()
+        if (!active) return
+
+        const normalizedUser = {
+          username: profile.username || null,
+          role: profile.role || null,
+          is_staff: !!profile.is_staff,
+          email: profile.email || null,
+        }
+
+        storeUser(normalizedUser)
+        setUser(normalizedUser)
+      } catch {
+        if (!active) return
+
+        if (getStoredUser()?.username) {
+          clearStoredUser()
+          setUser(null)
+        }
+      }
+    }
+
+    syncSession()
+
+    return () => {
+      active = false
+    }
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -257,7 +315,13 @@ function AppContent() {
         const cart = await getCart()
 
         if (active) {
-          setCartCount(cart.count ?? 0)
+          setCartCount(
+            typeof cart.count === "number"
+              ? cart.count
+              : Array.isArray(cart.items)
+                ? cart.items.length
+                : 0
+          )
         }
       } catch {
         if (active) {
@@ -286,7 +350,6 @@ function AppContent() {
       />
 
       <Routes>
-        {/* ── Public ── */}
         <Route path="/" element={<Home />} />
         <Route path="/:lang" element={<Home />} />
         <Route path="/artist/:id" element={<ArtistDetail />} />
@@ -307,209 +370,205 @@ function AppContent() {
         <Route path="/:lang/locations" element={<Locations />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/:lang/checkout" element={<Checkout />} />
-        <Route
-          path="/confirmation/:reservationId"
-          element={<Confirmation />}
-        />
-        <Route
-          path="/:lang/confirmation/:reservationId"
-          element={<Confirmation />}
-        />
+        <Route path="/confirmation/:reservationId" element={<Confirmation />} />
+        <Route path="/:lang/confirmation/:reservationId" element={<Confirmation />} />
         <Route path="/signup" element={<Signup onLogin={handleLogin} />} />
         <Route path="/:lang/signup" element={<Signup onLogin={handleLogin} />} />
         <Route path="/login" element={<Home />} />
         <Route path="/:lang/login" element={<Home />} />
         <Route
           path="/profile"
-          element={
-            <Profile
-              isLoggedIn={isLoggedIn}
-              username={username}
-            />
-          }
+          element={<Profile isLoggedIn={isLoggedIn} username={username} />}
         />
         <Route
           path="/:lang/profile"
-          element={
-            <Profile
-              isLoggedIn={isLoggedIn}
-              username={username}
-            />
-          }
+          element={<Profile isLoggedIn={isLoggedIn} username={username} />}
         />
         <Route path="/search" element={<Search />} />
         <Route path="/:lang/search" element={<Search />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/:lang/reviews" element={<Reviews />} />
-        <Route
-          path="/tickets"
-          element={<MyTickets isLoggedIn={isLoggedIn} />}
-        />
-        <Route
-          path="/:lang/tickets"
-          element={<MyTickets isLoggedIn={isLoggedIn} />}
-        />
+        <Route path="/tickets" element={<MyTickets isLoggedIn={isLoggedIn} />} />
+        <Route path="/:lang/tickets" element={<MyTickets isLoggedIn={isLoggedIn} />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/:lang/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/:lang/reset-password" element={<ResetPassword />} />
 
-        {/* ── Espace Producteur ── */}
         <Route
           path="/producer/dashboard"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerDashboard user={user} />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/dashboard"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerDashboard user={user} />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/shows"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerShows />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/shows"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerShows />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/shows/new"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerShowForm />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/shows/new"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerShowForm />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/shows/:slug/edit"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerShowForm />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/shows/:slug/edit"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerShowForm />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/shows/:slug/sessions"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerSessions />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/shows/:slug/sessions"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerSessions />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/sessions"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerAllSessions />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/sessions"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerAllSessions />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/stats"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerStats />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/stats"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerStats />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
-
         <Route
           path="/producer/reviews"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerReviews />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/producer/reviews"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute user={user} allowedRoles={["PRODUCER", "PRODUCTEUR"]}>
               <ProducerReviews />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
 
-        {/* ── Espace Critique ── */}
+        <Route
+          path="/critic/dashboard"
+          element={
+            <RoleProtectedRoute
+              user={user}
+              allowedRoles={["CRITIC", "CRITIQUE", "PRESS_CRITIC", "PRESSE_CRITIQUE"]}
+            >
+              <CriticReviews />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/:lang/critic/dashboard"
+          element={
+            <RoleProtectedRoute
+              user={user}
+              allowedRoles={["CRITIC", "CRITIQUE", "PRESS_CRITIC", "PRESSE_CRITIQUE"]}
+            >
+              <CriticReviews />
+            </RoleProtectedRoute>
+          }
+        />
         <Route
           path="/critic/reviews"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute
+              user={user}
+              allowedRoles={["CRITIC", "CRITIQUE", "PRESS_CRITIC", "PRESSE_CRITIQUE"]}
+            >
               <CriticReviews />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
         <Route
           path="/:lang/critic/reviews"
           element={
-            <ProtectedRoute user={user}>
+            <RoleProtectedRoute
+              user={user}
+              allowedRoles={["CRITIC", "CRITIQUE", "PRESS_CRITIC", "PRESSE_CRITIQUE"]}
+            >
               <CriticReviews />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           }
         />
 
-        {/* ── Administration ── */}
         <Route
           path="/admin/dashboard"
           element={
@@ -526,7 +585,6 @@ function AppContent() {
             </AdminProtectedRoute>
           }
         />
-
         <Route
           path="/admin/users"
           element={
@@ -543,7 +601,6 @@ function AppContent() {
             </AdminProtectedRoute>
           }
         />
-
         <Route
           path="/admin/reservations"
           element={
@@ -560,7 +617,6 @@ function AppContent() {
             </AdminProtectedRoute>
           }
         />
-
         <Route
           path="/admin/locations"
           element={
@@ -577,7 +633,6 @@ function AppContent() {
             </AdminProtectedRoute>
           }
         />
-
         <Route
           path="/admin/producers"
           element={
@@ -610,7 +665,6 @@ function AppContent() {
             </AdminProtectedRoute>
           }
         />
-
         <Route
           path="/admin/shows"
           element={
@@ -627,7 +681,6 @@ function AppContent() {
             </AdminProtectedRoute>
           }
         />
-
         <Route
           path="/admin/artists"
           element={

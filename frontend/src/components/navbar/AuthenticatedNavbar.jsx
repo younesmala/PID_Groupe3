@@ -149,7 +149,6 @@ function AuthenticatedNavbar({ user, onLogout, localizedPath, selectedLang, setS
   ]
 
   const criticLinks = [
-    { to: localizedPath('/critic/dashboard'), label: t('navbar.critic_space') },
     { to: localizedPath('/critic/reviews'), label: t('navbar.critic_reviews') },
   ]
 
