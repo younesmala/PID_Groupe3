@@ -1,11 +1,15 @@
-from rest_framework import serializers
+from pathlib import Path
+
+from django.conf import settings
 from django.db.models import Avg
 from django.utils import timezone
+from rest_framework import serializers
 from catalogue.models import Show, Review
 from api.serializers.show_prices import ShowPriceSerializer
 
 
 class ShowSerializer(serializers.ModelSerializer):
+    poster_url = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
     location_name = serializers.SerializerMethodField()
     next_schedule = serializers.SerializerMethodField()
@@ -33,6 +37,19 @@ class ShowSerializer(serializers.ModelSerializer):
         if obj.artist:
             return str(obj.artist)
         return None
+
+    def get_poster_url(self, obj):
+        value = obj.poster_url
+        if not value:
+            return value
+        if value.startswith(("http://", "https://", "/")):
+            return value
+
+        media_candidate = Path(settings.MEDIA_ROOT) / "show-posters" / value
+        if media_candidate.exists():
+            return f"{settings.MEDIA_URL}show-posters/{value}"
+
+        return value
 
     def get_rating(self, obj):
         avg = obj.reviews.filter(status=Review.STATUS_APPROVED).aggregate(Avg('stars'))['stars__avg']
