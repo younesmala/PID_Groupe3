@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { apiUrl } from '../services/api'
 import './AdminUsers.css'
 
 function getArtistName(artist) {
@@ -40,7 +41,7 @@ async function ensureCsrfToken(forceRefresh = false) {
   const storedToken = localStorage.getItem('csrf_token')
   if (!forceRefresh && storedToken) return storedToken
 
-  const response = await fetch('/api/auth/csrf/', {
+  const response = await fetch(apiUrl('/auth/csrf/'), {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -72,7 +73,7 @@ async function apiFetch(path, options = {}) {
     ...options,
   }
 
-  let response = await fetch(`/api${path}`, requestOptions)
+  let response = await fetch(apiUrl(path), requestOptions)
 
   if (method !== 'GET' && response.status === 403) {
     const responseText = await response.clone().text().catch(() => '')
@@ -80,7 +81,7 @@ async function apiFetch(path, options = {}) {
 
     if (looksLikeCsrfError) {
       const refreshedToken = await ensureCsrfToken(true)
-      response = await fetch(`/api${path}`, {
+      response = await fetch(apiUrl(path), {
         ...requestOptions,
         headers: {
           ...(requestOptions.headers || {}),

@@ -128,6 +128,17 @@ export async function logout() {
   localStorage.removeItem('user_email')
 }
 
+export function clearStoredUser() {
+  localStorage.removeItem('username')
+  localStorage.removeItem('csrf_token')
+  localStorage.removeItem('user_role')
+  localStorage.removeItem('user_is_staff')
+  localStorage.removeItem('user_email')
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('authToken')
+  localStorage.removeItem('token')
+}
+
 export function getStoredUsername() {
   return localStorage.getItem('username')
 }

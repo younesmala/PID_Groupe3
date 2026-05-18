@@ -42,22 +42,6 @@ async function ensureCsrfToken() {
   return csrfToken
 }
 
-function getAuthHeaders() {
-  const token =
-    localStorage.getItem('access_token') ||
-    localStorage.getItem('authToken') ||
-    localStorage.getItem('token')
-
-  return token
-    ? {
-        Accept: 'application/json',
-        Authorization: `Bearer ${token}`,
-      }
-    : {
-        Accept: 'application/json',
-      }
-}
-
 function normalizeCollection(data) {
   if (Array.isArray(data)) {
     return data
@@ -74,7 +58,10 @@ export async function getCurrentUser() {
   const res = await fetch(`${BASE}/users/me/`, {
     method: 'GET',
     credentials: 'include',
-    headers: getAuthHeaders(),
+    cache: 'no-store',
+    headers: {
+      Accept: 'application/json',
+    },
   })
 
   const data = await parseJsonResponse(res)

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { apiUrl } from '../services/api'
 import './Footer.css'
 
 function NewsletterForm() {
@@ -19,7 +20,7 @@ function NewsletterForm() {
         .split('; ')
         .find(row => row.startsWith('csrftoken='))
         ?.split('=')[1]
-      const res = await fetch('/api/newsletter/subscribe/', {
+      const res = await fetch(apiUrl('/newsletter/subscribe/'), {
         method: 'POST',
         credentials: 'include',
         headers: {

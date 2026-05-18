@@ -106,7 +106,13 @@ const ReviewSection = ({ showId, producerUsername }) => {
       setRating(0);
       setComment('');
     } catch (error) {
-      setStatusMsg({ type: 'error', text: t('show.cart_error') });
+      setStatusMsg({
+        type: 'error',
+        text: t(
+          'show.review_submit_error',
+          'Impossible de publier votre avis pour le moment.',
+        ),
+      });
     }
   };
 
