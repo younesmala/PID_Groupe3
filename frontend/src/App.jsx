@@ -131,6 +131,16 @@ function LanguageUrlManager() {
   return null
 }
 
+function ScrollToTop() {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }, [location.pathname, location.search])
+
+  return null
+}
+
 function ProtectedRoute({ user, children }) {
   if (!user?.username) {
     return <Navigate to="/" replace />
@@ -712,6 +722,7 @@ function App() {
   return (
     <BrowserRouter>
       <LanguageUrlManager />
+      <ScrollToTop />
       <AppContent />
     </BrowserRouter>
   )
