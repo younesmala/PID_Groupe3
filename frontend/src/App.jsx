@@ -46,6 +46,7 @@ import AdminShows from "./pages/AdminShows"
 import AdminReservations from "./pages/AdminReservations"
 import AdminLocations from "./pages/AdminLocations"
 import Locations from "./pages/Locations"
+import RssFeed from "./pages/RssFeed"
 
 import {
   getStoredUser,
@@ -277,6 +278,7 @@ function AppContent() {
     let active = true
 
     async function syncSession() {
+      if (!getStoredUser()?.username) return
       try {
         const profile = await fetchCurrentUser()
         if (!active) return
@@ -382,6 +384,8 @@ function AppContent() {
         <Route path="/:lang/checkout" element={<Checkout />} />
         <Route path="/confirmation/:reservationId" element={<Confirmation />} />
         <Route path="/:lang/confirmation/:reservationId" element={<Confirmation />} />
+        <Route path="/rss" element={<RssFeed />} />
+        <Route path="/:lang/rss" element={<RssFeed />} />
         <Route path="/signup" element={<Signup onLogin={handleLogin} />} />
         <Route path="/:lang/signup" element={<Signup onLogin={handleLogin} />} />
         <Route path="/login" element={<Home />} />
