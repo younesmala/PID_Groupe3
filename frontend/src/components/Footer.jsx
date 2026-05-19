@@ -103,6 +103,7 @@ function Footer() {
             <li><Link to={localizedPath('/shows')}>{t('spectacles')}</Link></li>
             <li><Link to={localizedPath('/cart')}>{t('panier')}</Link></li>
             <li><Link to={localizedPath('/profile')}>{t('footer.profile')}</Link></li>
+            <li><Link to={localizedPath('/rss')}>Flux RSS</Link></li>
           </ul>
         </div>
 
